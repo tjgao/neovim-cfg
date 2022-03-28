@@ -20,10 +20,10 @@ vim.g.maplocalleader = " "
 
 -- Normal --
 -- Better window navigation
-keymap("n", "<A-h>", "<C-w>h", opts)
-keymap("n", "<A-j>", "<C-w>j", opts)
-keymap("n", "<A-k>", "<C-w>k", opts)
-keymap("n", "<A-l>", "<C-w>l", opts)
+keymap("n", "<Left>", "<C-w>h", opts)
+keymap("n", "<Down>", "<C-w>j", opts)
+keymap("n", "<Up>", "<C-w>k", opts)
+keymap("n", "<Right>", "<C-w>l", opts)
 
 -- Resize with arrows
 keymap("n", "<C-Up>", ":resize +2<CR>", opts)
@@ -34,6 +34,15 @@ keymap("n", "<C-Right>", ":vertical resize -2<CR>", opts)
 -- Navigate buffers
 keymap("n", "<S-l>", ":bnext<CR>", opts)
 keymap("n", "<S-h>", ":bprevious<CR>", opts)
+
+-- Retrieve last thing yanked instead of deleted
+keymap("n", "<A-p>", "\"0p", opts)
+
+-- Telescope find file
+keymap("n", "<C-q>", ":Telescope fd<CR>", opts)
+
+-- nvim-tree
+keymap("n", "<F1>", ":NvimTreeToggle<CR>", opts)
 
 -- Move text up and down
 -- keymap("n", "<A-j>", "<Esc>:m .+1<CR>==gi", opts)
@@ -67,11 +76,3 @@ keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", opts)
 -- keymap("t", "<C-k>", "<C-\\><C-N><C-w>k", term_opts)
 -- keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", term_opts)
 
--- ToggleTerm --
---keymap("n", "<C-s>", ":ToggleTerm<CR>", opts)
-
--- Telescope find file
-keymap("n", "<C-q>", ":Telescope fd<CR>", opts)
-
--- nvim-tree
-keymap("n", "<F1>", ":NvimTreeToggle<CR>", opts)
