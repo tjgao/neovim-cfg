@@ -7,4 +7,8 @@ if not vim.opt.termguicolors then
     }
 end
 
-require 'nvim-tree'.setup()
+require 'nvim-tree'.setup {
+    view = {
+        side = 'right'
+    }
+}
