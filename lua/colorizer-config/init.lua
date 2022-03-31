@@ -1,4 +1,11 @@
-require 'colorizer'.setup()
+require 'colorizer'.setup {
+    'css',
+    'lua',
+    'javascript',
+    html = {
+        mode = 'foreground'
+    }
+}
 
 -- print('colorizer loaded ...')
 
