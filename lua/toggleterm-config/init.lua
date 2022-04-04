@@ -1,46 +1,4 @@
-require('toggleterm').setup{
-    -- size can be a number or function which is passed the current terminal
-    size = function(term)
-        if term.direction == "horizontal" then
-            return 20
-        elseif term.direction == "vertical" then
-            return vim.o.columns * 0.4
-        end
-    end,
-    open_mapping = [[<c-s>]],
---    on_open = fun(t: Terminal), -- function to run when the terminal opens
---    on_close = fun(t: Terminal), -- function to run when the terminal closes
---    on_stdout = fun(t: Terminal, job: number, data: string[], name: string) -- callback for processing output on stdout
---    on_stderr = fun(t: Terminal, job: number, data: string[], name: string) -- callback for processing output on stderr
---    on_exit = fun(t: Terminal, job: number, exit_code: number, name: string) -- function to run when terminal process exits
-    hide_numbers = true, -- hide the number column in toggleterm buffers
-    shade_filetypes = {},
-    shade_terminals = true,
-    shading_factor = 3, -- the degree by which to darken to terminal colour, default: 1 for dark backgrounds, 3 for light
-    start_in_insert = true,
-    insert_mappings = true, -- whether or not the open mapping applies in insert mode
-    terminal_mappings = true, -- whether or not the open mapping applies in the opened terminals
-    persist_size = true,
-    direction = 'float', -- 'vertical' | 'horizontal' | 'window' | 'float',
-    close_on_exit = true, -- close the terminal window when the process exits
-    shell = vim.o.shell, -- change the default shell
-    -- This field is only relevant if direction is set to 'float'
-    float_opts = {
-        -- The border key is *almost* the same as 'nvim_open_win'
-        -- see :h nvim_open_win for details on borders however
-        -- the 'curved' border is a custom border type
-        -- not natively supported but implemented in this plugin.
-        border = 'curved', -- 'single' | 'double' | 'shadow' | 'curved' | ... other options supported by win open
-        hidden = true,
---        width = <value>,
---        height = <value>,
-        winblend = 3,
-        highlights = {
-            border = "Normal",
-            background = "Normal",
-        }
-    }
-}
+require('toggleterm').setup{}
 
 function _G.set_terminal_keymaps()
     local opts = { noremap = true }
@@ -48,3 +6,69 @@ function _G.set_terminal_keymaps()
 end
 
 vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
+
+
+local Terminal  = require('toggleterm.terminal').Terminal
+
+local opts = {noremap = true, silent = true}
+
+local cfg = {
+    {'<F2>', 'float'},
+    {'<F3>', 'float'},
+    {'<F4>', 'horizontal'},
+}
+
+local make_term = function(idx, o)
+    return {
+        count = idx,
+        direction = o[2],
+        float_opts = {
+            border = 'curved',
+        },
+        close_on_exit = true, -- close the terminal window when the process exits
+        start_in_insert = true,
+
+        size = function(term)
+            if term.direction == "horizontal" then
+                return 20
+            elseif term.direction == "vertical" then
+                return vim.o.columns * 0.4
+            end
+        end,
+
+        on_open = function(term)
+            vim.cmd('startinsert!')
+            for i, v in pairs(cfg) do
+                vim.api.nvim_buf_set_keymap(term.bufnr, 't', v[1], '<cmd>lua MyToggleTerm(' .. i .. ')<CR>', opts)
+                vim.api.nvim_buf_set_keymap(term.bufnr, 'n', v[1], '<cmd>lua MyToggleTerm(' .. i .. ')<CR>', opts)
+            end
+        end,
+    }
+end
+
+local term_table = {}
+
+for i, o in pairs(cfg) do
+    table.insert(term_table, Terminal:new(make_term(i, o)))
+end
+
+local activeTerm = nil
+
+function MyToggleTerm(c)
+    local t = term_table[c]
+    if activeTerm ~= nil and activeTerm ~= t and activeTerm:is_open() then
+        activeTerm:toggle()
+    end
+    if t:is_open() then
+        t:close()
+        activeTerm = nil
+    else
+        t:open()
+        vim.cmd('startinsert!')
+        activeTerm = t
+    end
+end
+
+for i, v in pairs(cfg) do
+    vim.api.nvim_buf_set_keymap(0, 'n', v[1], '<cmd>lua MyToggleTerm(' .. i .. ')<CR>', opts)
+end
