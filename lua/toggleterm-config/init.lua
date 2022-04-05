@@ -6,6 +6,8 @@ function _G.set_terminal_keymaps()
 end
 
 vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
+-- vim.cmd('autocmd! BufEnter, BufWinEnter, WinEnter term://* lua startinsert')
+-- autocmd BufWinEnter,WinEnter term://* startinsert
 
 
 local Terminal  = require('toggleterm.terminal').Terminal
@@ -37,11 +39,11 @@ local make_term = function(idx, o)
         end,
 
         on_open = function(term)
-            vim.cmd('startinsert!')
             for i, v in pairs(cfg) do
                 vim.api.nvim_buf_set_keymap(term.bufnr, 't', v[1], '<cmd>lua MyToggleTerm(' .. i .. ')<CR>', opts)
                 vim.api.nvim_buf_set_keymap(term.bufnr, 'n', v[1], '<cmd>lua MyToggleTerm(' .. i .. ')<CR>', opts)
             end
+            vim.cmd('startinsert')
         end,
     }
 end
@@ -52,20 +54,23 @@ for i, o in pairs(cfg) do
     table.insert(term_table, Terminal:new(make_term(i, o)))
 end
 
-local activeTerm = nil
-
 function MyToggleTerm(c)
-    local t = term_table[c]
-    if activeTerm ~= nil and activeTerm ~= t and activeTerm:is_open() then
-        activeTerm:toggle()
+    local opened = nil
+    for _, o in pairs(term_table) do
+        if o:is_open() then
+            opened = o
+            break
+        end
     end
-    if t:is_open() then
+
+    local t = term_table[c]
+    if t == opened then
         t:close()
-        activeTerm = nil
     else
+        if opened ~= nil then
+            opened:close()
+        end
         t:open()
-        vim.cmd('startinsert!')
-        activeTerm = t
     end
 end
 
