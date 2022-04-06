@@ -75,5 +75,6 @@ function MyToggleTerm(c)
 end
 
 for i, v in pairs(cfg) do
-    vim.api.nvim_buf_set_keymap(0, 'n', v[1], '<cmd>lua MyToggleTerm(' .. i .. ')<CR>', opts)
+    vim.api.nvim_set_keymap('n', v[1], ':lua MyToggleTerm(' .. i .. ')<CR>', opts)
+    vim.api.nvim_set_keymap('i', v[1], '<cmd>lua MyToggleTerm(' .. i .. ')<CR>', opts)
 end
