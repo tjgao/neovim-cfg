@@ -38,8 +38,8 @@ keymap("n", "<S-h>", ":bprevious<CR>", opts)
 -- Retrieve last thing yanked instead of deleted
 keymap("n", "<A-p>", "\"0p", opts)
 
--- Telescope find file
--- keymap("n", "<C-q>", ":Telescope fd<CR>", opts)
+-- Toggle quickfix window
+keymap("n", "<C-q>", ":lua require('commands').ToggleQF()<CR>", opts)
 
 -- nvim-tree
 keymap("n", "<F1>", ":NvimTreeToggle<CR>", opts)
