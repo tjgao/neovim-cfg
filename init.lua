@@ -10,6 +10,7 @@ require('nvim-tree-config')
 require('gitsigns-config')
 require('telescope-config')
 require('nord-config')
+require('commands')
 require('keymaps')
 require('options.init-last')
 

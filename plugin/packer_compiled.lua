@@ -174,6 +174,11 @@ _G.packer_plugins = {
     path = "/home/tiejun/.local/share/nvim/site/pack/packer/start/popup.nvim",
     url = "https://github.com/nvim-lua/popup.nvim"
   },
+  ["telescope-rg.nvim"] = {
+    loaded = true,
+    path = "/home/tiejun/.local/share/nvim/site/pack/packer/start/telescope-rg.nvim",
+    url = "https://github.com/nvim-telescope/telescope-rg.nvim"
+  },
   ["telescope.nvim"] = {
     loaded = true,
     path = "/home/tiejun/.local/share/nvim/site/pack/packer/start/telescope.nvim",

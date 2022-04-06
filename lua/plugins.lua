@@ -59,7 +59,10 @@ return packer.startup(function(use)
     use {"akinsho/toggleterm.nvim"}
     use {
         'nvim-telescope/telescope.nvim',
-        requires = { {'nvim-lua/plenary.nvim'} }
+        requires = {
+            {'nvim-lua/plenary.nvim'},
+            {'nvim-telescope/telescope-rg.nvim'},
+        }
     }
     use "L3MON4D3/LuaSnip"
     use 'hrsh7th/nvim-cmp'
