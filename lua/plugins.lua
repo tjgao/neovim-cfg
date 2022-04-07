@@ -34,6 +34,7 @@ packer.init {
 return packer.startup(function(use)
     -- Packer can manage itself
     use 'wbthomason/packer.nvim'
+    use 'windwp/nvim-autopairs'
     use {'nvim-treesitter/nvim-treesitter', run = ":TSUpdate"}
     use {
         'nvim-lualine/lualine.nvim',
@@ -63,6 +64,12 @@ return packer.startup(function(use)
             {'nvim-lua/plenary.nvim'},
             {'nvim-telescope/telescope-rg.nvim'},
         }
+    }
+    use {
+            "numToStr/Comment.nvim",
+            config = function()
+                require('Comment').setup()
+            end
     }
     use "L3MON4D3/LuaSnip"
     use 'hrsh7th/nvim-cmp'
