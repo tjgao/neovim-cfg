@@ -40,6 +40,12 @@ return packer.startup(function(use)
         'nvim-lualine/lualine.nvim',
         requires = { 'kyazdani42/nvim-web-devicons', opt = true }
     }
+    use {
+            'simrat39/symbols-outline.nvim',
+            config = function()
+                require('symbols-outline').setup()
+            end
+        }
     use 'tjgao/nord.nvim'
     use "nvim-lua/popup.nvim" -- An implementation of the Popup API from vim in Neovim
     use {'akinsho/bufferline.nvim', requires = 'kyazdani42/nvim-web-devicons'}
