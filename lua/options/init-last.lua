@@ -1,3 +1,4 @@
+vim.opt['background'] = 'dark'
 vim.cmd "set whichwrap+=<,>,[,],h,l"
 vim.cmd [[set iskeyword+=-]]
 vim.cmd [[set laststatus=3]]

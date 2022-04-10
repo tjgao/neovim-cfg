@@ -47,8 +47,8 @@ return packer.startup(function(use)
             end
         }
     use 'tjgao/nord.nvim'
+    use 'christoomey/vim-tmux-navigator'
     use "nvim-lua/popup.nvim" -- An implementation of the Popup API from vim in Neovim
-    use {'akinsho/bufferline.nvim', requires = 'kyazdani42/nvim-web-devicons'}
     use {
         'lewis6991/gitsigns.nvim',
         requires = {
@@ -91,7 +91,7 @@ return packer.startup(function(use)
     }
     use 'folke/which-key.nvim'
     use 'tpope/vim-fugitive'
-
+    use 'vimwiki/vimwiki'
     -- if this is the first run, install everything
     if PACKER_BOOTSTRAP then
         require('packer').sync()
