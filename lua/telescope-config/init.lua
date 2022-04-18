@@ -18,7 +18,7 @@ local M = {}
 local function check_git_folder(folder)
     local cmd = { 'git' }
     local args = { 'rev-parse', '--is-inside-work-tree' }
-    if folder == nil or folder == '' then
+    if folder ~= nil or folder ~= '' then
         table.insert(cmd, '-C')
         table.insert(cmd, folder)
     end
@@ -45,30 +45,25 @@ function M.word_search(word, folder)
 end
 
 
--- function M.word_search_gitfiles(word)
---     if word == nil or word == '' then
---         word = vim.fn.expand '<cword>'
---     end
--- end
-
-
--- function M.file_search(folder, fn)
-function M.file_search(fn)
-    local folder = nil
+-- search files in the current working directory
+-- if we are in a repo directory, search git files only
+-- otherwise degrade to a normal file search
+function M.file_search(fn, folder)
+    print(folder .. ' is received ')
     if folder == nil or folder == '' then
         folder = vim.fn.getcwd()
     end
+    local files = 'Files: '
     local opts = {}
-    opts.prompt_title = 'Search in: ' .. folder
-    opts.search = folder
+    if check_git_folder(folder) then
+        opts.find_command = {'git', 'ls-files'}
+        files = 'Git files: '
+    end
+    opts.prompt_title = files .. folder
     if fn ~= nil and fn ~= '' then
         opts.default_text = fn
     end
     builtin.find_files(opts)
 end
-
--- function M.file_search_gitfiles(fn)
---     local _, ret, stderr = utils.get_os_command_output({ 'git', 'rev-parse', '--is-inside-work-tree'})
--- end
 
 return M;
