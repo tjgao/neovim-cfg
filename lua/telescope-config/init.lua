@@ -7,6 +7,10 @@ telescope.setup{}
 
 local live_grep_raw = telescope.extensions.live_grep_raw.live_grep_raw
 
+-- telescope.load_extension "fzf"
+
+-- telescope.load_extensions "zoxide"
+
 -- local pickers = require('telescope.pickers')
 
 local M = {}
@@ -49,7 +53,6 @@ end
 -- if we are in a repo directory, search git files only
 -- otherwise degrade to a normal file search
 function M.file_search(fn, folder)
-    print(folder .. ' is received ')
     if folder == nil or folder == '' then
         folder = vim.fn.getcwd()
     end

@@ -63,12 +63,13 @@ return packer.startup(function(use)
         },
     }
     use 'norcalli/nvim-colorizer.lua'
-    use {"akinsho/toggleterm.nvim"}
+    use {"akinsho/toggleterm.nvim", branch='main'}
     use {
         'nvim-telescope/telescope.nvim',
         requires = {
             {'nvim-lua/plenary.nvim'},
             {'nvim-telescope/telescope-rg.nvim'},
+--            {'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
         }
     }
     use {
