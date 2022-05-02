@@ -8,10 +8,7 @@ if fn.empty(fn.glob(install_path)) > 0 then
         "clone",
         "--depth",
         "1",
-        "https://github.com/wbthomason/packer.nvim",
-        install_path,
-    }
-    print "Installing packer close and reopen Neovim..."
+        "https://github.com/wbthomason/packer.nvim", install_path, } print "Installing packer close and reopen Neovim..."
     vim.cmd [[packadd packer.nvim]]
 end
 
@@ -35,6 +32,7 @@ return packer.startup(function(use)
     -- Packer can manage itself
     use 'wbthomason/packer.nvim'
     use 'windwp/nvim-autopairs'
+    use {'akinsho/bufferline.nvim', tag = "*", requires = 'kyazdani42/nvim-web-devicons'}
     use {'nvim-treesitter/nvim-treesitter', run = ":TSUpdate"}
     use {
         'nvim-lualine/lualine.nvim',
