@@ -90,7 +90,7 @@ return packer.startup(function(use)
     }
     use 'folke/which-key.nvim'
     use 'tpope/vim-fugitive'
-    use 'vimwiki/vimwiki'
+    use 'sunjon/shade.nvim'
     -- if this is the first run, install everything
     if PACKER_BOOTSTRAP then
         require('packer').sync()
