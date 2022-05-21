@@ -14,5 +14,6 @@ require('nvim-autopairs-config')
 require('nord-config')
 require('commands')
 require('keymaps')
+require('shade-config')
 require('options.init-last')
 
