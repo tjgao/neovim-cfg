@@ -5,7 +5,7 @@ local finders = require('telescope.finders')
 
 telescope.setup{}
 
-local live_grep_raw = telescope.extensions.live_grep_raw.live_grep_raw
+local live_grep_raw = telescope.extensions.live_grep_args.live_grep_args
 
 -- telescope.load_extension "fzf"
 
