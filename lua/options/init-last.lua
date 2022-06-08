@@ -9,3 +9,5 @@ vim.cmd "highlight WinSeparator guibg=none guifg=#4C566A"
 
 -- Do not want to see filler char in diff view
 vim.cmd [[set fillchars+=diff:\ ]]
+
+vim.cmd('colorscheme nightfox')

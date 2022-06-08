@@ -45,6 +45,8 @@ return packer.startup(function(use)
             end
         }
     use 'tjgao/nord.nvim'
+    use 'EdenEast/nightfox.nvim'
+    use 'rafi/awesome-vim-colorschemes'
     use 'christoomey/vim-tmux-navigator'
     use "nvim-lua/popup.nvim" -- An implementation of the Popup API from vim in Neovim
     use {

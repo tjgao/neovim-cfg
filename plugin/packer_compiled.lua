@@ -80,6 +80,11 @@ _G.packer_plugins = {
     path = "/home/tiejun/.local/share/nvim/site/pack/packer/start/LuaSnip",
     url = "https://github.com/L3MON4D3/LuaSnip"
   },
+  ["awesome-vim-colorschemes"] = {
+    loaded = true,
+    path = "/home/tiejun/.local/share/nvim/site/pack/packer/start/awesome-vim-colorschemes",
+    url = "https://github.com/rafi/awesome-vim-colorschemes"
+  },
   ["bufferline.nvim"] = {
     loaded = true,
     path = "/home/tiejun/.local/share/nvim/site/pack/packer/start/bufferline.nvim",
@@ -124,6 +129,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/tiejun/.local/share/nvim/site/pack/packer/start/lualine.nvim",
     url = "https://github.com/nvim-lualine/lualine.nvim"
+  },
+  ["nightfox.nvim"] = {
+    loaded = true,
+    path = "/home/tiejun/.local/share/nvim/site/pack/packer/start/nightfox.nvim",
+    url = "https://github.com/EdenEast/nightfox.nvim"
   },
   ["nord.nvim"] = {
     loaded = true,
