@@ -3,7 +3,7 @@ local opts = { noremap = true, silent = true }
 -- local term_opts = { silent = true }
 
 -- Shorten function name
-local keymap = vim.api.nvim_set_keymap
+local keymap = vim.keymap.set
 
 --Remap space as leader key
 keymap("", "<Space>", "<Nop>", opts)
@@ -42,7 +42,7 @@ keymap("n", "<A-p>", "\"0p", opts)
 keymap("n", "<C-q>", ":lua require('commands').ToggleQF()<CR>", opts)
 
 -- Telescope search file window
-keymap("n", "<C-p>", ":lua require('telescope-config').file_search()<CR>", opts)
+-- keymap("n", "<C-p>", ":lua require('telescope-config').file_search()<CR>", opts)
 
 -- Toggle symbols outline window
 keymap("n", "<A-a>", ":lua require('symbols-outline').toggle_outline()<CR>", opts)

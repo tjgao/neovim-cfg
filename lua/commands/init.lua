@@ -1,5 +1,3 @@
-require('telescope-config')
-
 local M = {}
 
 -- Unfortunately, could not figure out how to do this with pure lua
@@ -22,9 +20,6 @@ function M.ToggleQF()
         vim.cmd [[ cclose ]]
     end
 end
-
-vim.cmd [[ command! -nargs=* Tg lua require('telescope-config').word_search(<q-args>) ]]
-vim.cmd [[ command! -nargs=* Tf lua require('telescope-config').file_search(<f-args>) ]]
 
 return M
 
