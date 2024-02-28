@@ -10,6 +10,7 @@ local servers = {
 return {
 	{
 		"williamboman/mason.nvim",
+        -- branch = "main",
 		config = function()
 			local mason = require("mason")
 			mason.setup()
@@ -24,12 +25,15 @@ return {
 		config = function()
 			local masonlsp = require("mason-lspconfig")
 			masonlsp.setup({
-				ensure_installed = { "lua_ls", "pyright" },
+				ensure_installed = servers,
 			})
 		end,
 	},
 	{
 		"neovim/nvim-lspconfig",
+        dependencies = {
+            { "folke/neoconf.nvim", cmd = "Neoconf", config = true },
+        },
 		config = function()
             local capabilities = require('cmp_nvim_lsp').default_capabilities()
 			local cfg = require("lspconfig")
