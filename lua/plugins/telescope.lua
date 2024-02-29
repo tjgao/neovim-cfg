@@ -111,8 +111,8 @@ M = {
             builtin = require('telescope.builtin')
             utils = require('telescope.utils')
             vim.keymap.set('n', '<C-p>', regular_file_search, {})
-            vim.keymap.set('n', '<leader>p', repo_file_search, {})
-            vim.keymap.set('n', '<leader>rg', builtin.live_grep, {})
+            vim.keymap.set("n", "<leader>p", repo_file_search, { desc = "Search file in repo [Telescope]" })
+            vim.keymap.set("n", "<leader>rg", builtin.live_grep, { desc = "Live rg search [Telescope]" })
         end
     },
     {

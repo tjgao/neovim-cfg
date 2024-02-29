@@ -11,11 +11,14 @@ return {
             },
         })
         vim.keymap.set("n", "<leader>ha", function()
+            -- we remove it first and then append it back
+            -- this allows us to update the file row/col location
+            harpoon:list():remove()
             harpoon:list():append()
-        end)
+        end, { desc = "Add current file [Harpoon]" })
         vim.keymap.set("n", "<leader>hm", function()
             harpoon.ui:toggle_quick_menu(harpoon:list())
-        end)
+        end, { desc = "Toggle quick menu [Harpoon]" })
         vim.keymap.set("n", "<A-1>", function()
             harpoon:list():select(1)
         end)

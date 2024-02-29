@@ -22,8 +22,7 @@ return {
 		dap.listeners.before.event_exited.dapui_config = function()
 			dapui.close()
 		end
-		local opts = {}
-		vim.keymap.set("n", "<Leader>db", dap.toggle_breakpoint, opts)
-		vim.keymap.set("n", "<Leader>dc", dap.continue, opts)
+		vim.keymap.set("n", "<Leader>db", dap.toggle_breakpoint, { desc = "Toggle breakpoint [DAP]" })
+		vim.keymap.set("n", "<Leader>dc", dap.continue, { desc = "Continue [DAP]" })
 	end,
 }

@@ -42,7 +42,7 @@ local make_term = function(idx, o)
 end
 
 M = {
-    "akinsho/toggleterm.nvim", 
+    "akinsho/toggleterm.nvim",
     branch='main',
     config = function()
         local Terminal  = require('toggleterm.terminal').Terminal
