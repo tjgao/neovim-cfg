@@ -99,35 +99,43 @@ local function regular_file_search(fn, folder)
     builtin.find_files(opts)
 end
 
+
 M = {
-    {
-        'nvim-telescope/telescope.nvim',
-        dependencies = {
-            {'nvim-lua/plenary.nvim'},
-            {'nvim-telescope/telescope-rg.nvim'},
-            --      {'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
+        {
+            'nvim-telescope/telescope.nvim',
+            dependencies = {
+                {'nvim-lua/plenary.nvim'},
+                {'nvim-telescope/telescope-rg.nvim'},
+                --      {'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
+            },
+            config = function()
+                builtin = require('telescope.builtin')
+                utils = require('telescope.utils')
+                vim.keymap.set('n', '<C-p>', regular_file_search, {})
+                vim.keymap.set("n", "<leader>p", repo_file_search, { desc = "Search file in repo [Telescope]" })
+                vim.keymap.set("n", "<leader>rg", builtin.live_grep, { desc = "Live rg search [Telescope]" })
+            end
         },
-        config = function()
-            builtin = require('telescope.builtin')
-            utils = require('telescope.utils')
-            vim.keymap.set('n', '<C-p>', regular_file_search, {})
-            vim.keymap.set("n", "<leader>p", repo_file_search, { desc = "Search file in repo [Telescope]" })
-            vim.keymap.set("n", "<leader>rg", builtin.live_grep, { desc = "Live rg search [Telescope]" })
-        end
-    },
-    {
-        'nvim-telescope/telescope-ui-select.nvim',
-        config = function()
-            require('telescope').setup({
-                extensions = {
-                    ["ui-select"] = {
-                        require("telescope.themes").get_dropdown {}
-                    }
-                }
-            })
-            require("telescope").load_extension("ui-select")
-        end
-    }
+        {
+            'nvim-telescope/telescope-ui-select.nvim',
+            config = function()
+                local trouble = require("trouble.providers.telescope")
+                require('telescope').setup({
+                    extensions = {
+                        ["ui-select"] = {
+                            require("telescope.themes").get_dropdown {}
+                        }
+                    },
+                    defaults = {
+                        mappings = {
+                            i = { ["<c-t>"] = trouble.smart_open_with_trouble }, -- send results to trouble
+                            n = { ["<c-t>"] = trouble.smart_open_with_trouble },
+                        },
+                    },
+                })
+                require("telescope").load_extension("ui-select")
+            end
+        }
 }
 
 return M
