@@ -1,7 +1,7 @@
 return {
-    'nvim-tree/nvim-tree.lua',
+    "nvim-tree/nvim-tree.lua",
     dependencies = {
-        'nvim-tree/nvim-web-devicons', -- optional, for file icon
+        "nvim-tree/nvim-web-devicons", -- optional, for file icon
     },
     config = function()
         if not vim.opt.termguicolors then
@@ -12,6 +12,6 @@ return {
                 folder_arrrows = 0,
             }
         end
-        require('nvim-tree').setup()
-    end
+        require("nvim-tree").setup()
+    end,
 }

@@ -44,17 +44,16 @@ return {
             end
             local opts = {}
             vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-            vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+            vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition [LSP]" })
             vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action [LSP]" })
 
-            vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
-            vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
-            vim.keymap.set("n", "KK", vim.lsp.buf.signature_help, opts)
+            vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "Go to declaration [LSP]" })
+            vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { desc = "Go to implementation [LSP]" })
+            vim.keymap.set("n", "KK", vim.lsp.buf.signature_help, { desc = "Signature help [LSP]" })
             vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename func/var [LSP]" })
-            vim.keymap.set("n", "gr", ":Trouble lsp_references<CR>", opts)
+            vim.keymap.set("n", "gr", ":Trouble lsp_references<CR>", { desc = "Find references [LSP]" })
             vim.keymap.set("n", "<leader>gd", ":Trouble workspace_diagnostics<CR>", { desc = "Show diagnostics [LSP]" })
-            -- vim.keymap.set("n", "<leader>f", vim.diagnostic.open_float, opts)
-            vim.keymap.set("n", "gl", vim.diagnostic.open_float, opts)
+            -- vim.keymap.set("n", "gl", vim.diagnostic.open_float, opts)
             -- vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, opts)
             -- vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
             -- vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)

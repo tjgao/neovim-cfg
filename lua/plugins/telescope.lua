@@ -19,56 +19,56 @@
 -- 2. specify multiple folders to search strings
 
 local builtin
-local utils
-local function check_git_folder(folder)
-    local cmd = { 'git' }
-    local args = { 'rev-parse', '--is-inside-work-tree' }
-    if folder ~= nil or folder ~= '' then
-        table.insert(cmd, '-C')
-        table.insert(cmd, folder)
-    end
-    for _, v in pairs(args) do
-        table.insert(cmd, v)
-    end
-    local _, ret, _ = utils.get_os_command_output(cmd)
-    return ret == 0
-end
-
-local function word_search(word, folder)
-    if word == nil or word == '' then
-        word = vim.fn.expand '<cword>'
-    end
-    if folder == nil or folder == '' then
-        folder = vim.fn.getcwd()
-    end
-    live_grep_raw {
-        prompt_title = 'Search in: ' .. folder,
-        -- search = folder,
-        shorten_path = true,
-        default_text = word
-    }
-end
-
-
--- search files in the current working directory
--- if we are in a repo directory, search git files only
--- otherwise degrade to a normal file search
-local function file_search(fn, folder)
-    if folder == nil or folder == '' then
-        folder = vim.fn.getcwd()
-    end
-    local files = 'Files: '
-    local opts = {}
-    if check_git_folder(folder) then
-        opts.find_command = {'git', 'ls-files'}
-        files = 'Git files: '
-    end
-    opts.prompt_title = files .. folder
-    if fn ~= nil and fn ~= '' then
-        opts.default_text = fn
-    end
-    builtin.find_files(opts)
-end
+-- local utils
+-- local function check_git_folder(folder)
+--     local cmd = { 'git' }
+--     local args = { 'rev-parse', '--is-inside-work-tree' }
+--     if folder ~= nil or folder ~= '' then
+--         table.insert(cmd, '-C')
+--         table.insert(cmd, folder)
+--     end
+--     for _, v in pairs(args) do
+--         table.insert(cmd, v)
+--     end
+--     local _, ret, _ = utils.get_os_command_output(cmd)
+--     return ret == 0
+-- end
+--
+-- local function word_search(word, folder)
+--     if word == nil or word == '' then
+--         word = vim.fn.expand '<cword>'
+--     end
+--     if folder == nil or folder == '' then
+--         folder = vim.fn.getcwd()
+--     end
+--     live_grep_raw {
+--         prompt_title = 'Search in: ' .. folder,
+--         -- search = folder,
+--         shorten_path = true,
+--         default_text = word
+--     }
+-- end
+--
+--
+-- -- search files in the current working directory
+-- -- if we are in a repo directory, search git files only
+-- -- otherwise degrade to a normal file search
+-- local function file_search(fn, folder)
+--     if folder == nil or folder == '' then
+--         folder = vim.fn.getcwd()
+--     end
+--     local files = 'Files: '
+--     local opts = {}
+--     if check_git_folder(folder) then
+--         opts.find_command = {'git', 'ls-files'}
+--         files = 'Git files: '
+--     end
+--     opts.prompt_title = files .. folder
+--     if fn ~= nil and fn ~= '' then
+--         opts.default_text = fn
+--     end
+--     builtin.find_files(opts)
+-- end
 
 
 local function repo_file_search(fn, folder)
@@ -110,8 +110,7 @@ M = {
             },
             config = function()
                 builtin = require('telescope.builtin')
-                utils = require('telescope.utils')
-                vim.keymap.set('n', '<C-p>', regular_file_search, {})
+                vim.keymap.set('n', '<C-p>', regular_file_search, { desc = "Search file in current folder [Telescope]" })
                 vim.keymap.set("n", "<leader>p", repo_file_search, { desc = "Search file in repo [Telescope]" })
                 vim.keymap.set("n", "<leader>rg", builtin.live_grep, { desc = "Live rg search [Telescope]" })
             end

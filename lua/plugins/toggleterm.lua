@@ -1,16 +1,16 @@
 function _G.set_terminal_keymaps()
     local opts = { noremap = true }
-    vim.api.nvim_buf_set_keymap(0, 't', '<c-\\>', [[<c-\><c-n>]], opts)
+    vim.api.nvim_buf_set_keymap(0, "t", "<c-\\>", [[<c-\><c-n>]], opts)
 end
 
-vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
+vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
 
-local opts = {noremap = true, silent = true}
+local opts = { noremap = true, silent = true }
 
 local cfg = {
-    {'<F2>', 'float'},
-    {'<F3>', 'float'},
-    {'<F4>', 'horizontal'},
+    { "<F2>", "float" },
+    { "<F3>", "float" },
+    { "<F4>", "horizontal" },
 }
 
 local make_term = function(idx, o)
@@ -18,7 +18,7 @@ local make_term = function(idx, o)
         count = idx,
         direction = o[2],
         float_opts = {
-            border = 'curved',
+            border = "curved",
         },
         close_on_exit = true, -- close the terminal window when the process exits
         start_in_insert = true,
@@ -33,19 +33,19 @@ local make_term = function(idx, o)
 
         on_open = function(term)
             for i, v in pairs(cfg) do
-                vim.api.nvim_buf_set_keymap(term.bufnr, 't', v[1], '<cmd>lua MyToggleTerm(' .. i .. ')<CR>', opts)
-                vim.api.nvim_buf_set_keymap(term.bufnr, 'n', v[1], '<cmd>lua MyToggleTerm(' .. i .. ')<CR>', opts)
+                vim.api.nvim_buf_set_keymap(term.bufnr, "t", v[1], "<cmd>lua MyToggleTerm(" .. i .. ")<CR>", opts)
+                vim.api.nvim_buf_set_keymap(term.bufnr, "n", v[1], "<cmd>lua MyToggleTerm(" .. i .. ")<CR>", opts)
             end
-            vim.cmd('startinsert')
+            vim.cmd("startinsert")
         end,
     }
 end
 
 M = {
     "akinsho/toggleterm.nvim",
-    branch='main',
+    branch = "main",
     config = function()
-        local Terminal  = require('toggleterm.terminal').Terminal
+        local Terminal = require("toggleterm.terminal").Terminal
         local term_table = {}
 
         for i, o in pairs(cfg) do
@@ -73,11 +73,10 @@ M = {
         end
 
         for i, v in pairs(cfg) do
-            vim.api.nvim_set_keymap('n', v[1], ':lua MyToggleTerm(' .. i .. ')<CR>', opts)
-            vim.api.nvim_set_keymap('i', v[1], '<cmd>lua MyToggleTerm(' .. i .. ')<CR>', opts)
+            vim.api.nvim_set_keymap("n", v[1], ":lua MyToggleTerm(" .. i .. ")<CR>", opts)
+            vim.api.nvim_set_keymap("i", v[1], "<cmd>lua MyToggleTerm(" .. i .. ")<CR>", opts)
         end
-    end
+    end,
 }
-
 
 return M

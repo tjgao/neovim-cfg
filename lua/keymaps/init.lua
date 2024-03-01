@@ -39,13 +39,13 @@ keymap("n", "<S-h>", ":bprevious<CR>", opts)
 keymap("n", "<A-p>", "\"0p", opts)
 
 -- Toggle quickfix window
-keymap("n", "<C-q>", ":lua require('commands').ToggleQF()<CR>", opts)
+-- keymap("n", "<C-q>", ":lua require('commands').ToggleQF()<CR>", opts)
 
 -- Telescope search file window
 -- keymap("n", "<C-p>", ":lua require('telescope-config').file_search()<CR>", opts)
 
 -- Toggle symbols outline window
-keymap("n", "<A-a>", ":lua require('symbols-outline').toggle_outline()<CR>", opts)
+-- keymap("n", "<A-a>", ":lua require('symbols-outline').toggle_outline()<CR>", opts)
 
 -- nvim-tree
 keymap("n", "<F1>", ":NvimTreeToggle<CR>", opts)
