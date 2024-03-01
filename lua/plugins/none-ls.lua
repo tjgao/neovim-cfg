@@ -9,6 +9,11 @@ return {
                         return utils.root_has_file { "stylua.toml", ".stylua.toml" }
                     end
                 },
+                null_ls.builtins.formatting.clang_format.width {
+                    condition = function(utils)
+                        return utils.root_has_file { ".clang_format" }
+                    end
+                },
                 null_ls.builtins.formatting.black,
                 null_ls.builtins.formatting.gofumpt,
                 null_ls.builtins.formatting.goimports,
@@ -16,6 +21,6 @@ return {
             },
         })
 
-        vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, { desc = "Format [None-ls]" })
+        vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, { desc = "Format file [None-ls]" })
     end,
 }
