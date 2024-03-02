@@ -9,7 +9,7 @@ return {
                         return utils.root_has_file { "stylua.toml", ".stylua.toml" }
                     end
                 },
-                null_ls.builtins.formatting.clang_format.width {
+                null_ls.builtins.formatting.clang_format.with {
                     condition = function(utils)
                         return utils.root_has_file { ".clang_format" }
                     end
