@@ -1,9 +1,7 @@
-
 -- local telescope = require('telescope')
 -- local builtin = require('telescope.builtin')
 -- local utils = require('telescope.utils')
 -- local finders = require('telescope.finders')
-
 
 -- local live_grep_raw = telescope.extensions.live_grep_args.live_grep_args
 
@@ -12,7 +10,6 @@
 -- telescope.load_extensions "zoxide"
 
 -- local pickers = require('telescope.pickers')
-
 
 -- @todo
 -- 1. search in git files only
@@ -70,71 +67,68 @@ local builtin
 --     builtin.find_files(opts)
 -- end
 
-
 local function repo_file_search(fn, folder)
-    if folder == nil or folder == '' then
+    if folder == nil or folder == "" then
         folder = vim.fn.getcwd()
     end
     local opts = {}
-    local files = 'Git files:'
+    local files = "Git files:"
     opts.prompt_title = files .. folder
-    opts.find_command = {'git', 'ls-files'}
-    if fn ~= nil and fn ~= '' then
+    opts.find_command = { "git", "ls-files" }
+    if fn ~= nil and fn ~= "" then
         opts.default_text = fn
     end
     builtin.find_files(opts)
 end
-
 
 local function regular_file_search(fn, folder)
-    if folder == nil or folder == '' then
+    if folder == nil or folder == "" then
         folder = vim.fn.getcwd()
     end
     local opts = {}
-    local files = 'Files:'
+    local files = "Files:"
     opts.prompt_title = files .. folder
-    if fn ~= nil and fn ~= '' then
+    if fn ~= nil and fn ~= "" then
         opts.default_text = fn
     end
     builtin.find_files(opts)
 end
 
-
 M = {
-        {
-            'nvim-telescope/telescope.nvim',
-            dependencies = {
-                {'nvim-lua/plenary.nvim'},
-                {'nvim-telescope/telescope-rg.nvim'},
-                --      {'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
-            },
-            config = function()
-                builtin = require('telescope.builtin')
-                vim.keymap.set('n', '<C-p>', regular_file_search, { desc = "Search file in current folder [Telescope]" })
-                vim.keymap.set("n", "<leader>p", repo_file_search, { desc = "Search file in repo [Telescope]" })
-                vim.keymap.set("n", "<leader>rg", builtin.live_grep, { desc = "Live rg search [Telescope]" })
-            end
+    {
+        "nvim-telescope/telescope.nvim",
+        dependencies = {
+            { "nvim-lua/plenary.nvim" },
+            { "nvim-telescope/telescope-rg.nvim" },
+            --      {'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
         },
-        {
-            'nvim-telescope/telescope-ui-select.nvim',
-            config = function()
-                local trouble = require("trouble.providers.telescope")
-                require('telescope').setup({
-                    extensions = {
-                        ["ui-select"] = {
-                            require("telescope.themes").get_dropdown {}
-                        }
+        config = function()
+            builtin = require("telescope.builtin")
+            vim.keymap.set("n", "<C-p>", regular_file_search, { desc = "Search file in current folder [Telescope]" })
+            vim.keymap.set("n", "<leader>p", repo_file_search, { desc = "Search file in repo [Telescope]" })
+            vim.keymap.set("n", "<leader>rg", builtin.live_grep, { desc = "Live rg search [Telescope]" })
+        end,
+    },
+    {
+        "nvim-telescope/telescope-ui-select.nvim",
+        config = function()
+            local trouble = require("trouble.providers.telescope")
+            require("telescope").setup({
+                extensions = {
+                    ["ui-select"] = {
+                        require("telescope.themes").get_dropdown({}),
                     },
-                    defaults = {
-                        mappings = {
-                            i = { ["<c-t>"] = trouble.smart_open_with_trouble }, -- send results to trouble
-                            n = { ["<c-t>"] = trouble.smart_open_with_trouble },
-                        },
+                },
+                defaults = {
+                    mappings = {
+                        i = { ["<c-t>"] = trouble.smart_open_with_trouble }, -- send results to trouble
+                        n = { ["<c-t>"] = trouble.smart_open_with_trouble },
                     },
-                })
-                require("telescope").load_extension("ui-select")
-            end
-        }
+                },
+            })
+            require("telescope").load_extension("ui-select")
+        end,
+    },
 }
 
 return M

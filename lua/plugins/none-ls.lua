@@ -4,16 +4,16 @@ return {
         local null_ls = require("null-ls")
         null_ls.setup({
             sources = {
-                null_ls.builtins.formatting.stylua.with {
+                null_ls.builtins.formatting.stylua.with({
                     condition = function(utils)
-                        return utils.root_has_file { "stylua.toml", ".stylua.toml" }
-                    end
-                },
-                null_ls.builtins.formatting.clang_format.with {
+                        return utils.root_has_file({ "stylua.toml", ".stylua.toml" })
+                    end,
+                }),
+                null_ls.builtins.formatting.clang_format.with({
                     condition = function(utils)
-                        return utils.root_has_file { ".clang_format" }
-                    end
-                },
+                        return utils.root_has_file({ ".clang_format" })
+                    end,
+                }),
                 null_ls.builtins.formatting.black,
                 null_ls.builtins.formatting.gofumpt,
                 null_ls.builtins.formatting.goimports,
