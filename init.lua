@@ -1,5 +1,5 @@
-require('options.init-first')
+require('settings.init-first')
 require('lazy-nvim')
-require('keymaps')
-require('options.init-last')
+require('settings.keymaps')
+require('settings.init-last')
 
