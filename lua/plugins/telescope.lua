@@ -129,7 +129,16 @@ M = {
         "nvim-telescope/telescope-ui-select.nvim",
         config = function()
             local trouble = require("trouble.providers.telescope")
+            local actions = require("telescope.actions")
+            local setting = {
+                mappings = {
+                    i = { ["<c-f>"] = actions.to_fuzzy_refine },
+                },
+            }
             require("telescope").setup({
+                pickers = {
+                    live_grep = setting,
+                },
                 extensions = {
                     ["ui-select"] = {
                         require("telescope.themes").get_dropdown({}),
