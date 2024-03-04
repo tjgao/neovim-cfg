@@ -7,6 +7,14 @@ local servers = {
     "tsserver",
 }
 
+
+local function keymap(mode, keys, f, opts)
+    if opts.desc ~= nil and opts.desc ~= "" then
+        opts.desc = opts.desc .. " [LSP]"
+    end
+    vim.keymap.set(mode, keys, f, opts)
+end
+
 return {
     {
         "williamboman/mason.nvim",
@@ -35,6 +43,7 @@ return {
             { "folke/neoconf.nvim", cmd = "Neoconf", config = true },
         },
         config = function()
+            local builtin = require("telescope.builtin")
             local capabilities = require("cmp_nvim_lsp").default_capabilities()
             local cfg = require("lspconfig")
             for _, v in ipairs(servers) do
@@ -43,20 +52,21 @@ return {
                 })
             end
             local opts = {}
-            vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-            vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition [LSP]" })
-            vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action [LSP]" })
+            keymap("n", "K", vim.lsp.buf.hover, opts)
+            keymap("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
+            keymap("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
 
-            vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "Go to declaration [LSP]" })
-            vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { desc = "Go to implementation [LSP]" })
-            vim.keymap.set("n", "KK", vim.lsp.buf.signature_help, { desc = "Signature help [LSP]" })
-            vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename func/var [LSP]" })
-            vim.keymap.set("n", "gr", ":Trouble lsp_references<CR>", { desc = "Find references [LSP]" })
-            vim.keymap.set("n", "<leader>gd", ":Trouble workspace_diagnostics<CR>", { desc = "Show diagnostics [LSP]" })
+            keymap("n", "gD", vim.lsp.buf.declaration, { desc = "Go to declaration" })
+            keymap("n", "gi", vim.lsp.buf.implementation, { desc = "Go to implementation" })
+            keymap("n", "KK", vim.lsp.buf.signature_help, { desc = "Signature help" })
+            keymap("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename func/var" })
+            -- keymap("n", "gr", ":Trouble lsp_references<CR>", { desc = "Find references" })
+            keymap("n", "gr", builtin.lsp_references, { desc = "Find references" })
+            keymap("n", "<leader>gd", ":Trouble workspace_diagnostics<CR>", { desc = "Show diagnostics" })
             -- vim.keymap.set("n", "gl", vim.diagnostic.open_float, opts)
             -- vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, opts)
-            -- vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
-            -- vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
+            keymap("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to prev diagnostic" })
+            keymap("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next diagnostic"})
         end,
     },
 }

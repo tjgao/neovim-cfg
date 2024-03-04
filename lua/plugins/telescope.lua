@@ -94,6 +94,13 @@ local function regular_file_search(fn, folder)
     builtin.find_files(opts)
 end
 
+local function keymap(mode, keys, f, opts)
+    if opts.desc ~= nil and opts.desc ~= "" then
+        opts.desc = opts.desc .. " [Telescope]"
+    end
+    vim.keymap.set(mode, keys, f, opts)
+end
+
 M = {
     {
         "nvim-telescope/telescope.nvim",
@@ -104,9 +111,15 @@ M = {
         },
         config = function()
             builtin = require("telescope.builtin")
-            vim.keymap.set("n", "<C-p>", regular_file_search, { desc = "Search file in current folder [Telescope]" })
-            vim.keymap.set("n", "<leader>p", repo_file_search, { desc = "Search file in repo [Telescope]" })
-            vim.keymap.set("n", "<leader>rg", builtin.live_grep, { desc = "Live rg search [Telescope]" })
+            keymap("n", "<C-p>", regular_file_search, { desc = "Search file in current folder" })
+            keymap("n", "<leader>p", repo_file_search, { desc = "Search file in repo" })
+            keymap("n", "<leader>rg", builtin.live_grep, { desc = "Live rg search" })
+            keymap("n", "<leader>sh", builtin.help_tags, { desc = "Search help" })
+            keymap("n", "<leader>sk", builtin.keymaps, { desc = "Search keymaps" })
+            keymap("n", "<leader>sw", builtin.grep_string, { desc = "Search current word" })
+            keymap("n", "<leader>sd", builtin.diagnostics, { desc = "Search diagnostics" })
+            keymap("n", "<leader>so", builtin.oldfiles, { desc = "Search recent files" })
+            keymap("n", "<leader>sb", builtin.buffers, { desc = "Search buffers" })
         end,
     },
     {

@@ -8,9 +8,9 @@ vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
 local opts = { noremap = true, silent = true }
 
 local cfg = {
-    { "<F2>", "float" },
-    { "<F3>", "float" },
-    { "<F4>", "horizontal" },
+    { "<A-1>", "float" },
+    { "<A-2>", "float" },
+    { "<A-3>", "horizontal" },
 }
 
 local make_term = function(idx, o)

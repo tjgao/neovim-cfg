@@ -19,6 +19,7 @@ return {
     },
     {
         "hrsh7th/nvim-cmp",
+        event = "InsertEnter",
         config = function()
             local cmp = require("cmp")
             require("luasnip.loaders.from_vscode").lazy_load()
