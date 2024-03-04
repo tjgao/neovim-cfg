@@ -120,6 +120,9 @@ M = {
             keymap("n", "<leader>sd", builtin.diagnostics, { desc = "Search diagnostics" })
             keymap("n", "<leader>so", builtin.oldfiles, { desc = "Search recent files" })
             keymap("n", "<leader>sb", builtin.buffers, { desc = "Search buffers" })
+            keymap("n", "<leader>sn", function()
+                builtin.find_files({ cwd = vim.fn.stdpath("config") })
+            end, { desc = "Search neovim files" })
         end,
     },
     {

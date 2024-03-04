@@ -1,3 +1,10 @@
+local function keymap(mode, keys, f, opts)
+    if opts.desc ~= nil and opts.desc ~= "" then
+        opts.desc = opts.desc .. " [DAP]"
+    end
+    vim.keymap.set(mode, keys, f, opts)
+end
+
 return {
     "mfussenegger/nvim-dap",
     dependencies = {
@@ -22,7 +29,18 @@ return {
         dap.listeners.before.event_exited.dapui_config = function()
             dapui.close()
         end
-        vim.keymap.set("n", "<Leader>db", dap.toggle_breakpoint, { desc = "Toggle breakpoint [DAP]" })
-        vim.keymap.set("n", "<Leader>dc", dap.continue, { desc = "Continue [DAP]" })
+        keymap("n", "<Leader>db", dap.toggle_breakpoint, { desc = "Toggle breakpoint" })
+        keymap("n", "<Leader>dB", function()
+            dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
+        end, { desc = "Set breakpoint" })
+
+        keymap("n", "<F5>", dap.continue, { desc = "Continue" })
+        keymap("n", "<F2>", dap.step_into, { desc = "Step into" })
+        keymap("n", "<F3>", dap.step_over, { desc = "Step over" })
+        keymap("n", "<F4>", dap.step_out, { desc = "Step out" })
+        keymap("n", "<Leader>dc", dap.continue, { desc = "Continue" })
+        keymap("n", "<Leader>di", dap.step_into, { desc = "Step into" })
+        keymap("n", "<Leader>do", dap.step_out, { desc = "Step out" })
+        keymap("n", "<Leader>dv", dap.step_over, { desc = "Step over" })
     end,
 }
