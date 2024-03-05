@@ -8,9 +8,9 @@ vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
 local opts = { noremap = true, silent = true }
 
 local cfg = {
-    { "<A-1>", "float" },
-    { "<A-2>", "float" },
-    { "<A-3>", "horizontal" },
+    { "<F9>", "float" },
+    { "<F10>", "float" },
+    -- { "<F12>", "horizontal" },
 }
 
 local make_term = function(idx, o)
@@ -73,8 +73,8 @@ M = {
         end
 
         for i, v in pairs(cfg) do
-            vim.api.nvim_set_keymap("n", v[1], ":lua MyToggleTerm(" .. i .. ")<CR>", opts)
-            vim.api.nvim_set_keymap("i", v[1], "<cmd>lua MyToggleTerm(" .. i .. ")<CR>", opts)
+            vim.keymap.set("i", v[1], "<cmd>lua MyToggleTerm(" .. i .. ")<CR>", opts)
+            vim.keymap.set("n", v[1], ":lua MyToggleTerm(" .. i .. ")<CR>", opts)
         end
     end,
 }
