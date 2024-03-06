@@ -24,7 +24,7 @@ vim.cmd "highlight WinSeparator guibg=none guifg=#4C566A"
 
 
 -- Close all buffers except current
-local function CloseAllBufExceptCurrent()
+local function close_allbuf_except_current()
     local cur = vim.api.nvim_win_get_buf(0)
     for _, o in pairs(vim.api.nvim_list_bufs()) do
         if o ~= cur then
@@ -33,4 +33,4 @@ local function CloseAllBufExceptCurrent()
     end
 end
 
-vim.api.nvim_create_user_command('Bd', CloseAllBufExceptCurrent, {})
+vim.api.nvim_create_user_command('Bd', close_allbuf_except_current, {})
