@@ -27,7 +27,10 @@ vim.cmd "highlight WinSeparator guibg=none guifg=#4C566A"
 local function close_allbuf_except_current()
     local cur = vim.api.nvim_win_get_buf(0)
     for _, o in pairs(vim.api.nvim_list_bufs()) do
-        if o ~= cur then
+        -- We want to exclude nvim-tree and terminals
+        local bt = vim.api.nvim_get_option_value("buftype", { buf = o })
+        local ft = vim.api.nvim_get_option_value("filetype", { buf = o })
+        if o ~= cur and bt ~= "terminal" and ft ~= "NvimTree" then
             vim.api.nvim_buf_delete(o, {})
         end
     end

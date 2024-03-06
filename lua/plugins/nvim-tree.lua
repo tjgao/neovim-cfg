@@ -12,6 +12,12 @@ return {
                 folder_arrrows = 0,
             }
         end
-        require("nvim-tree").setup()
+        require("nvim-tree").setup({
+            -- this will force nvim tree to find and highlight the file 
+            -- currently is open
+            update_focused_file = {
+                enable = true,
+            },
+        })
     end,
 }
