@@ -21,3 +21,16 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- We have new global status line so we want to disable bg color for window separator
 -- also, pick a nicer fg color
 vim.cmd "highlight WinSeparator guibg=none guifg=#4C566A"
+
+
+-- Close all buffers except current
+function CloseAllBufExceptCurrent()
+    local cur = vim.api.nvim_win_get_buf(0)
+    for _, o in pairs(vim.api.nvim_list_bufs()) do
+        if o ~= cur then
+            vim.api.nvim_buf_delete(o, {})
+        end
+    end
+end
+
+vim.api.nvim_create_user_command('Bd', CloseAllBufExceptCurrent, {})
