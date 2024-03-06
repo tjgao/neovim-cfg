@@ -91,7 +91,7 @@ return {
         config = function()
             local builtin = require("telescope.builtin")
             keymap("n", "K", vim.lsp.buf.hover, {})
-            keymap("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
+            keymap("n", "gd", builtin.lsp_definitions, { desc = "Go to definition" })
             keymap("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
 
             keymap("n", "gD", vim.lsp.buf.declaration, { desc = "Go to declaration" })

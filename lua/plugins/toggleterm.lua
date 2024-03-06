@@ -8,8 +8,8 @@ vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
 local opts = { noremap = true, silent = true }
 
 local cfg = {
-    { "<F9>", "float" },
-    { "<F10>", "float" },
+    { "<F9>", "float", "" },
+    { "<F10>", "float", "cmd=\"lazygit\"" },
     -- { "<F12>", "horizontal" },
 }
 
@@ -52,7 +52,7 @@ M = {
             table.insert(term_table, Terminal:new(make_term(i, o)))
         end
 
-        function MyToggleTerm(c)
+        function MyToggleTerm(c, cmd)
             local opened = nil
             for _, o in pairs(term_table) do
                 if o:is_open() then
@@ -69,12 +69,15 @@ M = {
                     opened:close()
                 end
                 t:open()
+                if cmd ~= nil and cmd ~= '' then
+                    require("toggleterm").exec_command(cmd, c)
+                end
             end
         end
 
         for i, v in pairs(cfg) do
-            vim.keymap.set("i", v[1], "<cmd>lua MyToggleTerm(" .. i .. ")<CR>", opts)
-            vim.keymap.set("n", v[1], ":lua MyToggleTerm(" .. i .. ")<CR>", opts)
+            vim.keymap.set("i", v[1], "<cmd>lua MyToggleTerm(" .. i .. ",'" .. v[3] .. "')<CR>", opts)
+            vim.keymap.set("n", v[1], ":lua MyToggleTerm(" .. i .. ",'" .. v[3] .. "')<CR>", opts)
         end
     end,
 }
