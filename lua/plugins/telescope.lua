@@ -113,7 +113,7 @@ M = {
             builtin = require("telescope.builtin")
             keymap("n", "<C-p>", regular_file_search, { desc = "Search file in current folder" })
             keymap("n", "<leader>p", repo_file_search, { desc = "Search file in repo" })
-            keymap("n", "<leader>rg", builtin.live_grep, { desc = "Live rg search" })
+            keymap("n", "<leader>sg", builtin.live_grep, { desc = "Live rg search" })
             keymap("n", "<leader>sh", builtin.help_tags, { desc = "Search help" })
             keymap("n", "<leader>sk", builtin.keymaps, { desc = "Search keymaps" })
             keymap("n", "<leader>ss", builtin.grep_string, { desc = "Search current word" })
@@ -123,6 +123,17 @@ M = {
             keymap("n", "<leader>sn", function()
                 builtin.find_files({ cwd = vim.fn.stdpath("config") })
             end, { desc = "Search neovim files" })
+            keymap("n", "<leader><leader>", builtin.builtin, { desc = "Search in Telescope" })
+            keymap("n", "<leader>sr", builtin.resume, { desc = "Search resume" })
+
+            -- Slightly advanced example of overriding default behavior and theme
+            keymap("n", "<leader>/", function()
+                -- You can pass additional configuration to telescope to change theme, layout, etc.
+                builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
+                    winblend = 10,
+                    previewer = false,
+                }))
+            end, { desc = "Fuzzy search in current buffer" })
         end,
     },
     {
