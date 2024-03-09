@@ -6,8 +6,6 @@ end
 
 --Remap space as leader key
 keymap("", "<Space>", "<Nop>", "Leader remap")
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
 
 -- Modes
 --   normal_mode = "n",
