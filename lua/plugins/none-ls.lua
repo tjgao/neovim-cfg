@@ -57,9 +57,10 @@ return {
         null_ls.setup({
             sources = {
                 null_ls.builtins.formatting.stylua.with({
-                    condition = function(utils)
-                        return utils.root_has_file({ "stylua.toml", ".stylua.toml" })
-                    end,
+                    extra_args = { "--indent-type", "Spaces" },
+                    -- condition = function(utils)
+                    --     return utils.root_has_file({ "stylua.toml", ".stylua.toml" })
+                    -- end,
                 }),
                 null_ls.builtins.formatting.clang_format.with({
                     condition = function(utils)
