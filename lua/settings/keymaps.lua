@@ -33,7 +33,7 @@ keymap("n", "<S-l>", ":bnext<CR>", "Go to next buf")
 keymap("n", "<S-h>", ":bprevious<CR>", "Go to previous buf")
 
 -- Retrieve last thing yanked instead of deleted
-keymap("n", "<A-p>", "\"0p", "Past last yanked instead of deleted")
+keymap("n", "<A-p>", '"0p', "Past last yanked instead of deleted")
 
 -- Toggle quickfix window
 -- keymap("n", "<C-q>", ":lua require('commands').ToggleQF()<CR>", opts)
@@ -82,4 +82,3 @@ keymap("n", "mm", ":noh<CR>", "Clear search highlight")
 -- keymap("t", "<C-j>", "<C-\\><C-N><C-w>j", term_opts)
 -- keymap("t", "<C-k>", "<C-\\><C-N><C-w>k", term_opts)
 -- keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", term_opts)
-
