@@ -53,7 +53,7 @@ keymap("n", "<F1>", ":NvimTreeToggle<CR>", "Toggle NvimTree")
 
 -- Insert --
 -- Press jk fast to enter
-keymap("i", "jk", "<ESC>", "Alternative for ESC in insert mode")
+-- keymap("i", "jk", "<ESC>", "Alternative for ESC in insert mode")
 
 -- Visual --
 -- Stay in indent mode
