@@ -85,7 +85,6 @@ return {
     {
         "neovim/nvim-lspconfig",
         dependencies = {
-            { "folke/neoconf.nvim", cmd = "Neoconf", config = true },
             { "WhoIsSethDaniel/mason-tool-installer.nvim" },
         },
         config = function()
