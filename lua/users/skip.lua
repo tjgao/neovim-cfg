@@ -112,8 +112,12 @@ local function skip_to_beginning()
     return false
 end
 
-vim.keymap.set("i", "<C-j>", "<Down>", { remap = false, desc = "Move up" })
-vim.keymap.set("i", "<C-k>", "<Up>", { remap = false, desc = "Move down" })
+-- insert mode thing, similar to <C-w>
+-- delete the right part
+vim.keymap.set("i", "<C-q>", "<C-o>dw", { desc = "Delete right part" })
+
+vim.keymap.set("i", "<C-j>", "<Down>", { desc = "Move up" })
+vim.keymap.set("i", "<C-k>", "<Up>", { desc = "Move down" })
 
 vim.keymap.set("i", "<C-e>", skip_to_end, { desc = "Skip to the end" })
 vim.keymap.set("i", "<C-a>", skip_to_beginning, { desc = "Skip to the beginning" })
