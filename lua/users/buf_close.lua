@@ -1,3 +1,9 @@
+-- This lua file provides a command, :Bd or :Bd!
+-- It closes all buffers except the current one we are working on
+-- If executed with bang (!), the other unsaved buffers will be closed
+-- as well. Nvim-tree and terminal buffers are untouched, because that's
+-- my preference, I'd like to have them around.
+--
 -- Close all buffers except current
 local function close_allbuf_except_current(opts)
     local cur = vim.api.nvim_win_get_buf(0)
