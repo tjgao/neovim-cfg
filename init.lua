@@ -1,5 +1,5 @@
-require('settings.options')
-require('lazy-nvim')
-require('settings.keymaps')
-require('settings.commands')
-
+require("settings.options")
+require("lazy-nvim")
+require("settings.keymaps")
+require("settings.commands")
+require("users.buf_close")
