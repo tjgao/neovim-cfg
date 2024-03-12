@@ -24,12 +24,14 @@ local function move(str, idx, direction)
     local ch, prev
     if direction then
         idx = idx + 1
-        if isstopper(string.sub(str, idx, idx)) then
+        ch = string.sub(str, idx, idx)
+        if isstopper(ch) then
             idx = idx + 1
+            prev = ch
         end
         while idx ~= #str + 1 do
             ch = string.sub(str, idx, idx)
-            if isstopper(ch) or (nonspace(ch) and isspace(prev)) then
+            if isstopper(ch) or (nonspace(ch) and isspace(prev)) or (isspace(ch) and nonspace(prev)) then
                 return idx - 1
             end
             prev = ch
@@ -38,20 +40,15 @@ local function move(str, idx, direction)
         return idx - 1
     else
         idx = idx - 1
-        if isstopper(string.sub(str, idx, idx)) then
+        ch = string.sub(str, idx, idx)
+        if isstopper(ch) then
             idx = idx - 1
+            prev = ch
         end
         while idx >= 0 do
             ch = string.sub(str, idx, idx)
-            if isstopper(ch) then
-                if isstopper(prev) then
-                    return idx + 1
-                elseif nonspace(prev) then
-                    return idx
-                end
-                return idx + 1
-            elseif nonspace(ch) and isspace(prev) then
-                return idx + 1
+            if isstopper(ch) or (nonspace(ch) and isspace(prev)) or (isspace(ch) and nonspace(prev)) then
+                return idx
             end
             prev = ch
             idx = idx - 1
