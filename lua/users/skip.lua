@@ -109,15 +109,20 @@ local function skip_to_beginning()
     return false
 end
 
--- insert mode thing, similar to <C-w>
--- delete the right part
-vim.keymap.set("i", "<C-q>", "<C-o>dw", { desc = "Delete right part" })
-
+vim.keymap.set("i", "<C-Tab>", move_right, { desc = "Skip -> right" })
+vim.keymap.set("i", "<S-Tab>", move_left, { desc = "Skip -> left" })
+-- vim.keymap.set("i", "<C-Tab>", function()
+--     local key = vim.api.nvim_replace_termcodes("<Tab>", true, true, true)
+--     vim.api.nvim_put({ key }, "", false, true)
+--     local r, c = unpack(vim.api.nvim_win_get_cursor(0))
+--     vim.cmd(".retab")
+--     vim.api.nvim_win_set_cursor(0, { r, c })
+-- end, { desc = "Normal tab" })
+vim.keymap.set("i", "<C-w>", "<C-o>daw", { desc = "Delete whole word" })
 vim.keymap.set("i", "<C-j>", "<Down>", { desc = "Move up" })
 vim.keymap.set("i", "<C-k>", "<Up>", { desc = "Move down" })
+vim.keymap.set("i", "<C-l>", "<Right>", { desc = "Move right" })
+vim.keymap.set("i", "<C-h>", "<Left>", { desc = "Skip -> left" })
 
 vim.keymap.set("i", "<C-e>", skip_to_end, { desc = "Skip to the end" })
 vim.keymap.set("i", "<C-a>", skip_to_beginning, { desc = "Skip to the beginning" })
-
-vim.keymap.set("i", "<C-l>", move_right, { desc = "Skip out of pairs -> right" })
-vim.keymap.set("i", "<C-h>", move_left, { desc = "Skip out of pairs -> left" })
