@@ -88,8 +88,6 @@ local function move_right()
     vim.api.nvim_win_set_cursor(0, { r, pos })
 end
 
--- I am a "good" fox jumping around
-
 local function skip_to_end()
     local r, _ = unpack(vim.api.nvim_win_get_cursor(0))
     local line = vim.api.nvim_get_current_line()
@@ -109,15 +107,29 @@ local function skip_to_beginning()
     return false
 end
 
-vim.keymap.set("i", "<C-Tab>", move_right, { desc = "Skip -> right" })
-vim.keymap.set("i", "<S-Tab>", move_left, { desc = "Skip -> left" })
--- vim.keymap.set("i", "<C-Tab>", function()
---     local key = vim.api.nvim_replace_termcodes("<Tab>", true, true, true)
---     vim.api.nvim_put({ key }, "", false, true)
---     local r, c = unpack(vim.api.nvim_win_get_cursor(0))
---     vim.cmd(".retab")
---     vim.api.nvim_win_set_cursor(0, { r, c })
--- end, { desc = "Normal tab" })
+local function wrap(key)
+    return vim.api.nvim_replace_termcodes(key, true, true, true)
+end
+
+vim.keymap.set("i", "<Tab>", move_right, { desc = "Skip -> right" })
+vim.keymap.set("i", "<C-BS>", move_left, { desc = "Skip -> left" })
+-- only act as tabs when there is nothing before the cusor
+vim.keymap.set("i", "<C-Tab>", function()
+    local line = vim.api.nvim_get_current_line()
+    local _, c = unpack(vim.api.nvim_win_get_cursor(0))
+    for i = 1, c - 1, 1 do
+        if nonspace(string.sub(line, i, i)) then
+            vim.api.nvim_feedkeys(wrap("<Tab>"), "i", false)
+            return
+        end
+    end
+    local key = "<Tab>"
+    if vim.o.expandtab and vim.o.tabstop then
+        key = string.rep("<Space>", vim.o.tabstop)
+    end
+    vim.api.nvim_put({ wrap(key) }, "", false, true)
+end, { desc = "Smart tab" })
+
 vim.keymap.set("i", "<C-w>", "<C-o>daw", { desc = "Delete whole word" })
 vim.keymap.set("i", "<C-j>", "<Down>", { desc = "Move up" })
 vim.keymap.set("i", "<C-k>", "<Up>", { desc = "Move down" })
