@@ -117,7 +117,7 @@ vim.keymap.set("i", "<C-BS>", move_left, { desc = "Skip -> left" })
 vim.keymap.set("i", "<C-Tab>", function()
     local line = vim.api.nvim_get_current_line()
     local _, c = unpack(vim.api.nvim_win_get_cursor(0))
-    for i = 1, c - 1, 1 do
+    for i = 0, c, 1 do
         if nonspace(string.sub(line, i, i)) then
             vim.api.nvim_feedkeys(wrap("<Tab>"), "i", false)
             return
