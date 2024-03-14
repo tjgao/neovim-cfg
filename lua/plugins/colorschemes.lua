@@ -1,14 +1,15 @@
 return {
-    "rafi/awesome-vim-colorschemes",
+    "EdenEast/nightfox.nvim",
     dependencies = {
+        { "AlexvZyl/nordic.nvim" },
         {
             "catppuccin/nvim",
             name = "catppuccin",
             priority = 1000,
         },
-        {
-            "EdenEast/nightfox.nvim",
-        },
+        -- {
+        --     "rafi/awesome-vim-colorschemes",
+        -- },
         {
             "tjgao/nord.nvim",
             config = function()

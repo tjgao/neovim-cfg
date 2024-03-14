@@ -4,6 +4,7 @@ return {
     opts = {
         indent = {
             char = "",
+            -- char = "|",
             -- tab_char = "󰌒",
             -- tab_char = ".",
         },
