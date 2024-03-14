@@ -111,15 +111,12 @@ local function wrap(key)
     return vim.api.nvim_replace_termcodes(key, true, true, true)
 end
 
-vim.keymap.set("i", "<Tab>", move_right, { desc = "Skip -> right" })
-vim.keymap.set("i", "<C-BS>", move_left, { desc = "Skip -> left" })
--- only act as tabs when there is nothing before the cusor
-vim.keymap.set("i", "<C-Tab>", function()
+local function smart_tab()
     local line = vim.api.nvim_get_current_line()
     local _, c = unpack(vim.api.nvim_win_get_cursor(0))
     for i = 0, c, 1 do
         if nonspace(string.sub(line, i, i)) then
-            vim.api.nvim_feedkeys(wrap("<Tab>"), "i", false)
+            move_right()
             return
         end
     end
@@ -128,7 +125,9 @@ vim.keymap.set("i", "<C-Tab>", function()
         key = string.rep("<Space>", vim.o.tabstop)
     end
     vim.api.nvim_put({ wrap(key) }, "", false, true)
-end, { desc = "Smart tab" })
+end
+vim.keymap.set("i", "<Tab>", smart_tab, { desc = "Smart tab: skip -> right or normal tab" })
+vim.keymap.set("i", "<C-BS>", move_left, { desc = "Skip -> left" })
 
 vim.keymap.set("i", "<C-w>", "<C-o>daw", { desc = "Delete whole word" })
 vim.keymap.set("i", "<C-j>", "<Down>", { desc = "Move up" })
