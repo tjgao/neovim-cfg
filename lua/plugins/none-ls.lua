@@ -38,7 +38,7 @@ local toggle_autofmt = function(show_notification)
 
     if #cmds == 0 then
         if show_notification then
-            notify("AutoFormat is turned on")
+            notify("AutoFormat is turned on for " .. table.concat(autofmt_patterns, ", "))
         end
         install_autofmt(autofmt_patterns)
     else

@@ -8,9 +8,9 @@ vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
 local opts = { noremap = true, silent = true }
 
 local cfg = {
-    { "<F9>", "float", "" },
-    { "<F10>", "float", "cmd=\"lazygit\"" },
-    -- { "<F12>", "horizontal" },
+    { "<F9>",  "float",      "" },
+    { "<F10>", "float",      'cmd="lazygit"' },
+    { "<F11>", "horizontal", "" },
 }
 
 local make_term = function(idx, o)
@@ -69,7 +69,7 @@ M = {
                     opened:close()
                 end
                 t:open()
-                if cmd ~= nil and cmd ~= '' then
+                if cmd ~= nil and cmd ~= "" then
                     require("toggleterm").exec_command(cmd, c)
                 end
             end
