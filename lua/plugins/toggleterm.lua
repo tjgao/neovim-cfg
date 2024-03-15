@@ -8,8 +8,8 @@ vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
 local opts = { noremap = true, silent = true }
 
 local cfg = {
-    { "<F9>",  "float",      "" },
-    { "<F10>", "float",      'cmd="lazygit"' },
+    { "<F9>", "float", "" },
+    { "<F10>", "float", 'cmd="lazygit"' },
     { "<F11>", "horizontal", "" },
 }
 
@@ -31,12 +31,15 @@ local make_term = function(idx, o)
             end
         end,
 
-        on_open = function(term)
-            for i, v in pairs(cfg) do
-                vim.api.nvim_buf_set_keymap(term.bufnr, "t", v[1], "<cmd>lua MyToggleTerm(" .. i .. ")<CR>", opts)
-                vim.api.nvim_buf_set_keymap(term.bufnr, "n", v[1], "<cmd>lua MyToggleTerm(" .. i .. ")<CR>", opts)
-            end
+        on_open = function(_)
             vim.cmd("startinsert")
+        end,
+
+        on_create = function(term)
+            vim.api.nvim_buf_set_keymap(term.bufnr, "t", o[1], "<cmd>lua MyToggleTerm(" .. idx .. ")<CR>", opts)
+            if o[3] ~= nil and o[3] ~= "" then
+                require("toggleterm").exec_command(o[3], idx)
+            end
         end,
     }
 end
@@ -52,7 +55,7 @@ M = {
             table.insert(term_table, Terminal:new(make_term(i, o)))
         end
 
-        function MyToggleTerm(c, cmd)
+        function MyToggleTerm(c)
             local opened = nil
             for _, o in pairs(term_table) do
                 if o:is_open() then
@@ -69,15 +72,12 @@ M = {
                     opened:close()
                 end
                 t:open()
-                if cmd ~= nil and cmd ~= "" then
-                    require("toggleterm").exec_command(cmd, c)
-                end
             end
         end
 
         for i, v in pairs(cfg) do
-            vim.keymap.set("i", v[1], "<cmd>lua MyToggleTerm(" .. i .. ",'" .. v[3] .. "')<CR>", opts)
-            vim.keymap.set("n", v[1], ":lua MyToggleTerm(" .. i .. ",'" .. v[3] .. "')<CR>", opts)
+            vim.keymap.set("i", v[1], "<cmd>lua MyToggleTerm(" .. i .. ")<CR>", opts)
+            vim.keymap.set("n", v[1], ":lua MyToggleTerm(" .. i .. ")<CR>", opts)
         end
     end,
 }
