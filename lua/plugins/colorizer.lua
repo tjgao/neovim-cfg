@@ -5,6 +5,8 @@ return {
             "css",
             "lua",
             "javascript",
+            "bash",
+            "python",
             html = {
                 mode = "foreground",
             },

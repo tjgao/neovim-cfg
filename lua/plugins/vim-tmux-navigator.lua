@@ -7,11 +7,13 @@ return {
         "TmuxNavigateRight",
         "TmuxNavigatePrevious",
     },
-    keys = {
-        { "<c-h>", "<cmd><C-U>TmuxNavigateLeft<cr>" },
-        { "<c-j>", "<cmd><C-U>TmuxNavigateDown<cr>" },
-        { "<c-k>", "<cmd><C-U>TmuxNavigateUp<cr>" },
-        { "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
-        { "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
-    },
+    -- keybinding here won't work --
+    -- move to keymaps.lua
+    -- keys = {
+    --     { "<c-h>", "<cmd>TmuxNavigateLeft<cr>" },
+    --     { "<c-j>", "<cmd>TmuxNavigateDown<cr>" },
+    --     { "<c-k>", "<cmd>TmuxNavigateUp<cr>" },
+    --     { "<c-l>", "<cmd>TmuxNavigateRight<cr>" },
+    --     { "<c-\\>", "<cmd>TmuxNavigatePrevious<cr>" },
+    -- },
 }

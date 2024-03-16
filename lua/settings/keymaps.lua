@@ -16,11 +16,11 @@ keymap("", "<Space>", "<Nop>", "Leader remap")
 --   command_mode = "c",
 
 -- Normal --
--- Better window navigation
-keymap("n", "<C-h>", "<C-w>h", "Move left to next window")
-keymap("n", "<C-j>", "<C-w>j", "Move down to next window")
-keymap("n", "<C-k>", "<C-w>k", "Move up to next window")
-keymap("n", "<C-l>", "<C-w>l", "Move right to next window")
+-- Tmux --
+keymap("n", "<C-h>", ":TmuxNavigateLeft<CR>", "Move left [Tmux-nav]")
+keymap("n", "<C-l>", ":TmuxNavigateRight<CR>", "Move right [Tmux-nav]")
+keymap("n", "<C-k>", ":TmuxNavigateUp<CR>", "Move up [Tmux-nav]")
+keymap("n", "<C-j>", ":TmuxNavigateDown<CR>", "Move down [Tmux-nav]")
 
 -- Resize with arrows
 keymap("n", "<C-Up>", ":resize +2<CR>", "Resize window upward")
