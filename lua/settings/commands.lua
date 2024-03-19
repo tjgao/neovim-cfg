@@ -20,3 +20,21 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 -- We have new global status line so we want to disable bg color for window separator
 -- also, pick a nicer fg color
 vim.cmd("highlight WinSeparator guibg=none guifg=#4C566A")
+
+local function toggle_spell()
+    local ok, notify = pcall(require, "notify")
+    print(vim.o.spell)
+    if vim.o.spell then
+        vim.o.spell = false
+        if ok then
+            notify.notify("Spell turned off")
+        end
+    else
+        vim.o.spell = true
+        if ok then
+            notify.notify("Spell turned on")
+        end
+    end
+end
+
+vim.api.nvim_create_user_command("Spell", toggle_spell, { desc = "Toggle spell" })
