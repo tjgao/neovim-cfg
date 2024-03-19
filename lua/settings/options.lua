@@ -1,5 +1,7 @@
 local options = {
     backup = false,                               -- creates backup file
+    spell = true,                                 -- check spelling
+    spelllang = "en_au",                          -- spell checking language
     swapfile = false,                             -- creates swap file
     clipboard = "unnamedplus",                    -- allows neovim to access the system clipboard
     ignorecase = true,                            -- ignores case in search
@@ -32,6 +34,6 @@ for k, v in pairs(options) do
     vim.opt[k] = v
 end
 
-vim.g.tmux_navigator_disable_when_zoomed = 1       -- disable tmux nav when zoomed
+vim.g.tmux_navigator_disable_when_zoomed = 1 -- disable tmux nav when zoomed
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "

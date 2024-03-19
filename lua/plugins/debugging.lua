@@ -8,7 +8,12 @@ end
 return {
     "mfussenegger/nvim-dap",
     dependencies = {
-        "rcarriga/nvim-dap-ui",
+        {
+            "rcarriga/nvim-dap-ui",
+            dependencies = {
+                "nvim-neotest/nvim-nio",
+            },
+        },
         "leoluz/nvim-dap-go",
         -- unpack(daps_install),
     },

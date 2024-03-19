@@ -48,7 +48,11 @@ return {
         -- branch = "main",
         config = function()
             local mason = require("mason")
-            mason.setup()
+            mason.setup({
+                ui = {
+                    border = "single",
+                },
+            })
         end,
     },
     {
