@@ -23,7 +23,6 @@ vim.cmd("highlight WinSeparator guibg=none guifg=#4C566A")
 
 local function toggle_spell()
     local ok, notify = pcall(require, "notify")
-    print(vim.o.spell)
     if vim.o.spell then
         vim.o.spell = false
         if ok then
