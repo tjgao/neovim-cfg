@@ -8,6 +8,6 @@ return {
     },
     config = function()
         require("trouble").setup()
-        vim.keymap.set("n", "<C-q>", ":Trouble quickfix<CR>", { desc = "Open quickfix [Trouble]" })
+        vim.keymap.set("n", "<C-q>", ":TroubleToggle<CR>", { desc = "TroubleToggle [Trouble]" })
     end,
 }

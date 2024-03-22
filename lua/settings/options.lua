@@ -6,7 +6,6 @@ local options = {
     ignorecase = true,                                 -- ignores case in search
     smartcase = true,                                  -- smart case, search pattern in lower case will ignore case, otherwise not
     fileencoding = "utf-8",                            -- the encoding used in writing files
-    cmdheight = 2,                                     -- more space in command line for displaying messages
     completeopt = { "menuone", "popup", "noselect" },  -- for cmp
     termguicolors = true,                              -- for most terminals this is supported
     mouse = 'a',                                       -- allows mouse use
