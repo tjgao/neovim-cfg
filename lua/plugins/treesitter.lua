@@ -5,7 +5,20 @@ return {
         config = function()
             local lspconfig = require("nvim-treesitter.configs")
             lspconfig.setup({
-                ensure_installed = { "markdown", "html", "javascript", "bash", "python", "cpp", "go", "lua", "vimdoc" },
+                ensure_installed = {
+                    "markdown",
+                    "regex",
+                    "vim",
+                    "markdown_inline",
+                    "html",
+                    "javascript",
+                    "bash",
+                    "python",
+                    "cpp",
+                    "go",
+                    "lua",
+                    "vimdoc",
+                },
                 hightlight = { enable = true },
                 indent = { enable = true },
             })
@@ -48,7 +61,7 @@ return {
                         -- mapping query_strings to modes.
                         selection_modes = {
                             ["@parameter.outer"] = "v", -- charwise
-                            ["@function.outer"] = "V",  -- linewise
+                            ["@function.outer"] = "V", -- linewise
                             ["@class.outer"] = "<c-v>", -- blockwise
                         },
                         -- If you set this to `true` (default is `false`) then any textobject is
