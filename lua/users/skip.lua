@@ -112,11 +112,20 @@ local function wrap(key)
 end
 
 local function smart_tab()
-    local line = vim.api.nvim_get_current_line()
-    local _, c = unpack(vim.api.nvim_win_get_cursor(0))
-    for i = 0, c, 1 do
-        if nonspace(string.sub(line, i, i)) then
-            move_right()
+    local ok, cmp = pcall(require, "cmp")
+    if ok then
+        if not cmp.visible() then
+            local line = vim.api.nvim_get_current_line()
+            local _, c = unpack(vim.api.nvim_win_get_cursor(0))
+            for i = c, 0, -1 do
+                if nonspace(string.sub(line, i, i)) then
+                    move_right()
+                    return
+                end
+            end
+        else
+            -- we have popup cmp menu, send C-n
+            vim.api.nvim_feedkeys(wrap("<C-n>"), vim.api.nvim_get_mode().mode, false)
             return
         end
     end
@@ -126,10 +135,11 @@ local function smart_tab()
     end
     vim.api.nvim_put({ wrap(key) }, "", false, true)
 end
+
 vim.keymap.set("i", "<Tab>", smart_tab, { desc = "Smart tab: skip -> right or normal tab" })
 vim.keymap.set("i", "<C-BS>", move_left, { desc = "Skip -> left" })
 
-vim.keymap.set("i", "<C-w>", "<C-o>daw", { desc = "Delete whole word" })
+vim.keymap.set("i", "<C-w>", "<C-o>diw", { desc = "Delete whole word" })
 vim.keymap.set("i", "<C-j>", "<Down>", { desc = "Move up" })
 vim.keymap.set("i", "<C-k>", "<Up>", { desc = "Move down" })
 vim.keymap.set("i", "<C-l>", "<Right>", { desc = "Move right" })
