@@ -32,10 +32,10 @@ return {
             harpoon:list():select(4)
         end)
         vim.keymap.set("n", "<A-j>", function()
-            harpoon:list():prev()
+            harpoon:list():prev({ ui_nav_wrap = true })
         end)
         vim.keymap.set("n", "<A-k>", function()
-            harpoon:list():next()
+            harpoon:list():next({ ui_nav_wrap = true })
         end)
     end,
 }
