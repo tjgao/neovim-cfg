@@ -6,7 +6,7 @@ return {
         local config = {
             options = {
                 icons_enabled = vim.opt.termguicolors,
-                theme = "nord",
+                -- theme = "nord",
                 --    	component_separators = '',
                 --    	section_separators = '',
             },

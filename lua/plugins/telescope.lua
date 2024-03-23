@@ -5,12 +5,14 @@ local function repo_file_search(fn, folder)
         folder = vim.fn.getcwd()
     end
     local opts = {}
-    local files = "Git files:"
+    local files = "Git files: "
     opts.prompt_title = files .. folder
     opts.find_command = { "git", "ls-files" }
     if fn ~= nil and fn ~= "" then
         opts.default_text = fn
     end
+    opts.previewer = false
+    opts.layout_config = { height = 0.5, width = 0.4 }
     builtin.find_files(opts)
 end
 
@@ -19,11 +21,23 @@ local function regular_file_search(fn, folder)
         folder = vim.fn.getcwd()
     end
     local opts = {}
-    local files = "Files:"
+    local files = "Files: "
     opts.prompt_title = files .. folder
     if fn ~= nil and fn ~= "" then
         opts.default_text = fn
     end
+    opts.previewer = false
+    opts.layout_config = { height = 0.5, width = 0.4 }
+    builtin.find_files(opts)
+end
+
+local function nvim_file_search(fn, folder)
+    local opts = {}
+    local cwd = vim.fn.stdpath("config")
+    opts.prompt_title = "NeoVim files: " .. cwd
+    opts.previewer = false
+    opts.layout_config = { height = 0.5, width = 0.4 }
+    opts.cwd = cwd
     builtin.find_files(opts)
 end
 
@@ -46,25 +60,23 @@ M = {
             builtin = require("telescope.builtin")
             keymap("n", "<C-p>", regular_file_search, { desc = "Search file in current folder" })
             keymap("n", "<leader>p", repo_file_search, { desc = "Search file in repo" })
-            keymap("n", "<leader>sg", builtin.live_grep, { desc = "Live rg search" })
+            keymap("n", "<leader>/", builtin.live_grep, { desc = "Live rg search" })
             keymap("n", "<leader>sh", builtin.help_tags, { desc = "Search help" })
             keymap("n", "<leader>sk", builtin.keymaps, { desc = "Search keymaps" })
             keymap("n", "<leader>ss", builtin.grep_string, { desc = "Search current word" })
             keymap("n", "<leader>sd", builtin.diagnostics, { desc = "Search diagnostics" })
             keymap("n", "<leader>so", builtin.oldfiles, { desc = "Search recent files" })
             keymap("n", "<leader>sb", builtin.buffers, { desc = "Search buffers" })
-            keymap("n", "<leader>sn", function()
-                builtin.find_files({ cwd = vim.fn.stdpath("config") })
-            end, { desc = "Search neovim files" })
+            keymap("n", "<leader>sn", nvim_file_search, { desc = "Search neovim files" })
             keymap("n", "<leader><leader>", builtin.builtin, { desc = "Search in Telescope" })
             keymap("n", "<leader>sr", builtin.resume, { desc = "Search resume" })
-            keymap("n", "<leader>/", function()
-                -- You can pass additional configuration to telescope to change theme, layout, etc.
-                builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
-                    winblend = 10,
-                    -- previewer = false,
-                }))
-            end, { desc = "Fuzzy search in current buffer" })
+            -- keymap("n", "<leader>/", function()
+            --     -- You can pass additional configuration to telescope to change theme, layout, etc.
+            --     builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
+            --         winblend = 10,
+            --         -- previewer = false,
+            --     }))
+            -- end, { desc = "Fuzzy search in current buffer" })
         end,
     },
     {
