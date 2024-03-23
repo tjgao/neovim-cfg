@@ -32,8 +32,8 @@ return {
                 -- bottom_search = true, -- use a classic bottom cmdline for search
                 -- command_palette = true,       -- position the cmdline and popupmenu together
                 long_message_to_split = true, -- long messages will be sent to a split
-                inc_rename = false, -- enables an input dialog for inc-rename.nvim
-                lsp_doc_border = false, -- add a border to hover docs and signature help
+                inc_rename = false,           -- enables an input dialog for inc-rename.nvim
+                lsp_doc_border = false,       -- add a border to hover docs and signature help
             },
             views = {
                 cmdline_popup = {
@@ -47,6 +47,8 @@ return {
                     },
                 },
                 popupmenu = {
+                    backend = "cmp",
+                    kind_icons = {},
                     relative = "editor",
                     position = {
                         row = pop_row,
@@ -64,6 +66,19 @@ return {
                         winhighlight = { Normal = "Normal", FloatBorder = "DiagnosticInfo" },
                     },
                 },
+            },
+            routes = {
+                { filter = { event = "notify", min_height = 15 },               view = "split" },
+                { filter = { find = "E486" },                                   view = "mini" },
+                { filter = { find = "E162" },                                   view = "mini" },
+                { filter = { find = "E21" },                                    view = "mini" },
+                { filter = { event = "msg_show", kind = "", find = "written" }, view = "mini" },
+                { filter = { event = "msg_show", find = "search hit BOTTOM" },  skip = true },
+                { filter = { event = "msg_show", find = "search hit TOP" },     skip = true },
+                { filter = { event = "emsg", find = "E23" },                    skip = true },
+                { filter = { event = "emsg", find = "E20" },                    skip = true },
+                { filter = { find = "No signature help" },                      skip = true },
+                { filter = { find = "E37" },                                    skip = true },
             },
         })
         vim.keymap.set("n", "<leader>nt", function()
