@@ -80,24 +80,24 @@ return {
                         -- by the server configuration above. Useful when disabling
                         -- certain features of an LSP (for example, turning off formatting for tsserver)
                         server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-                        -- local border = {
-                        --     { "🭽", "FloatBorder" },
-                        --     { "▔", "FloatBorder" },
-                        --     { "🭾", "FloatBorder" },
-                        --     { "▕", "FloatBorder" },
-                        --     { "🭿", "FloatBorder" },
-                        --     { "▁", "FloatBorder" },
-                        --     { "🭼", "FloatBorder" },
-                        --     { "▏", "FloatBorder" },
-                        -- }
-                        -- local modified_handlers = {
-                        --     ["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = border }),
-                        --     ["textDocument/signatureHelp"] = vim.lsp.with(
-                        --         vim.lsp.handlers.signature_help,
-                        --         { border = border }
-                        --     ),
-                        -- }
-                        -- server.handlers = modified_handlers
+                        local border = {
+                            { "╭", "FloatBorder" },
+                            { "─", "FloatBorder" },
+                            { "╮", "FloatBorder" },
+                            { "│", "FloatBorder" },
+                            { "╯", "FloatBorder" },
+                            { "─", "FloatBorder" },
+                            { "╰", "FloatBorder" },
+                            { "│", "FloatBorder" },
+                        }
+                        local modified_handlers = {
+                            ["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = border }),
+                            ["textDocument/signatureHelp"] = vim.lsp.with(
+                                vim.lsp.handlers.signature_help,
+                                { border = border }
+                            ),
+                        }
+                        server.handlers = modified_handlers
                         require("lspconfig")[server_name].setup(server)
                     end,
                 },
@@ -111,7 +111,7 @@ return {
         },
         config = function()
             local builtin = require("telescope.builtin")
-            keymap("n", "K", vim.lsp.buf.hover, {})
+            keymap("n", "K", vim.lsp.buf.hover, { desc = "Hover help" })
             keymap("n", "gd", builtin.lsp_definitions, { desc = "Go to definition" })
             keymap("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
 
@@ -119,7 +119,6 @@ return {
             keymap("n", "gi", vim.lsp.buf.implementation, { desc = "Go to implementation" })
             keymap("n", "KK", vim.lsp.buf.signature_help, { desc = "Signature help" })
             keymap("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename func/var" })
-            -- keymap("n", "gr", ":Trouble lsp_references<CR>", { desc = "Find references" })
             keymap("n", "gr", builtin.lsp_references, { desc = "Find references" })
             keymap("n", "<leader>gd", ":Trouble workspace_diagnostics<CR>", { desc = "Show workspace diagnostics" })
             keymap("n", "<leader>gb", ":Trouble document_diagnostics<CR>", { desc = "Show document diagnostics" })
