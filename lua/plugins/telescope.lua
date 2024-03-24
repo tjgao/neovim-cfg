@@ -31,7 +31,7 @@ local function regular_file_search(fn, folder)
     builtin.find_files(opts)
 end
 
-local function nvim_file_search(fn, folder)
+local function nvim_file_search()
     local opts = {}
     local cwd = vim.fn.stdpath("config")
     opts.prompt_title = "NeoVim files: " .. cwd
@@ -70,6 +70,7 @@ M = {
             keymap("n", "<leader>sn", nvim_file_search, { desc = "Search neovim files" })
             keymap("n", "<leader><leader>", builtin.builtin, { desc = "Search in Telescope" })
             keymap("n", "<leader>sr", builtin.resume, { desc = "Search resume" })
+            keymap("n", "<leader>gc", ":Telescope git_branches<CR>", { desc = "Git branches" })
             -- keymap("n", "<leader>/", function()
             --     -- You can pass additional configuration to telescope to change theme, layout, etc.
             --     builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
