@@ -137,6 +137,11 @@ local function smart_tab()
 end
 
 vim.keymap.set("i", "<Tab>", smart_tab, { desc = "Smart tab: skip -> right or normal tab" })
+vim.keymap.set("s", "<Tab>", function()
+    smart_tab()
+    vim.api.nvim_feedkeys(wrap("<ESC>"), vim.api.nvim_get_mode().mode, false)
+    vim.cmd("startinsert")
+end, { desc = "Smart tab: skip -> right or normal tab" })
 vim.keymap.set("i", "<C-BS>", move_left, { desc = "Skip -> left" })
 
 vim.keymap.set("i", "<C-w>", "<C-o>diw", { desc = "Delete whole word" })
