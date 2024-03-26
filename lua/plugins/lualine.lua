@@ -23,10 +23,8 @@ end
 
 function GitInfoCache:add(key, val)
     if not self.map[key] then
-        if self.cap then
-            if #self.keys > self.cap then
-                GitInfoCache.__random_remove_one(self)
-            end
+        if self.cap and #self.keys > self.cap then
+            GitInfoCache.__random_remove_one(self)
         end
         table.insert(self.keys, key)
     end
@@ -53,7 +51,15 @@ local function parse_path_hash(path)
             hash[idx - j] = ch
         end
     end
-    return table.concat(hash)
+    local ret = table.concat(hash)
+    if ret == ":0:" then
+        local obj = vim.system({ "git", "log", "--pretty=%h", "-n", "1" }, { text = true }):wait()
+        if not obj or obj.code ~= 0 then
+            return nil
+        end
+        return obj.stdout:gsub("^%s*(.-)%s*$", "%1")
+    end
+    return ret
 end
 
 local function truncate_branch(branch)
