@@ -76,6 +76,7 @@ keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", "Move visual selected up")
 
 keymap("n", "mm", ":noh<CR>", "Clear search highlight")
 
+keymap("n", "<leader>rh", ":Gitsigns reset_hunk<CR>", "Reset hunk (drop changes)")
 -- Terminal --
 -- Better terminal navigation
 -- keymap("t", "<C-h>", "<C-\\><C-N><C-w>h", term_opts)
