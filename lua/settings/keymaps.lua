@@ -35,25 +35,12 @@ keymap("n", "<S-h>", ":bprevious<CR>", "Go to previous buf")
 -- Retrieve last thing yanked instead of deleted
 keymap("n", "<A-p>", '"0p', "Past last yanked instead of deleted")
 
--- Toggle quickfix window
--- keymap("n", "<C-q>", ":lua require('commands').ToggleQF()<CR>", opts)
-
--- Telescope search file window
--- keymap("n", "<C-p>", ":lua require('telescope-config').file_search()<CR>", opts)
-
--- Toggle symbols outline window
--- keymap("n", "<A-a>", ":lua require('symbols-outline').toggle_outline()<CR>", opts)
-
 -- nvim-tree
 keymap("n", "<F1>", ":NvimTreeToggle<CR>", "Toggle NvimTree")
 
--- Move text up and down
--- keymap("n", "<A-j>", "<Esc>:m .+1<CR>==gi", opts)
--- keymap("n", "<A-k>", "<Esc>:m .-2<CR>==gi", opts)
-
 -- Insert --
 -- Press jk fast to enter
--- keymap("i", "jk", "<ESC>", "Alternative for ESC in insert mode")
+keymap("i", "jk", "<ESC>", "Alternative for ESC in insert mode")
 
 -- Visual --
 -- Stay in indent mode
@@ -61,11 +48,6 @@ keymap("v", "<", "<gv", "Move visual selected left")
 keymap("v", ">", ">gv", "Move visual selected right")
 keymap("v", "<S-h>", "<gv", "Move visual selected left")
 keymap("v", "<S-l>", ">gv", "Move visual selected right")
-
--- Move text up and down
--- keymap("v", "<A-j>", ":m .+1<CR>==", opts)
--- keymap("v", "<A-k>", ":m .-2<CR>==", opts)
--- keymap("v", "p", '"_dP', opts)
 
 -- Visual Block --
 -- Move text up and down
@@ -77,9 +59,3 @@ keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", "Move visual selected up")
 keymap("n", "mm", ":noh<CR>", "Clear search highlight")
 
 keymap("n", "<leader>rh", ":Gitsigns reset_hunk<CR>", "Reset hunk (drop changes)")
--- Terminal --
--- Better terminal navigation
--- keymap("t", "<C-h>", "<C-\\><C-N><C-w>h", term_opts)
--- keymap("t", "<C-j>", "<C-\\><C-N><C-w>j", term_opts)
--- keymap("t", "<C-k>", "<C-\\><C-N><C-w>k", term_opts)
--- keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", term_opts)
