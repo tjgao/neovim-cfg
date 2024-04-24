@@ -43,7 +43,7 @@ return {
                             nvim_lsp = "[LSP]",
                             nvim_lua = "[NvimLua]",
                             luasnip = "[Snip]",
-                            buffer = "[Buf]",
+                            -- buffer = "[Buf]",
                             path = "[Path]",
                         })[entry.source.name]
                         return vim_item
