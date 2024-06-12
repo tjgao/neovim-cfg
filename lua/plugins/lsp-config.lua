@@ -109,6 +109,7 @@ return {
         dependencies = {
             { "WhoIsSethDaniel/mason-tool-installer.nvim" },
         },
+        opts = { inlay_hints = { enabled = true } },
         config = function()
             local builtin = require("telescope.builtin")
             keymap("n", "K", vim.lsp.buf.hover, { desc = "Hover help" })

@@ -83,7 +83,7 @@ M = {
     {
         "nvim-telescope/telescope-ui-select.nvim",
         config = function()
-            local trouble = require("trouble.providers.telescope")
+            local trouble = require("trouble.sources.telescope")
             local actions = require("telescope.actions")
             local smart_send = function(prompt_buf)
                 actions.smart_send_to_qflist(prompt_buf)
@@ -106,11 +106,11 @@ M = {
                 defaults = {
                     mappings = {
                         i = {
-                            ["<c-t>"] = trouble.smart_open_with_trouble,
+                            ["<c-t>"] = trouble.open,
                             ["<c-q>"] = smart_send,
                         },
                         n = {
-                            ["<c-t>"] = trouble.smart_open_with_trouble,
+                            ["<c-t>"] = trouble.open,
                             ["<c-q>"] = smart_send,
                         },
                     },
