@@ -8,6 +8,7 @@ return {
     },
     config = function()
         require("trouble").setup()
-        vim.keymap.set("n", "<C-q>", ":TroubleToggle<CR>", { desc = "TroubleToggle [Trouble]" })
+        vim.keymap.set("n", "<C-q>", ":Trouble qflist toggle<CR>", { desc = "Trouble [Trouble]" })
+        -- vim.keymap.set("n", "<C-q>", ":TroubleToggle<CR>", { desc = "TroubleToggle [Trouble]" })
     end,
 }
