@@ -65,3 +65,5 @@ keymap("n", "<leader>tq", ":Trouble quickfix toggle<CR>", "Trouble quickfix")
 keymap("n", "<leader>tl", ":Trouble loclist toggle<CR>", "Trouble diagnostics")
 
 keymap("n", "<leader>dd", ":DiffviewClose<CR>", "Close diffview")
+
+keymap("n", "<leader>df", ":DiffviewFileHistory %<CR>", "File history in diffview")

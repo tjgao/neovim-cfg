@@ -17,5 +17,8 @@ return {
                 vim.g.nord_treesitter_bold = false
             end,
         },
+        {
+            "cocopon/iceberg.vim",
+        },
     },
 }
