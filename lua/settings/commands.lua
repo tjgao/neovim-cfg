@@ -37,3 +37,7 @@ local function toggle_spell()
 end
 
 vim.api.nvim_create_user_command("Spell", toggle_spell, { desc = "Toggle spell" })
+
+vim.api.nvim_create_user_command("Gl", function()
+    vim.cmd('G log --pretty=format:"%h%x09%an%x09%ad%x09%s" --date=short')
+end, { desc = "One line git log" })
