@@ -63,3 +63,5 @@ keymap("n", "<leader>rh", ":Gitsigns reset_hunk<CR>", "Reset hunk (drop changes)
 keymap("n", "<leader>td", ":Trouble diagnostics toggle<CR>", "Trouble diagnostics")
 keymap("n", "<leader>tq", ":Trouble quickfix toggle<CR>", "Trouble quickfix")
 keymap("n", "<leader>tl", ":Trouble loclist toggle<CR>", "Trouble diagnostics")
+
+keymap("n", "<leader>dd", ":DiffviewClose<CR>", "Close diffview")
