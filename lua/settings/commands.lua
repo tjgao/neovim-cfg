@@ -42,6 +42,7 @@ local function short_gitlog(args)
     vim.cmd('G log --pretty=format:"%h%x09%an%x09%ad%x09%s" --date=short ' .. args.args)
 end
 
+---@diagnostic disable-next-line: unused-local
 local function short_gitlog_complete(ArgLead, CmdLine, CursorPos)
     local lst = {}
     local cmd = vim.split(vim.trim(CmdLine), " ")
