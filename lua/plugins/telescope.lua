@@ -1,5 +1,13 @@
 local builtin
 
+local function buffer_search()
+    local opts = {}
+    opts.prompt_title = "Buffers"
+    opts.previewer = true
+    opts.layout_config = { height = 0.5, width = 0.6 }
+    builtin.buffers(opts)
+end
+
 local function repo_file_search(fn, folder)
     if folder == nil or folder == "" then
         folder = vim.fn.getcwd()
@@ -60,6 +68,7 @@ M = {
             builtin = require("telescope.builtin")
             keymap("n", "<C-p>", regular_file_search, { desc = "Search file in current folder" })
             keymap("n", "<leader>p", repo_file_search, { desc = "Search file in repo" })
+            keymap("n", "<leader>b", buffer_search, { desc = "Search buffers" })
             keymap("n", "<leader>/", builtin.live_grep, { desc = "Live rg search" })
             keymap("n", "<leader>sh", builtin.help_tags, { desc = "Search help" })
             keymap("n", "<leader>sk", builtin.keymaps, { desc = "Search keymaps" })
