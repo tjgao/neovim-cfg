@@ -59,7 +59,7 @@ local function get_commit_from_current_line()
     if vim.bo.ft ~= "git" and vim.bo.ft ~= "fugitiveblame" then
         return
     end
-    local line = vim.api.nvim_get_current_line():gsub("^%s*", ""):gsub("%s*$", "")
+    local line = vim.trim(vim.api.nvim_get_current_line())
     return search_commit_hash(line)
 end
 
