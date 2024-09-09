@@ -8,9 +8,11 @@ vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
 local opts = { noremap = true, silent = true }
 
 local cfg = {
-    { "<F9>", "float", "" },
-    { "<F10>", "float", 'cmd="lazygit"' },
-    { "<F11>", "horizontal", "" },
+    { "<F9>",  "float",      "" },
+    { "<F10>", "float",      "" },
+    -- { "<F10>", "float", 'cmd="lazygit"' },
+    { "<F11>", "float",      "" },
+    { "<F12>", "horizontal", "" },
 }
 
 local make_term = function(idx, o)
@@ -25,7 +27,7 @@ local make_term = function(idx, o)
 
         size = function(term)
             if term.direction == "horizontal" then
-                return 20
+                return 80
             elseif term.direction == "vertical" then
                 return vim.o.columns * 0.4
             end
@@ -56,22 +58,9 @@ M = {
         end
 
         function MyToggleTerm(c)
-            local opened = nil
-            for _, o in pairs(term_table) do
-                if o:is_open() then
-                    opened = o
-                    break
-                end
-            end
-
             local t = term_table[c]
-            if t == opened then
-                t:close()
-            else
-                if opened ~= nil then
-                    opened:close()
-                end
-                t:open()
+            if t ~= nil then
+                t:toggle()
             end
         end
 
