@@ -1,7 +1,7 @@
 local builtin
 
 local function buffer_search()
-    local opts = {}
+    local opts = { sort_lastused = true, sort_mru = true }
     opts.prompt_title = "Buffers"
     opts.previewer = true
     opts.layout_config = { height = 0.5, width = 0.6 }
@@ -68,14 +68,15 @@ M = {
             builtin = require("telescope.builtin")
             keymap("n", "<C-p>", regular_file_search, { desc = "Search file in current folder" })
             keymap("n", "<leader>p", repo_file_search, { desc = "Search file in repo" })
-            keymap("n", "<leader>b", buffer_search, { desc = "Search buffers" })
+            keymap("n", "<leader>b", function()
+                buffer_search()
+            end, { desc = "Search buffers" })
             keymap("n", "<leader>/", builtin.live_grep, { desc = "Live rg search" })
             keymap("n", "<leader>sh", builtin.help_tags, { desc = "Search help" })
             keymap("n", "<leader>sk", builtin.keymaps, { desc = "Search keymaps" })
             keymap("n", "<leader>ss", builtin.grep_string, { desc = "Search any word" })
             keymap("n", "<leader>sd", builtin.diagnostics, { desc = "Search diagnostics" })
             keymap("n", "<leader>so", builtin.oldfiles, { desc = "Search recent files" })
-            keymap("n", "<leader>sb", builtin.buffers, { desc = "Search buffers" })
             keymap("n", "<leader>sn", nvim_file_search, { desc = "Search neovim files" })
             keymap("n", "<leader><leader>", builtin.builtin, { desc = "Search in Telescope" })
             keymap("n", "<leader>sr", builtin.resume, { desc = "Search resume" })
