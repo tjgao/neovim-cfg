@@ -1,24 +1,24 @@
 function _G.set_terminal_keymaps()
-    local opts = { noremap = true }
-    vim.api.nvim_buf_set_keymap(0, "t", "<c-\\>", [[<c-\><c-n>]], opts)
+    vim.api.nvim_buf_set_keymap(0, "t", "<c-\\>", [[<c-\><c-n>]], { noremap = true })
 end
 
 vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
 
-local opts = { noremap = true, silent = true }
+local keymap_opts = { noremap = true, silent = true }
 
 local cfg = {
-    { "<F9>", "float", 0, "" },
-    { "<F10>", "float", 0, "" },
-    { "<F11>", "float", 0, "" },
-    { "<F12>", "horizontal", vim.o.lines * 0.35, "" },
-    -- { "<F10>", "float", 'cmd="lazygit"' },
+    { name = "F9", key = "<F9>", direction = "float", size = 0, cmd = "" },
+    { name = "F10", key = "<F10>", direction = "float", szie = 0, cmd = "" },
+    { name = "F11", key = "<F11>", direction = "float", size = 0, cmd = "" },
+    { name = "F12", key = "<F12>", direction = "horizontal", size = vim.o.lines * 0.35, cmd = "" },
+    -- { name = "F10", key = "<F10>", direction = "float",      szie = 0,               cmd = "lazygit" },
 }
 
 local make_term = function(idx, o)
     return {
         count = idx,
-        direction = o[2],
+        direction = o.direction,
+        display_name = o.name,
         float_opts = {
             border = "curved",
         },
@@ -38,9 +38,9 @@ local make_term = function(idx, o)
         end,
 
         on_create = function(term)
-            vim.api.nvim_buf_set_keymap(term.bufnr, "t", o[1], "<cmd>lua MyToggleTerm(" .. idx .. ")<CR>", opts)
-            if o[4] ~= nil and o[4] ~= "" then
-                require("toggleterm").exec_command(o[4], idx)
+            vim.api.nvim_buf_set_keymap(term.bufnr, "t", o.key, "<cmd>lua MyToggleTerm(" .. idx .. ")<CR>", keymap_opts)
+            if o.cmd ~= nil and o.cmd ~= "" then
+                require("toggleterm").exec_command(o.cmd, idx)
             end
         end,
     }
@@ -56,26 +56,51 @@ local function get_visual_selection()
     return table.concat(lines, "\n")
 end
 
+-- local function send_to_terminal(selection_type)
+--     local terminals = terminal.get_all(true)
+--     if #terminals == 0 then
+--         return utils.notify("No toggleterms are open yet", "info")
+--     end
+--     if #terminals == 1 then
+--         toggleterm.send_lines_to_terminal(selection_type, true, terminals[1].id)
+--         return
+--     end
+--     vim.ui.select(terminals, {
+--         prompt = "Please select a terminal to open (or focus): ",
+--         format_item = function(term)
+--             return term.id .. ": " .. term:_display_name()
+--         end,
+--     }, function(_, idx)
+--         local term = terminals[idx]
+--         if not term then
+--             return
+--         end
+--         if term:is_open() then
+--             term:focus()
+--         else
+--             term:open()
+--         end
+--     end)
+-- end
+
 M = {
     "akinsho/toggleterm.nvim",
     branch = "main",
     config = function()
-        local Terminal = require("toggleterm.terminal").Terminal
+        -- local utils = require("toggleterm.utils")
+        local terminal = require("toggleterm.terminal").Terminal
+        local toggleterm = require("toggleterm")
+        toggleterm.setup()
         local term_table = {}
 
         for i, o in pairs(cfg) do
-            table.insert(term_table, Terminal:new(make_term(i, o)))
+            table.insert(term_table, terminal:new(make_term(i, o)))
         end
 
         function MyToggleTerm(c)
             local t = term_table[c]
             if t ~= nil then
-                local dir = cfg[c][2]
-                if dir == "horizontal" or dir == "vertical" then
-                    t:toggle(cfg[c][3], dir)
-                else
-                    t:toggle()
-                end
+                t:toggle(cfg[c].size, cfg[c].direction)
             end
         end
 
@@ -84,15 +109,15 @@ M = {
             -- if we call MyToggleTerm, we lose visual selection
             local cmd = get_visual_selection()
             MyToggleTerm(c)
-            if cmd ~= "" then
-                require("toggleterm").exec(cmd, c)
+            if term_table[c] ~= nil and cmd ~= "" then
+                toggleterm.exec(cmd, c)
             end
         end
 
         for i, v in pairs(cfg) do
-            vim.keymap.set("i", v[1], "<cmd>lua MyToggleTerm(" .. i .. ")<CR>", opts)
-            vim.keymap.set("n", v[1], ":lua MyToggleTerm(" .. i .. ")<CR>", opts)
-            vim.keymap.set("v", v[1], ":lua MyToggleTermRun(" .. i .. ")<CR>", opts)
+            vim.keymap.set("i", v.key, "<cmd>lua MyToggleTerm(" .. i .. ")<CR>", keymap_opts)
+            vim.keymap.set("n", v.key, ":lua MyToggleTerm(" .. i .. ")<CR>", keymap_opts)
+            vim.keymap.set("v", v.key, ":lua MyToggleTermRun(" .. i .. ")<CR>", keymap_opts)
         end
     end,
 }
