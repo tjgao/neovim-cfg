@@ -57,7 +57,7 @@ local function parse_path_hash(path)
         if not obj or obj.code ~= 0 then
             return nil
         end
-        return obj.stdout:gsub("^%s*(.-)%s*$", "%1")
+        return vim.trim(obj.stdout)
     end
     return ret
 end
@@ -79,11 +79,15 @@ local function get_commit_time(hash)
     if tm then
         return tm
     end
-    local obj = vim.system({ "git", "show", "-s", "--date=short", "--format=%cd", hash }, { text = true }):wait()
+    local obj = vim.system(
+        { "git", "show", "-s", "--date=format:'%Y%m%d %H:%M'", "--format=%cd", hash },
+        { text = true }
+    )
+        :wait()
     if not obj or obj.code ~= 0 then
         return nil
     end
-    local ret = obj.stdout:gsub("^%s*(.-)%s*$", "%1")
+    local ret = vim.trim(obj.stdout):gsub("^'(.-)'$", "%1")
     commit_to_time:add(hash, ret)
     return ret
 end
