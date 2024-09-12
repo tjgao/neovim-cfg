@@ -112,4 +112,7 @@ vim.api.nvim_create_user_command("Gl", short_gitlog, {
 
 return {
     "tpope/vim-fugitive",
+    dependencies = {
+        "tpope/vim-rhubarb",
+    },
 }
