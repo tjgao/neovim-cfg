@@ -38,18 +38,10 @@ vim.api.nvim_create_autocmd("FileType", {
     callback = diffview_cb_fugitive,
 })
 
-local function verify_commit_hash(hash)
-    local obj = vim.system({ "git", "show", hash }, { text = true }):wait()
-    if not obj or obj.code ~= 0 then
-        return nil
-    end
-    return true
-end
-
 local function search_commit_hash(line)
     for i in string.gmatch(line, "%S+") do
         local hash = string.match(i, "^%x+$")
-        if hash ~= nil and #hash >= 7 and verify_commit_hash(hash) then
+        if hash ~= nil and #hash >= 7 and require("shared.utils").valid_commit_hash(hash) then
             return hash
         end
     end

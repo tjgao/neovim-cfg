@@ -46,16 +46,6 @@ local make_term = function(idx, o)
     }
 end
 
-local function get_visual_selection()
-    local s_start = vim.fn.getpos("'<")
-    local s_end = vim.fn.getpos("'>")
-    local n_lines = math.abs(s_end[2] - s_start[2]) + 1
-    local lines = vim.api.nvim_buf_get_lines(0, s_start[2] - 1, s_end[2], false)
-    lines[n_lines] = string.sub(lines[n_lines], 1, s_end[3])
-    lines[1] = string.sub(lines[1], s_start[3], -1)
-    return table.concat(lines, "\n")
-end
-
 -- local function send_to_terminal(selection_type)
 --     local terminals = terminal.get_all(true)
 --     if #terminals == 0 then
@@ -107,7 +97,7 @@ M = {
         function MyToggleTermRun(c)
             -- We must get visual selection first
             -- if we call MyToggleTerm, we lose visual selection
-            local cmd = get_visual_selection()
+            local cmd = require("shared.utils").get_visual_selection()
             MyToggleTerm(c)
             if term_table[c] ~= nil and cmd ~= "" then
                 toggleterm.exec(cmd, c)
