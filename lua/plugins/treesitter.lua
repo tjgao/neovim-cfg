@@ -53,6 +53,15 @@ return {
 
                             ["il"] = "@loop.inner",
                             ["al"] = "@loop.outer",
+
+                            ["aa"] = "@parameter.outer",
+                            ["ia"] = "@parameter.inner",
+
+                            ["au"] = "@attribute.outer",
+                            ["iu"] = "@attribute.inner",
+
+                            ["a="] = "@assignment.outer",
+                            ["i="] = "@assignment.inner",
                         },
                         -- You can choose the select mode (default is charwise 'v')
                         --
