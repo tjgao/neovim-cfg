@@ -20,4 +20,36 @@ M.valid_commit_hash = function(hash)
     return true
 end
 
+---@diagnostic disable-next-line: unused-local
+M.git_branch_complete = function(ArgLead, CmdLine, CursorPos)
+    local lst = {}
+    local cmd = vim.split(vim.trim(CmdLine), " ")
+    if #cmd > 0 then
+        local obj = vim.system({ "git", "branch" }, { text = true }):wait()
+        if obj and obj.code == 0 then
+            for _, val in ipairs(vim.split(obj.stdout, "\n")) do
+                val = string.gsub(vim.trim(val), "^*%s*", "")
+                if val ~= "" then
+                    table.insert(lst, val)
+                end
+            end
+        end
+    end
+    return lst
+end
+
+local function search_commit_hash(line)
+    for i in string.gmatch(line, "%S+") do
+        local hash = string.match(i, "^%x+$")
+        if hash ~= nil and #hash >= 7 and M.valid_commit_hash(hash) then
+            return hash
+        end
+    end
+end
+
+M.get_commit_from_current_line = function()
+    local line = vim.trim(vim.api.nvim_get_current_line())
+    return search_commit_hash(line)
+end
+
 return M

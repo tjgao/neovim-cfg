@@ -1,3 +1,35 @@
+local function gitsigns_blame(args)
+    vim.cmd("Gitsigns blame " .. args.args)
+end
+
+vim.api.nvim_create_user_command("Gb", gitsigns_blame, {
+    desc = "Gitsigns blame",
+})
+
+local group = vim.api.nvim_create_augroup("GitsignsGroup", {})
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "gitsigns-blame",
+    group = group,
+    callback = function(ctx)
+        vim.keymap.set("n", "gq", function()
+            vim.cmd(":bd")
+        end, { buffer = true })
+        vim.keymap.set("n", "d", function()
+            local commit = require("shared.utils").get_commit_from_current_line()
+            if commit ~= nil then
+                vim.cmd(("DiffviewOpen %s^!"):format(commit))
+            end
+        end, { buffer = ctx.buf })
+        vim.keymap.set("n", "D", function()
+            local commit = require("shared.utils").get_commit_from_current_line()
+            if commit ~= nil then
+                vim.cmd(("DiffviewOpen %s"):format(commit))
+            end
+        end, { buffer = ctx.buf })
+    end,
+})
+
 return {
     "lewis6991/gitsigns.nvim",
     dependencies = {
