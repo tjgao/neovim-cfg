@@ -9,14 +9,11 @@ vim.api.nvim_create_user_command("Gb", gitsigns_blame, {
 local group = vim.api.nvim_create_augroup("GitsignsGroup", {})
 
 local function search_commit()
-    local commit = require("shared.utils").get_commit_from_current_line()
-    if commit == nil then
-        local r, _ = unpack(vim.api.nvim_win_get_cursor(0))
+    local commit = nil
+    local r, _ = unpack(vim.api.nvim_win_get_cursor(0))
+    while r > 0 and commit == nil do
+        commit = require("shared.utils").get_commit_from_line(r)
         r = r - 1
-        while r > 0 and commit == nil do
-            commit = require("shared.utils").get_commit_from_line(r)
-            r = r - 1
-        end
     end
     return commit
 end

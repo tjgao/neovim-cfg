@@ -47,11 +47,6 @@ local function search_commit_hash(line)
     end
 end
 
-M.get_commit_from_current_line = function()
-    local line = vim.trim(vim.api.nvim_get_current_line())
-    return search_commit_hash(line)
-end
-
 M.get_commit_from_line = function(row)
     local line = vim.trim(vim.api.nvim_buf_get_lines(0, row - 1, row, true)[1])
     return search_commit_hash(line)

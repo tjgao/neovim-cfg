@@ -38,15 +38,25 @@ vim.api.nvim_create_autocmd("FileType", {
     callback = diffview_cb_fugitive,
 })
 
+local function search_commit()
+    local commit = nil
+    local r, _ = unpack(vim.api.nvim_win_get_cursor(0))
+    while r > 0 and commit == nil do
+        commit = require("shared.utils").get_commit_from_line(r)
+        r = r - 1
+    end
+    return commit
+end
+
 local function diffview_cb_git(ctx)
     vim.keymap.set("n", "d", function()
-        local commit = require("shared.utils").get_commit_from_current_line()
+        local commit = search_commit()
         if commit ~= nil then
             vim.cmd(("DiffviewOpen %s^!"):format(commit))
         end
     end, { buffer = ctx.buf })
     vim.keymap.set("n", "D", function()
-        local commit = require("shared.utils").get_commit_from_current_line()
+        local commit = search_commit()
         if commit ~= nil then
             vim.cmd(("DiffviewOpen %s"):format(commit))
         end
