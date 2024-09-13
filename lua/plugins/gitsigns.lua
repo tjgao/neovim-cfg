@@ -11,8 +11,9 @@ local group = vim.api.nvim_create_augroup("GitsignsGroup", {})
 local function search_commit()
     local commit = nil
     local r, _ = unpack(vim.api.nvim_win_get_cursor(0))
+    local get_commit_from_line = require("shared.utils").get_commit_from_line
     while r > 0 and commit == nil do
-        commit = require("shared.utils").get_commit_from_line(r)
+        commit = get_commit_from_line(r)
         r = r - 1
     end
     return commit
@@ -73,8 +74,8 @@ return {
                 },
             },
             signcolumn = true, -- Toggle with `:Gitsigns toggle_signs`
-            numhl = false, -- Toggle with `:Gitsigns toggle_numhl`
-            linehl = false, -- Toggle with `:Gitsigns toggle_linehl`
+            numhl = false,     -- Toggle with `:Gitsigns toggle_numhl`
+            linehl = false,    -- Toggle with `:Gitsigns toggle_linehl`
             word_diff = false, -- Toggle with `:Gitsigns toggle_word_diff`
             watch_gitdir = {
                 interval = 1000,
