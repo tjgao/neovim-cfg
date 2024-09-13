@@ -7,11 +7,11 @@ vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
 local keymap_opts = { noremap = true, silent = true }
 
 local cfg = {
-    { name = "F9", key = "<F9>", direction = "float", size = 0, cmd = "" },
-    { name = "F10", key = "<F10>", direction = "float", szie = 0, cmd = "" },
-    { name = "F11", key = "<F11>", direction = "float", size = 0, cmd = "" },
+    { name = "F9",  key = "<F9>",  direction = "float",      size = 0,                  cmd = "" },
+    { name = "F10", key = "<F10>", direction = "float",      szie = 0,                  cmd = "" },
+    { name = "F11", key = "<F11>", direction = "float",      size = 0,                  cmd = "" },
     { name = "F12", key = "<F12>", direction = "horizontal", size = vim.o.lines * 0.35, cmd = "" },
-    -- { name = "F10", key = "<F10>", direction = "float",      szie = 0,               cmd = "lazygit" },
+    -- { name = "F10", key = "<F10>", direction = "float",      szie = 0,               cmd = 'cmd="lazygit"' },
 }
 
 local make_term = function(idx, o)
@@ -91,6 +91,9 @@ M = {
             local t = term_table[c]
             if t ~= nil then
                 t:toggle(cfg[c].size, cfg[c].direction)
+            end
+            if cfg[c].cmd ~= nil and cfg[c].cmd ~= "" then
+                toggleterm.exec_command(cfg[c].cmd, c)
             end
         end
 
