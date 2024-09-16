@@ -80,9 +80,27 @@ local function short_gitlog(args)
     vim.cmd('G log --pretty=format:"%h%x09%an%x09%ad%x09%s" --date=short ' .. args.args)
 end
 
+---@diagnostic disable-next-line: unused-local
+local git_branch_complete = function(ArgLead, CmdLine, CursorPos)
+    local lst = {}
+    local cmd = vim.split(vim.trim(CmdLine), " ")
+    if #cmd > 0 then
+        local obj = vim.system({ "git", "branch" }, { text = true }):wait()
+        if obj and obj.code == 0 then
+            for _, val in ipairs(vim.split(obj.stdout, "\n")) do
+                val = string.gsub(vim.trim(val), "^*%s*", "")
+                if val ~= "" then
+                    table.insert(lst, val)
+                end
+            end
+        end
+    end
+    return lst
+end
+
 vim.api.nvim_create_user_command("Gl", short_gitlog, {
     nargs = "*",
-    complete = require("shared.utils").git_branch_complete,
+    complete = git_branch_complete,
     desc = "One line git log",
 })
 
