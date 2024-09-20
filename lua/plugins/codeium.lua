@@ -1,4 +1,9 @@
 vim.g.codeium_disable_bindings = 1
+vim.g.codeium_filetypes = {
+    ["*"] = true,
+    ["markdown"] = false,
+}
+
 return {
     "Exafunction/codeium.vim",
     config = function()

@@ -32,7 +32,7 @@ local servers = {
     pyright = {},
     gopls = {},
     clangd = {},
-    tsserver = {},
+    ts_ls = {},
 }
 
 local function keymap(mode, keys, f, opts)

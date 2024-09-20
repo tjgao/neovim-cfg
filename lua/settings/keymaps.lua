@@ -70,3 +70,6 @@ keymap("n", "<leader>df", ":DiffviewFileHistory %<CR>", "File history in diffvie
 
 -- Small things --
 keymap("n", "<C-0>", "^", "Go to beginning of line")
+
+-- Obsidian --
+keymap("n", "<leader>on", ":ObsidianNew<CR>", "Open new obsidian note")
