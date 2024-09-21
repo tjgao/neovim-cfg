@@ -73,3 +73,4 @@ keymap("n", "<C-0>", "^", "Go to beginning of line")
 
 -- Obsidian --
 keymap("n", "<leader>on", ":ObsidianNew<CR>", "Open new obsidian note")
+keymap("n", "<leader>os", ":ObsidianSearch<CR>", "Search obsidian note")
