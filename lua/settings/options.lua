@@ -15,6 +15,7 @@ local options = {
     wrap = false,                                 -- do not wrap long lines
     expandtab = true,                             -- converts tabs to spaces
     number = true,                                -- shows line numbers
+    relativenumber = true,                        -- shows relative line numbers
     scrolloff = 8,                                -- always leaves some space above/below if possible
     sidescrolloff = 8,                            -- always leaves some space left/right if possible
     numberwidth = 4,                              -- the width for line number
