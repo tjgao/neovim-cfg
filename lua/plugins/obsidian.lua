@@ -86,6 +86,7 @@ return {
                 if spec.title then
                     fn = spec.title:gsub(" ", "-"):gsub("[&*$!@^#?,.%%()%[%]+'\"]", ""):lower()
                     fn = fn .. "_" .. gen_random_str(4)
+                    -- spec.title = require("shared.utils").titlize(spec.title)
                 else
                     fn = gen_id()
                 end
@@ -108,6 +109,8 @@ return {
                 local title = " "
                 if note.title then
                     title = note.title
+                    -- title = require("shared.utils").titlize(note.title)
+                    -- note.title = title
                 end
                 local out = {
                     id = id,

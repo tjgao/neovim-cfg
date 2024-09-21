@@ -34,4 +34,18 @@ M.get_commit_from_line = function(row)
     return search_commit_hash(line)
 end
 
+-- example: This Is A Title
+M.titlize = function(title)
+    -- return string.gsub(" " .. title, "%W%l", string.upper):sub(2)
+    local splits = vim.split(title, " ", { trimempty = true })
+    local ans = ""
+    for _, w in ipairs(splits) do
+        if w ~= "" then
+            w = w:lower()
+            ans = ans .. w:gsub("^%l", string.upper) .. " "
+        end
+    end
+    return vim.trim(ans)
+end
+
 return M

@@ -5,6 +5,11 @@ return {
             "css",
             "lua",
             "javascript",
+            "typescript",
+            "go",
+            "c",
+            "cpp",
+            "rust",
             "bash",
             "python",
             html = {
