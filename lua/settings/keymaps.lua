@@ -56,7 +56,7 @@ keymap("x", "K", ":move '<-2<CR>gv-gv", "Move visual selected up")
 keymap("x", "<A-j>", ":move '>+1<CR>gv-gv", "Move visual selected down")
 keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", "Move visual selected up")
 
-keymap("n", "<ESC><ESC>", ":noh<CR>", "Clear search highlight")
+keymap("n", "<C-m>", ":noh<CR>", "Clear search highlight")
 
 keymap("n", "<leader>rh", ":Gitsigns reset_hunk<CR>", "Reset hunk (drop changes)")
 
