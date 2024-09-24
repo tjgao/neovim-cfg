@@ -34,6 +34,7 @@ keymap("n", "<S-h>", ":bprevious<CR>", "Go to previous buf")
 
 -- Retrieve last thing yanked instead of deleted
 keymap("n", "<A-p>", '"0p', "Past last yanked instead of deleted")
+keymap("n", "<A-S-p>", '"0P', "Past last yanked using P")
 
 -- nvim-tree
 keymap("n", "<F1>", ":NvimTreeToggle<CR>", "Toggle NvimTree")
