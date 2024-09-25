@@ -124,7 +124,7 @@ M = {
                         i = {
                             ["<c-t>"] = function(prompt_buf)
                                 vim.g.last_trouble_mode = "telescope"
-                                trouble.open(prompt_buf)
+                                trouble.open(prompt_buf, { focus = true })
                             end,
                             ["<c-q>"] = smart_send_q,
                             ["<c-l>"] = smart_send_l,
@@ -132,7 +132,7 @@ M = {
                         n = {
                             ["<c-t>"] = function(prompt_buf)
                                 vim.g.last_trouble_mode = "telescope"
-                                trouble.open(prompt_buf)
+                                trouble.open(prompt_buf, { focus = true })
                             end,
                             -- ["<c-t>"] = trouble.open,
                             ["<c-q>"] = smart_send_q,
