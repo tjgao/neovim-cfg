@@ -95,9 +95,15 @@ M = {
         config = function()
             local trouble = require("trouble.sources.telescope")
             local actions = require("telescope.actions")
-            local smart_send = function(prompt_buf)
+            local smart_send_q = function(prompt_buf)
                 actions.smart_send_to_qflist(prompt_buf)
-                vim.cmd("copen")
+                vim.g.last_trouble_mode = "qflist"
+                vim.cmd("Trouble qflist toggle focus=true")
+            end
+            local smart_send_l = function(prompt_buf)
+                actions.smart_send_to_loclist(prompt_buf)
+                vim.g.last_trouble_mode = "loclist"
+                vim.cmd("Trouble loclist toggle focus=true")
             end
             local setting = {
                 mappings = {
@@ -116,12 +122,21 @@ M = {
                 defaults = {
                     mappings = {
                         i = {
-                            ["<c-t>"] = trouble.open,
-                            ["<c-q>"] = smart_send,
+                            ["<c-t>"] = function(prompt_buf)
+                                vim.g.last_trouble_mode = "telescope"
+                                trouble.open(prompt_buf)
+                            end,
+                            ["<c-q>"] = smart_send_q,
+                            ["<c-l>"] = smart_send_l,
                         },
                         n = {
-                            ["<c-t>"] = trouble.open,
-                            ["<c-q>"] = smart_send,
+                            ["<c-t>"] = function(prompt_buf)
+                                vim.g.last_trouble_mode = "telescope"
+                                trouble.open(prompt_buf)
+                            end,
+                            -- ["<c-t>"] = trouble.open,
+                            ["<c-q>"] = smart_send_q,
+                            ["<c-l>"] = smart_send_l,
                         },
                     },
                 },
