@@ -63,6 +63,7 @@ M = {
             { "nvim-lua/plenary.nvim" },
             { "nvim-telescope/telescope-rg.nvim" },
             { "nvim-telescope/telescope-symbols.nvim" },
+            { "nvim-telescope/telescope-live-grep-args.nvim" },
         },
         config = function()
             builtin = require("telescope.builtin")
@@ -71,7 +72,9 @@ M = {
             keymap("n", "<leader>b", function()
                 buffer_search()
             end, { desc = "Search buffers" })
-            keymap("n", "<leader>/", builtin.live_grep, { desc = "Live rg search" })
+            keymap("n", "<leader>/", function()
+                require("telescope").extensions.live_grep_args.live_grep_args()
+            end, { desc = "Live rg search" })
             keymap("n", "<leader>sh", builtin.help_tags, { desc = "Search help" })
             keymap("n", "<leader>sk", builtin.keymaps, { desc = "Search keymaps" })
             keymap("n", "<leader>ss", builtin.grep_string, { desc = "Search any word" })
