@@ -33,6 +33,12 @@ for k, v in pairs(options) do
     vim.opt[k] = v
 end
 
+vim.diagnostic.config({
+    virtual_text = false,
+    underline = false,
+    jump = { float = true },
+})
+
 -- disable tmux nav when zoomed
 vim.g.tmux_navigator_disable_when_zoomed = 1
 vim.g.mapleader = " "

@@ -116,6 +116,7 @@ return {
         config = function()
             local builtin = require("telescope.builtin")
             keymap("n", "K", vim.lsp.buf.hover, { desc = "Hover help" })
+            keymap("n", "Z", vim.diagnostic.open_float, { desc = "Show current diagnostic info" })
             keymap("n", "gd", builtin.lsp_definitions, { desc = "Go to definition" })
             keymap("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
 
@@ -125,10 +126,12 @@ return {
             keymap("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename func/var" })
             keymap("n", "gr", builtin.lsp_references, { desc = "Find references" })
             keymap("n", "<leader>gd", ":Trouble diagnostics<CR>", { desc = "Show workspace diagnostics" })
-            -- vim.keymap.set("n", "gl", vim.diagnostic.open_float, opts)
-            -- vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, opts)
-            keymap("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to prev diagnostic" })
-            keymap("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next diagnostic" })
+            keymap("n", "[d", function()
+                vim.diagnostic.jump({ count = -1 })
+            end, { desc = "Go to prev diagnostic" })
+            keymap("n", "]d", function()
+                vim.diagnostic.jump({ count = 1 })
+            end, { desc = "Go to next diagnostic" })
         end,
     },
 }

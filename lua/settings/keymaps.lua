@@ -61,9 +61,18 @@ keymap("n", "<C-m>", ":noh<CR>", "Clear search highlight")
 
 keymap("n", "<leader>rh", ":Gitsigns reset_hunk<CR>", "Reset hunk (drop changes)")
 
-keymap("n", "<leader>td", ":Trouble diagnostics toggle<CR>", "Trouble diagnostics toggle")
-keymap("n", "<leader>tq", ":Trouble quickfix toggle<CR>", "Trouble quickfix toggle")
-keymap("n", "<leader>tl", ":Trouble loclist toggle<CR>", "Trouble loclist toggle")
+keymap("n", "<leader>td", function()
+    vim.g.last_trouble_mode = "diagnostics"
+    vim.cmd("Trouble diagnostics toggle focus=true")
+end, "Trouble diagnostics toggle")
+keymap("n", "<leader>tq", function()
+    vim.g.last_trouble_mode = "qflist"
+    vim.cmd("Trouble qflist toggle focus=true")
+end, "Trouble quickfix toggle")
+keymap("n", "<leader>tl", function()
+    vim.g.last_trouble_mode = "loclist"
+    vim.cmd("Trouble loclist toggle focus=true")
+end, "Trouble loclist toggle")
 
 -- Diffview handy keymaps --
 keymap("n", "<leader>dd", ":DiffviewClose<CR>", "Close diffview")
