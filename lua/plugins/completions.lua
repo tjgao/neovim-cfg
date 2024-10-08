@@ -21,6 +21,8 @@ return {
         "hrsh7th/nvim-cmp",
         event = "InsertEnter",
         config = function()
+            local c = vim.api.nvim_get_hl(0, { name = "Normal" })
+            vim.api.nvim_set_hl(0, "MyCmpMenu", { bg = c.bg })
             local cmp = require("cmp")
             require("luasnip.loaders.from_vscode").lazy_load()
             cmp.setup({
@@ -50,8 +52,12 @@ return {
                     end,
                 },
                 window = {
-                    completion = cmp.config.window.bordered(),
-                    documentation = cmp.config.window.bordered(),
+                    completion = cmp.config.window.bordered({
+                        winhighlight = "Normal:MyCmpMenu,FloatBorder:MyCmpMenu,CursorLine:PmenuSel,Search:None",
+                    }),
+                    documentation = cmp.config.window.bordered({
+                        winhighlight = "Normal:MyCmpMenu,FloatBorder:MyCmpMenu,CursorLine:PmenuSel,Search:None",
+                    }),
                 },
                 mapping = cmp.mapping.preset.insert({
                     ["<C-b>"] = cmp.mapping.scroll_docs(-4),
