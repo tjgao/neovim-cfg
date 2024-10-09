@@ -1,6 +1,13 @@
 return {
     "echasnovski/mini.files",
     opts = {
+        mappings = {
+            toggle_hidden = "g.",
+            go_in_horizontal = "<C-s>",
+            go_in_vertical = "<C-v>",
+            go_in_horizontal_plus = "<C-w>s",
+            go_in_vertical_plus = "<C-w>v",
+        },
         windows = {
             preview = true,
             width_preview = 60,
