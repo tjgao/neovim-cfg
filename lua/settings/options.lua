@@ -24,6 +24,8 @@ local options = {
     splitright = true,                            -- force vertical spllits to go right
     wildmode = "longest:full",                    -- do not want auto select for wildmenu
     guifont = "UbuntuMono Nerd Font Regular:h16", -- font used in GUI neovim app
+
+    updatetime= 400,
 }
 
 vim.opt.shortmess:append("c")

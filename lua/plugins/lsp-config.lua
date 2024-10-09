@@ -115,8 +115,16 @@ return {
         opts = { inlay_hints = { enabled = true } },
         config = function()
             local builtin = require("telescope.builtin")
+            vim.api.nvim_create_autocmd("CursorHold", {
+                desc = "Show errors/warnings when cursor stopped for some time",
+                group = vim.api.nvim_create_augroup("CursorHoldGroup", { clear = true }),
+                callback = function()
+                    vim.diagnostic.open_float()
+                end,
+            })
+
             keymap("n", "K", vim.lsp.buf.hover, { desc = "Hover help" })
-            keymap("n", "Z", vim.diagnostic.open_float, { desc = "Show current diagnostic info" })
+            -- keymap("n", "Z", vim.diagnostic.open_float, { desc = "Show current diagnostic info" })
             keymap("n", "gd", builtin.lsp_definitions, { desc = "Go to definition" })
             keymap("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
 
