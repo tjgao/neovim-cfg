@@ -59,28 +59,28 @@ keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", "Move visual selected up")
 
 keymap("n", "<C-m>", ":noh<CR>", "Clear search highlight")
 
-keymap("n", "<leader>rh", ":Gitsigns reset_hunk<CR>", "Reset hunk (drop changes)")
+keymap("n", "<leader>rh", ":Gitsigns reset_hunk<CR>", "Reset hunk [Gitsigns]")
 
 keymap("n", "<leader>td", function()
     vim.g.last_trouble_mode = "diagnostics"
     vim.cmd("Trouble diagnostics toggle focus=true")
-end, "Trouble diagnostics toggle")
+end, "Diagnostics toggle [Trouble]")
 keymap("n", "<leader>tq", function()
     vim.g.last_trouble_mode = "qflist"
     vim.cmd("Trouble qflist toggle focus=true")
-end, "Trouble quickfix toggle")
+end, "Quickfix toggle [Trouble]")
 keymap("n", "<leader>tl", function()
     vim.g.last_trouble_mode = "loclist"
     vim.cmd("Trouble loclist toggle focus=true")
-end, "Trouble loclist toggle")
+end, "Loclist toggle [Trouble]")
 
 -- Diffview handy keymaps --
-keymap("n", "<leader>dd", ":DiffviewClose<CR>", "Close diffview")
-keymap("n", "<leader>df", ":DiffviewFileHistory %<CR>", "File history in diffview")
+keymap("n", "<leader>dd", ":DiffviewClose<CR>", "Close [Diffview]")
+keymap("n", "<leader>df", ":DiffviewFileHistory %<CR>", "File history [Diffview]")
 
 -- Small things --
 keymap("n", "<C-0>", "^", "Go to beginning of line")
 
 -- Obsidian --
-keymap("n", "<leader>on", ":ObsidianNew<CR>", "Open new obsidian note")
-keymap("n", "<leader>os", ":ObsidianSearch<CR>", "Search obsidian note")
+keymap("n", "<leader>on", ":ObsidianNew<CR>", "Open new note [Obsidian]")
+keymap("n", "<leader>os", ":ObsidianSearch<CR>", "Search note [Obsidian]")

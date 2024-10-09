@@ -25,11 +25,12 @@ local options = {
     wildmode = "longest:full",                    -- do not want auto select for wildmenu
     guifont = "UbuntuMono Nerd Font Regular:h16", -- font used in GUI neovim app
 
-    updatetime= 400,
+    updatetime = 400,
+    colorcolumn = "120",
+    conceallevel = 1,
 }
 
 vim.opt.shortmess:append("c")
-vim.opt.conceallevel = 1
 
 for k, v in pairs(options) do
     vim.opt[k] = v
