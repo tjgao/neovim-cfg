@@ -83,15 +83,16 @@ return {
                         -- by the server configuration above. Useful when disabling
                         -- certain features of an LSP (for example, turning off formatting for tsserver)
                         server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+                        -- '🭽', '▔', '🭾', '▕', '🭿', '▁', '🭼', '▏'
                         local border = {
-                            { "╭", "FloatBorder" },
-                            { "─", "FloatBorder" },
-                            { "╮", "FloatBorder" },
-                            { "│", "FloatBorder" },
-                            { "╯", "FloatBorder" },
-                            { "─", "FloatBorder" },
-                            { "╰", "FloatBorder" },
-                            { "│", "FloatBorder" },
+                            { "🭽", "FloatBorder" },
+                            { "▔", "FloatBorder" },
+                            { "🭾", "FloatBorder" },
+                            { "▕", "FloatBorder" },
+                            { "🭿", "FloatBorder" },
+                            { "▁", "FloatBorder" },
+                            { "🭼", "FloatBorder" },
+                            { "▏", "FloatBorder" },
                         }
                         local modified_handlers = {
                             ["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = border }),
