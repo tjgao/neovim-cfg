@@ -12,14 +12,14 @@ return {
 
                     keymaps = {
                         -- You can use the capture groups defined in textobjects.scm
-                        ["af"] = { query = "@caller.outer", desc = "Select outer part of a function/method call" },
-                        ["if"] = { query = "@caller.inner", desc = "Select inner part of a function/method call" },
+                        ["am"] = { query = "@caller.outer", desc = "Select outer part of a function/method call" },
+                        ["im"] = { query = "@caller.inner", desc = "Select inner part of a function/method call" },
 
-                        ["am"] = {
+                        ["af"] = {
                             query = "@function.outer",
                             desc = "Select outer part of a function/method def region",
                         },
-                        ["im"] = {
+                        ["if"] = {
                             query = "@function.inner",
                             desc = "Select inner part of a function/method def region",
                         },
@@ -54,7 +54,7 @@ return {
                     -- mapping query_strings to modes.
                     selection_modes = {
                         ["@parameter.outer"] = "v", -- charwise
-                        ["@function.outer"] = "V",  -- linewise
+                        ["@function.outer"] = "V", -- linewise
                         ["@class.outer"] = "<c-v>", -- blockwise
                     },
                     -- If you set this to `true` (default is `false`) then any textobject is
