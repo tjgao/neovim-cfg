@@ -115,7 +115,6 @@ return {
         },
         opts = { inlay_hints = { enabled = true } },
         config = function()
-            local builtin = require("telescope.builtin")
             vim.api.nvim_create_autocmd("CursorHold", {
                 desc = "Show errors/warnings when cursor stopped for some time",
                 group = vim.api.nvim_create_augroup("CursorHoldGroup", { clear = true }),
@@ -126,14 +125,14 @@ return {
 
             keymap("n", "K", vim.lsp.buf.hover, { desc = "Hover help" })
             -- keymap("n", "Z", vim.diagnostic.open_float, { desc = "Show current diagnostic info" })
-            keymap("n", "gd", builtin.lsp_definitions, { desc = "Go to definition" })
+            keymap("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
             keymap("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
 
             keymap("n", "gD", vim.lsp.buf.declaration, { desc = "Go to declaration" })
             keymap("n", "gi", vim.lsp.buf.implementation, { desc = "Go to implementation" })
             keymap("n", "KK", vim.lsp.buf.signature_help, { desc = "Signature help" })
             keymap("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename func/var" })
-            keymap("n", "gr", builtin.lsp_references, { desc = "Find references" })
+            keymap("n", "gr", vim.lsp.buf.references, { desc = "Find references" })
             keymap("n", "<leader>gd", ":Trouble diagnostics<CR>", { desc = "Show workspace diagnostics" })
             keymap("n", "[d", function()
                 vim.diagnostic.jump({ count = -1 })
