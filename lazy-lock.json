@@ -26,7 +26,7 @@
   "mini.files": { "branch": "main", "commit": "0db8f49088bcefff23c5cb8498a6c94e46a45a8e" },
   "nightfox.nvim": { "branch": "main", "commit": "595ffb8f291fc4a9bef3201a28b7c0379a41cdee" },
   "none-ls.nvim": { "branch": "main", "commit": "ed8f80849ef1ad31c2f74679fafdef7801091247" },
-  "nord.nvim": { "branch": "master", "commit": "5a5094068ec297fe06cf1fcc9d0ec9f4f57c7ca1" },
+  "nord.nvim": { "branch": "master", "commit": "405e1a44e1fb2199689df9447132188daeebe819" },
   "nordic.nvim": { "branch": "main", "commit": "2e060bda700365af5ce936bec6bb2b8ff2daeb19" },
   "nvim-autopairs": { "branch": "master", "commit": "3d02855468f94bf435db41b661b58ec4f48a06b7" },
   "nvim-cmp": { "branch": "main", "commit": "12509903a5723a876abd65953109f926f4634c30" },
