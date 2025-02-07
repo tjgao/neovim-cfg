@@ -20,5 +20,8 @@ return {
         {
             "cocopon/iceberg.vim",
         },
+        {
+            "slugbyte/lackluster.nvim",
+        },
     },
 }
