@@ -125,7 +125,8 @@ return {
 
             keymap("n", "K", vim.lsp.buf.hover, { desc = "Hover help" })
             -- keymap("n", "Z", vim.diagnostic.open_float, { desc = "Show current diagnostic info" })
-            keymap("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
+            keymap("n", "gd", ":Trouble lsp_definitions<CR>", { desc = "Go to definition" })
+            -- keymap("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
             keymap("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
 
             keymap("n", "gD", vim.lsp.buf.declaration, { desc = "Go to declaration" })
