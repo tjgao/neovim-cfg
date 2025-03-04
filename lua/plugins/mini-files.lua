@@ -41,7 +41,8 @@ return {
         },
     },
     config = function(_, opts)
-        require("mini.files").setup(opts)
+        local mini_files = require("mini.files")
+        mini_files.setup(opts)
 
         -- toggle dot files
         local show_hidden = true
@@ -53,7 +54,7 @@ return {
         end
         local toggle_dot = function()
             local dot_filter = show_hidden and show_all or hide_dots
-            require("mini.files").refresh({ content = { filter = dot_filter } })
+            mini_files.refresh({ content = { filter = dot_filter } })
             show_hidden = not show_hidden
         end
 
@@ -61,15 +62,15 @@ return {
         local map_split = function(buf_id, lhs, direction, close_on_file)
             local rhs = function()
                 local new_target_window
-                local cur_target_window = require("mini.files").get_explorer_state().target_window
+                local cur_target_window = mini_files.get_explorer_state().target_window
                 if cur_target_window ~= nil then
                     vim.api.nvim_win_call(cur_target_window, function()
                         vim.cmd("belowright " .. direction .. " split")
                         new_target_window = vim.api.nvim_get_current_win()
                     end)
 
-                    require("mini.files").set_target_window(new_target_window)
-                    require("mini.files").go_in({ close_on_file = close_on_file })
+                    mini_files.set_target_window(new_target_window)
+                    mini_files.go_in({ close_on_file = close_on_file })
                 end
             end
 
@@ -97,6 +98,10 @@ return {
                     require("mini.files").close,
                     { buffer = buf_id, desc = "Close [mini-files]" }
                 )
+
+                vim.keymap.set("n", "<Enter>", function()
+                    require("mini.files").go_in({ close_on_file = true })
+                end, { buffer = buf_id, desc = "Open in current window" })
 
                 map_split(buf_id, opts.mappings and opts.mappings.go_in_horizontal or "<C-w>s", "horizontal", false)
                 map_split(buf_id, opts.mappings and opts.mappings.go_in_vertical or "<C-w>v", "vertical", false)
