@@ -101,12 +101,14 @@ M = {
             local smart_send_q = function(prompt_buf)
                 actions.smart_send_to_qflist(prompt_buf)
                 vim.g.last_trouble_mode = "qflist"
-                vim.cmd("Trouble qflist toggle focus=true")
+                vim.cmd("copen")
+                -- vim.cmd("Trouble qflist toggle focus=true")
             end
             local smart_send_l = function(prompt_buf)
                 actions.smart_send_to_loclist(prompt_buf)
                 vim.g.last_trouble_mode = "loclist"
-                vim.cmd("Trouble loclist toggle focus=true")
+                vim.cmd("lopen")
+                -- vim.cmd("Trouble loclist toggle focus=true")
             end
             local setting = {
                 mappings = {

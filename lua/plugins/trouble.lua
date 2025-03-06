@@ -33,7 +33,7 @@ return {
         vim.keymap.set({ "n", "v" }, "<C-q>", function()
             local last_trouble_mode = vim.g.last_trouble_mode or "telescope"
             vim.cmd("Trouble " .. last_trouble_mode .. " toggle focus=true")
-        end, { silent = true })
+        end, { silent = true, desc = "Toggle trouble" })
 
         -- local group = vim.api.nvim_create_augroup("troubleGroup", {})
         -- autocmd allows us to update qflist with the modified content in trouble
