@@ -72,7 +72,7 @@ return {
                     enable = true,
                     set_jumps = true, -- whether to set jumps in the jumplist
                     goto_next_start = {
-                        ["]c"] = { query = "@class.outer", desc = "Next class start" },
+                        ["]a"] = { query = "@class.outer", desc = "Next class start" },
                         ["]f"] = { query = "@caller.outer", desc = "Next call start" },
                         ["]i"] = { query = "@conditional.outer", desc = "Next conditional start" },
                         ["]l"] = { query = "@loop.outer", desc = "Next loop start" },
@@ -86,7 +86,7 @@ return {
                         ["]M"] = { query = "@function.outer", desc = "Next function/method end" },
                     },
                     goto_previous_start = {
-                        ["[c"] = { query = "@class.outer", desc = "Prev class start" },
+                        ["[a"] = { query = "@class.outer", desc = "Prev class start" },
                         ["[f"] = { query = "@caller.outer", desc = "Prev call start" },
                         ["[i"] = { query = "@conditional.outer", desc = "Prev conditional start" },
                         ["[l"] = { query = "@loop.outer", desc = "Prev loop start" },
