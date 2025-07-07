@@ -1,6 +1,7 @@
 if not table.unpack then
     table.unpack = unpack
 end
+
 local servers = {
     lua_ls = {
         -- cmd = {...},
@@ -14,7 +15,7 @@ local servers = {
                     -- Tells lua_ls where to find all the Lua files that you have loaded
                     -- for your neovim configuration.
                     library = {
-                        "${3rd}/luv/library",
+                        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
                         table.unpack(vim.api.nvim_get_runtime_file("", true)),
                     },
                     -- If lua_ls is really slow on your computer, you can try this instead:
@@ -25,6 +26,9 @@ local servers = {
                 },
                 -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
                 -- diagnostics = { disable = { 'missing-fields' } },
+                diagnostics = {
+                    globals = { "vim" },
+                },
             },
         },
     },
