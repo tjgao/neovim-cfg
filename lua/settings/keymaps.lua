@@ -75,7 +75,9 @@ keymap("n", "<leader>tl", function()
 end, "Loclist toggle [Trouble]")
 
 -- Diffview handy keymaps --
-keymap("n", "<leader>dd", ":DiffviewClose<CR>", "Close [Diffview]")
+-- keymap("n", "<leader>dd", ":DiffviewClose<CR>", "Close [Diffview]")
+-- for some reason DiffviewClose sometimes doesn't work, have to close tab directly
+keymap("n", "<leader>dd", ":tabclose<CR>", "Close [Diffview]")
 keymap("n", "<leader>df", ":DiffviewFileHistory %<CR>", "File history [Diffview]")
 
 -- Small things --
