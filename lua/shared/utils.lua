@@ -13,17 +13,22 @@ M.get_visual_selection = function()
 end
 
 M.valid_commit_hash = function(hash)
-    local obj = vim.system({ "git", "show", hash }, { text = true }):wait()
-    if not obj or obj.code ~= 0 then
-        return false
+    local succeeded = false
+    local output = hash
+    local function exit_callback(job)
+        succeeded = job.code == 0
     end
-    return true
+    vim.system({ "git", "rev-parse", "--verify", "--quiet", hash }, { text = true }, exit_callback):wait()
+    if succeeded then
+        return output
+    end
+    return nil
 end
 
 local function search_commit_hash(line)
     for i in string.gmatch(line, "%S+") do
-        local hash = string.match(i, "^%x+$")
-        if hash ~= nil and #hash >= 7 and M.valid_commit_hash(hash) then
+        local hash = M.valid_commit_hash(i)
+        if hash ~= nil then
             return hash
         end
     end
