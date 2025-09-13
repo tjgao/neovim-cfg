@@ -12,7 +12,7 @@ local servers = {
                     -- for your neovim configuration.
                     library = {
                         { path = "${3rd}/luv/library", words = { "vim%.uv" } },
-                        table.unpack(vim.api.nvim_get_runtime_file("", true)),
+                        -- table.unpack(vim.api.nvim_get_runtime_file("", true)),
                     },
                     -- If lua_ls is really slow on your computer, you can try this instead:
                     -- library = { vim.env.VIMRUNTIME },
