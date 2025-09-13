@@ -1,7 +1,3 @@
-if not table.unpack then
-    table.unpack = unpack
-end
-
 local servers = {
     lua_ls = {
         -- cmd = {...},

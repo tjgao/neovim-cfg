@@ -58,7 +58,7 @@ local function move(str, idx, direction)
 end
 
 local function move_left()
-    local r, c = unpack(vim.api.nvim_win_get_cursor(0))
+    local r, c = table.unpack(vim.api.nvim_win_get_cursor(0))
     local line = vim.api.nvim_get_current_line()
     if c == 0 then
         if r <= 1 then
@@ -73,7 +73,7 @@ local function move_left()
 end
 
 local function move_right()
-    local r, c = unpack(vim.api.nvim_win_get_cursor(0))
+    local r, c = table.unpack(vim.api.nvim_win_get_cursor(0))
     local line = vim.api.nvim_get_current_line()
     if c == #line then
         local line_count = vim.api.nvim_buf_line_count(0)
@@ -89,14 +89,14 @@ local function move_right()
 end
 
 local function skip_to_end()
-    local r, _ = unpack(vim.api.nvim_win_get_cursor(0))
+    local r, _ = table.unpack(vim.api.nvim_win_get_cursor(0))
     local line = vim.api.nvim_get_current_line()
     vim.api.nvim_win_set_cursor(0, { r, #line })
     return true
 end
 
 local function skip_to_beginning()
-    local r, _ = unpack(vim.api.nvim_win_get_cursor(0))
+    local r, _ = table.unpack(vim.api.nvim_win_get_cursor(0))
     local line = vim.api.nvim_get_current_line()
     for i = 1, #line, 1 do
         if not isspace(string.sub(line, i, i)) then
@@ -116,7 +116,7 @@ local function smart_tab()
     if ok then
         if not cmp.visible() then
             local line = vim.api.nvim_get_current_line()
-            local _, c = unpack(vim.api.nvim_win_get_cursor(0))
+            local _, c = table.unpack(vim.api.nvim_win_get_cursor(0))
             for i = c, 0, -1 do
                 if nonspace(string.sub(line, i, i)) then
                     move_right()
