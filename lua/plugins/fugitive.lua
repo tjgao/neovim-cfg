@@ -40,7 +40,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
 local function search_commit()
     local commit = nil
-    local r, _ = unpack(vim.api.nvim_win_get_cursor(0))
+    local r, _ = table.unpack(vim.api.nvim_win_get_cursor(0))
     local get_commit_from_line = require("shared.utils").get_commit_from_line
     while r > 0 and commit == nil do
         commit = get_commit_from_line(r)
