@@ -6,8 +6,7 @@ vim.cmd([[set laststatus=3]])
 -- Do not want to see filler char in diff view
 vim.cmd([[set fillchars+=diff:\ ]])
 
--- vim.cmd("colorscheme nord")
-vim.cmd("colorscheme nordfox")
+vim.cmd("colorscheme nord")
 
 -- Steal from TJ's kickstart.nvim
 vim.api.nvim_create_autocmd("TextYankPost", {
