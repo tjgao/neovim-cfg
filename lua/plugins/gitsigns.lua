@@ -1,6 +1,7 @@
 if not table.unpack then
     table.unpack = unpack
 end
+
 local function gitsigns_blame(args)
     vim.cmd("Gitsigns blame " .. args.args)
 end
