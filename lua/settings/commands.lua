@@ -7,7 +7,6 @@ vim.cmd([[set laststatus=3]])
 vim.cmd([[set fillchars+=diff:\ ]])
 
 vim.cmd("colorscheme nord")
--- vim.cmd("colorscheme nordfox")
 
 -- Steal from TJ's kickstart.nvim
 vim.api.nvim_create_autocmd("TextYankPost", {
