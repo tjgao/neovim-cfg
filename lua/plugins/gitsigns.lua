@@ -1,3 +1,7 @@
+if not table.unpack then
+    table.unpack = unpack
+end
+
 local function gitsigns_blame(args)
     vim.cmd("Gitsigns blame " .. args.args)
 end
@@ -10,7 +14,7 @@ local group = vim.api.nvim_create_augroup("GitsignsGroup", {})
 
 local function search_commit()
     local commit = nil
-    local r, _ = table.unpack(vim.api.nvim_win_get_cursor(0))
+    local r, _ = unpack(vim.api.nvim_win_get_cursor(0))
     local get_commit_from_line = require("shared.utils").get_commit_from_line
     while r > 0 and commit == nil do
         commit = get_commit_from_line(r)
