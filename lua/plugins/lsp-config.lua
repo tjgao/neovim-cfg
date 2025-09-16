@@ -21,8 +21,9 @@ local servers = {
                     callSnippet = "Replace",
                 },
                 -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-                -- diagnostics = { disable = { 'missing-fields' } },
+                -- diagnostics = { disable = { "missing-fields" } },
                 diagnostics = {
+                    disable = { "missing-fields" },
                     globals = { "vim" },
                 },
             },
@@ -35,12 +36,7 @@ local servers = {
     ts_ls = {},
 }
 
-local function keymap(mode, keys, f, opts)
-    if opts.desc ~= nil and opts.desc ~= "" then
-        opts.desc = opts.desc .. " [LSP]"
-    end
-    vim.keymap.set(mode, keys, f, opts)
-end
+local keymap = require("shared.utils").keymap
 
 return {
     {
@@ -119,7 +115,9 @@ return {
                 desc = "Show errors/warnings when cursor stopped for some time",
                 group = vim.api.nvim_create_augroup("CursorHoldGroup", { clear = true }),
                 callback = function()
-                    vim.diagnostic.open_float({ focusable = false })
+                    if vim.diagnostic.is_enabled() then
+                        vim.diagnostic.open_float({ focusable = false })
+                    end
                 end,
             })
 
@@ -131,7 +129,7 @@ return {
 
             keymap("n", "gD", vim.lsp.buf.declaration, { desc = "Go to declaration" })
             keymap("n", "gi", vim.lsp.buf.implementation, { desc = "Go to implementation" })
-            keymap("n", "KK", vim.lsp.buf.signature_help, { desc = "Signature help" })
+            -- keymap("n", "KK", vim.lsp.buf.signature_help, { desc = "Signature help" })
             keymap("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename func/var" })
             keymap("n", "gR", vim.lsp.buf.references, { desc = "Find references" })
             keymap("n", "gr", ":Trouble lsp_references<CR>", { desc = "Find references in Trouble" })
