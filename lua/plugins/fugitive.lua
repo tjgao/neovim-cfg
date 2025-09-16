@@ -1,7 +1,6 @@
 if not table.unpack then
     table.unpack = unpack
 end
-
 local group = vim.api.nvim_create_augroup("FugitiveDiffview", {})
 
 local function get_sid(file)
