@@ -1,5 +1,8 @@
 -- Some little handy skip functions in insert mode
 -- Move forward/backward and stop at some potentially meaningful positions
+if not table.unpack then
+    table.unpack = unpack
+end
 
 local stoppers = { ".", ",", ";", "(", ")", "{", "}", "'", "'", '"', '"', "[", "]" }
 
