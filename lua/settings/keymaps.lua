@@ -1,8 +1,4 @@
-local keymap = function(mode, key, action, desc)
-    local opts = { noremap = true, silent = true }
-    opts.desc = desc
-    vim.keymap.set(mode, key, action, opts)
-end
+local keymap = require("shared.utils").keymap
 
 --Remap space as leader key
 keymap("", "<Space>", "<Nop>", "Leader remap")
@@ -84,6 +80,10 @@ keymap("n", "<leader>df", ":DiffviewFileHistory %<CR>", "File history [Diffview]
 keymap("n", "<C-0>", "^", "Go to beginning of line")
 keymap("n", "<leader>an", ":set relativenumber!<CR>", "Toggle relativenumber")
 keymap("n", "<leader>ad", ":lua vim.diagnostic.enable(not vim.diagnostic.is_enabled())<CR>", "Toggle diagnostics")
+
+keymap("n", "]h", ":Gitsigns next_hunk<CR>", { desc = "Gitsigns: Go to next hunk" })
+keymap("n", "[h", ":Gitsigns previous_hunk<CR>", { desc = "Gitsigns: Go to previous hunk" })
+keymap("n", "KK", ":Gitsigns preview_hunk<CR>", { desc = "Gitsigns: Preview hunk" })
 
 -- Obsidian --
 keymap("n", "<leader>on", ":ObsidianNew<CR>", "Open new note [Obsidian]")

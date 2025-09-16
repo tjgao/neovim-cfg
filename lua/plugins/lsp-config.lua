@@ -35,12 +35,7 @@ local servers = {
     ts_ls = {},
 }
 
-local function keymap(mode, keys, f, opts)
-    if opts.desc ~= nil and opts.desc ~= "" then
-        opts.desc = opts.desc .. " [LSP]"
-    end
-    vim.keymap.set(mode, keys, f, opts)
-end
+local keymap = require("shared.utils").keymap
 
 return {
     {
@@ -133,7 +128,7 @@ return {
 
             keymap("n", "gD", vim.lsp.buf.declaration, { desc = "Go to declaration" })
             keymap("n", "gi", vim.lsp.buf.implementation, { desc = "Go to implementation" })
-            keymap("n", "KK", vim.lsp.buf.signature_help, { desc = "Signature help" })
+            -- keymap("n", "KK", vim.lsp.buf.signature_help, { desc = "Signature help" })
             keymap("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename func/var" })
             keymap("n", "gR", vim.lsp.buf.references, { desc = "Find references" })
             keymap("n", "gr", ":Trouble lsp_references<CR>", { desc = "Find references in Trouble" })

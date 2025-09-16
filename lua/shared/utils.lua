@@ -53,4 +53,17 @@ M.titlize = function(title)
     return vim.trim(ans)
 end
 
+M.keymap = function(mode, key, action, desc)
+    local opts = { noremap = true, silent = true }
+    desc = desc or nil
+    if desc ~= nil then
+        if type(desc) == "string" then
+            opts.desc = desc
+        elseif type(desc) == "table" then
+            opts.desc = desc.desc
+        end
+    end
+    vim.keymap.set(mode, key, action, opts)
+end
+
 return M
