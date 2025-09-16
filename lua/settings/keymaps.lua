@@ -83,6 +83,7 @@ keymap("n", "<leader>df", ":DiffviewFileHistory %<CR>", "File history [Diffview]
 -- Small things --
 keymap("n", "<C-0>", "^", "Go to beginning of line")
 keymap("n", "<leader>an", ":set relativenumber!<CR>", "Toggle relativenumber")
+keymap("n", "<leader>ad", ":lua vim.diagnostic.enable(not vim.diagnostic.is_enabled())<CR>", "Toggle diagnostics")
 
 -- Obsidian --
 keymap("n", "<leader>on", ":ObsidianNew<CR>", "Open new note [Obsidian]")

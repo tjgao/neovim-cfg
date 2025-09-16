@@ -119,7 +119,9 @@ return {
                 desc = "Show errors/warnings when cursor stopped for some time",
                 group = vim.api.nvim_create_augroup("CursorHoldGroup", { clear = true }),
                 callback = function()
-                    vim.diagnostic.open_float({ focusable = false })
+                    if vim.diagnostic.is_enabled() then
+                        vim.diagnostic.open_float({ focusable = false })
+                    end
                 end,
             })
 
