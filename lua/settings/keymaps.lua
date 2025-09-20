@@ -85,6 +85,11 @@ keymap("n", "]h", ":Gitsigns next_hunk<CR>", { desc = "Gitsigns: Go to next hunk
 keymap("n", "[h", ":Gitsigns previous_hunk<CR>", { desc = "Gitsigns: Go to previous hunk" })
 keymap("n", "KK", ":Gitsigns preview_hunk<CR>", { desc = "Gitsigns: Preview hunk" })
 
+keymap("n", "<C-f>", "<C-f>zz", "Scroll down")
+keymap("n", "<C-b>", "<C-b>zz", "Scroll up")
+keymap("n", "n", "nzzzv", "Next search result")
+keymap("n", "N", "Nzzzv", "Previous search result")
+
 -- Obsidian --
 keymap("n", "<leader>on", ":ObsidianNew<CR>", "Open new note [Obsidian]")
 keymap("n", "<leader>os", ":ObsidianSearch<CR>", "Search note [Obsidian]")
