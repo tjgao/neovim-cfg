@@ -18,6 +18,17 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     end,
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "qf",
+    group = vim.api.nvim_create_augroup("quickfix", { clear = true }),
+    callback = function()
+        vim.keymap.set("n", "<CR>", function()
+            local cur = tostring(vim.fn.line("."))
+            vim.cmd("cc" .. cur)
+        end)
+    end,
+})
+
 -- We have new global status line so we want to disable bg color for window separator
 -- also, pick a nicer fg color
 vim.cmd("highlight WinSeparator guibg=none guifg=#4C566A")
