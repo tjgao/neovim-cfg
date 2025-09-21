@@ -6,10 +6,6 @@ end
 
 local stoppers = { ".", ",", ";", "(", ")", "{", "}", "'", "'", '"', '"', "[", "]" }
 
-if not table.unpack then
-    table.unpack = unpack
-end
-
 local function isspace(str)
     return str ~= nil and str:match("%s") ~= nil
 end
