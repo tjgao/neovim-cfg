@@ -17,7 +17,7 @@
     },
     "catppuccin": {
         "branch": "main",
-        "commit": "30fa4d122d9b22ad8b2e0ab1b533c8c26c4dde86"
+        "commit": "f19cab18ec4dc86d415512c7a572863b2adbcc18"
     },
     "cmp-buffer": {
         "branch": "main",
@@ -46,10 +46,6 @@
     "diffview.nvim": {
         "branch": "main",
         "commit": "4516612fe98ff56ae0415a259ff6361a89419b0a"
-    },
-    "flash.nvim": {
-        "branch": "main",
-        "commit": "b68bda044d68e4026c4e1ec6df3c5afd7eb8e341"
     },
     "friendly-snippets": {
         "branch": "main",
@@ -108,8 +104,8 @@
         "commit": "78111a97cebed3dfda8157af8141bf1915cfc327"
     },
     "nord.nvim": {
-        "branch": "wsl",
-        "commit": "57eac899c493bce9b3f5cd76489a9b46d2f59f89"
+        "branch": "master",
+        "commit": "274257ee12beabeaa588ffb3efb941246d97e3e7"
     },
     "nordic.nvim": {
         "branch": "main",
@@ -150,6 +146,10 @@
     "nvim-notify": {
         "branch": "master",
         "commit": "8701bece920b38ea289b457f902e2ad184131a5d"
+    },
+    "nvim-surround": {
+        "branch": "main",
+        "commit": "a868c256c861044beb9794b4dd126480dcdfbdad"
     },
     "nvim-tree.lua": {
         "branch": "master",
