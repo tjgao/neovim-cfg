@@ -127,7 +127,13 @@ return {
             -- keymap("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
             keymap("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
 
-            keymap("n", "gD", ":Telescope lsp_document_symbols<CR>", { desc = "List lsp document symbols" })
+            keymap("n", "gD", function()
+                require("telescope.builtin").lsp_document_symbols({
+                    -- fname_width = 20,
+                    symbol_width = 0.8,
+                    symbol_type_width = 0.2,
+                })
+            end, { desc = "List lsp document symbols" })
             keymap("n", "gi", vim.lsp.buf.implementation, { desc = "Go to implementation" })
             -- keymap("n", "KK", vim.lsp.buf.signature_help, { desc = "Signature help" })
             keymap("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename func/var" })
