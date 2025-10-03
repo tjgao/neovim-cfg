@@ -102,13 +102,14 @@ return {
                 },
             },
         })
-        local ts_repeat_move = require("nvim-treesitter.textobjects.repeatable_move")
-        vim.keymap.set({ "n", "o", "x" }, ";", ts_repeat_move.repeat_last_move_next)
-        vim.keymap.set({ "n", "o", "x" }, ",", ts_repeat_move.repeat_last_move_previous)
-
-        vim.keymap.set({ "n", "o", "x" }, "f", ts_repeat_move.builtin_f_expr, { expr = true })
-        vim.keymap.set({ "n", "o", "x" }, "F", ts_repeat_move.builtin_F_expr, { expr = true })
-        vim.keymap.set({ "n", "o", "x" }, "t", ts_repeat_move.builtin_t_expr, { expr = true })
-        vim.keymap.set({ "n", "o", "x" }, "T", ts_repeat_move.builtin_T_expr, { expr = true })
+        -- the following config conflict with flash.nvim, disable for now
+        -- local ts_repeat_move = require("nvim-treesitter.textobjects.repeatable_move")
+        -- vim.keymap.set({ "n", "o", "x" }, ";", ts_repeat_move.repeat_last_move_next)
+        -- vim.keymap.set({ "n", "o", "x" }, ",", ts_repeat_move.repeat_last_move_previous)
+        --
+        -- vim.keymap.set({ "n", "o", "x" }, "f", ts_repeat_move.builtin_f_expr, { expr = true })
+        -- vim.keymap.set({ "n", "o", "x" }, "F", ts_repeat_move.builtin_F_expr, { expr = true })
+        -- vim.keymap.set({ "n", "o", "x" }, "t", ts_repeat_move.builtin_t_expr, { expr = true })
+        -- vim.keymap.set({ "n", "o", "x" }, "T", ts_repeat_move.builtin_T_expr, { expr = true })
     end,
 }
