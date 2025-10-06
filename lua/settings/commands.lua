@@ -49,3 +49,8 @@ local function toggle_spell()
 end
 
 vim.api.nvim_create_user_command("Spell", toggle_spell, { desc = "Toggle spell" })
+
+vim.api.nvim_create_user_command("Df", function(opts)
+    local args = table.concat(opts.fargs, " ")
+    vim.cmd(("DiffviewOpen %s"):format(args))
+end, { nargs = "*" })
