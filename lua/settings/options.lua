@@ -1,3 +1,4 @@
+local tabwidth = 2
 local options = {
     backup = false,                               -- creates backup file
     spelllang = "en_au",                          -- spell checking language
@@ -9,9 +10,9 @@ local options = {
     completeopt = { "menuone", "noselect" },      -- for cmp
     termguicolors = true,                         -- for most terminals this is supported
     mouse = "a",                                  -- allows mouse use
-    tabstop = 2,                                  -- inserts 4 spaces for a tab
-    shiftwidth = 2,                               -- the number of spaces inserted for each indentation
-    softtabstop = 2,                              -- how many columns (spaces) cursor moves right for a tab press, and left for a BS
+    tabstop = tabwidth,                           -- inserts 'tabwidth' spaces for a tab
+    shiftwidth = tabwidth,                        -- the number of spaces inserted for each indentation
+    softtabstop = tabwidth,                       -- how many columns (spaces) cursor moves right for a tab press, and left for a BS
     wrap = false,                                 -- do not wrap long lines
     expandtab = true,                             -- converts tabs to spaces
     number = true,                                -- shows line numbers
