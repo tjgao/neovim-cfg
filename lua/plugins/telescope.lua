@@ -66,18 +66,34 @@ M = {
             { "nvim-telescope/telescope-live-grep-args.nvim" },
         },
         config = function()
+            local telescope = require("telescope")
+            local lga_actions = require("telescope-live-grep-args.actions")
+            telescope.setup({
+                auto_quoting = true,
+                mappings = {
+                    i = {
+                        ["<C-k>"] = lga_actions.quote_prompt(),
+                        ["<C-i>"] = lga_actions.quote_prompt({ postfix = " --iglob " }),
+                        ["<C-space>"] = lga_actions.to_fuzzy_refine,
+                    },
+                },
+            })
+            telescope.load_extension("live_grep_args")
+
             builtin = require("telescope.builtin")
+            local live_grep_args = require("telescope").extensions.live_grep_args
+            local live_grep_args_shortcut = require("telescope-live-grep-args.shortcuts")
             keymap("n", "<C-p>", regular_file_search, { desc = "Search file in current folder" })
             keymap("n", "<leader>p", repo_file_search, { desc = "Search file in repo" })
             keymap("n", "<leader>b", function()
                 buffer_search()
             end, { desc = "Search buffers" })
             keymap("n", "<leader>/", function()
-                require("telescope").extensions.live_grep_args.live_grep_args()
+                live_grep_args.live_grep_args()
             end, { desc = "Live rg search" })
             keymap("n", "<leader>sh", builtin.help_tags, { desc = "Search help" })
             keymap("n", "<leader>sk", builtin.keymaps, { desc = "Search keymaps" })
-            keymap("n", "<leader>ss", builtin.grep_string, { desc = "Search any word" })
+            keymap("n", "<leader>ss", live_grep_args_shortcut.grep_word_under_cursor, { desc = "Search any word" })
             keymap("n", "<leader>sd", builtin.diagnostics, { desc = "Search diagnostics" })
             keymap("n", "<leader>so", builtin.oldfiles, { desc = "Search recent files" })
             keymap("n", "<leader>sn", nvim_file_search, { desc = "Search neovim files" })
@@ -110,15 +126,7 @@ M = {
                 vim.cmd("lopen")
                 -- vim.cmd("Trouble loclist toggle focus=true")
             end
-            local setting = {
-                mappings = {
-                    i = { ["<c-f>"] = actions.to_fuzzy_refine },
-                },
-            }
             require("telescope").setup({
-                pickers = {
-                    live_grep = setting,
-                },
                 extensions = {
                     ["ui-select"] = {
                         require("telescope.themes").get_dropdown({}),
