@@ -1,4 +1,4 @@
-local tabwidth = 2
+local tabwidth = 4
 local options = {
     backup = false,                               -- creates backup file
     spelllang = "en_au",                          -- spell checking language
