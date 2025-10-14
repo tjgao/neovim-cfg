@@ -107,7 +107,7 @@ vim.api.nvim_create_user_command("Gl", short_gitlog, {
     desc = "One line git log",
 })
 
-vim.api.nvim_create_user_command("Gbb", function()
+vim.api.nvim_create_user_command("Gb", function()
     vim.cmd("G branch")
 end, { desc = "Shortcut for git branch" })
 

@@ -5,7 +5,7 @@ local function gitsigns_blame(args)
     vim.cmd("Gitsigns blame " .. args.args)
 end
 
-vim.api.nvim_create_user_command("Gb", gitsigns_blame, {
+vim.api.nvim_create_user_command("Gbb", gitsigns_blame, {
     desc = "Gitsigns blame",
 })
 
