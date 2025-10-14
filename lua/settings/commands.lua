@@ -21,9 +21,19 @@ vim.api.nvim_create_autocmd("FileType", {
     pattern = "qf",
     group = vim.api.nvim_create_augroup("quickfix", { clear = true }),
     callback = function()
+        local winid = vim.api.nvim_get_current_win()
+        local win_info = vim.fn.getwininfo(winid)[1]
+        local cmd
+        if win_info["loclist"] == 1 then
+            cmd = "ll"
+        elseif win_info["quickfix"] == 1 then
+            cmd = "cc"
+        else
+            return
+        end
         vim.keymap.set("n", "<CR>", function()
             local cur = tostring(vim.fn.line("."))
-            vim.cmd("cc" .. cur)
+            vim.cmd(cmd .. cur)
         end)
     end,
 })
