@@ -104,16 +104,16 @@
 local width = 100
 local margin = 1
 
-local function add_inner_margin(lines, margin)
+local function add_inner_left_margin(lines, margin)
     local padded = {}
     for _, line in ipairs(lines) do
-        table.insert(padded, string.rep(" ", margin) .. line .. string.rep(" ", margin))
+        table.insert(padded, string.rep(" ", margin) .. line)
     end
     return padded
 end
 
 local function breadscrumb_popup(text)
-    local lines = type(text) == "string" and add_inner_margin(vim.split(text, "\n"), margin) or text
+    local lines = type(text) == "string" and add_inner_left_margin(vim.split(text, "\n"), margin) or text
     local buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 
@@ -162,7 +162,7 @@ end
 
 local ts = require("nvim-treesitter")
 
-opts = {
+local opts = {
     indicator_size = 10000,
     type_patterns = { "namespace", "class", "struct", "function", "method", "interface" },
     transform_fn = function(line, _node)
