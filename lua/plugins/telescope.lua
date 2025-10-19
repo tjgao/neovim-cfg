@@ -31,6 +31,7 @@ local function regular_file_search(fn, folder)
     local opts = {}
     local files = "Files: "
     opts.prompt_title = files .. folder
+    opts.find_command = { "fd" }
     if fn ~= nil and fn ~= "" then
         opts.default_text = fn
     end
