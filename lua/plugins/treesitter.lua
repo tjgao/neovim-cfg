@@ -1,4 +1,5 @@
 local langs = {
+    "c",
     "bash",
     "cpp",
     "css",
