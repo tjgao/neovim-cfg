@@ -83,14 +83,13 @@ keymap("n", "<leader>ad", ":lua vim.diagnostic.enable(not vim.diagnostic.is_enab
 
 keymap("n", "]h", ":Gitsigns next_hunk<CR>", { desc = "Gitsigns: Go to next hunk" })
 keymap("n", "[h", ":Gitsigns previous_hunk<CR>", { desc = "Gitsigns: Go to previous hunk" })
-keymap("n", "KK", ":Gitsigns preview_hunk<CR>", { desc = "Gitsigns: Preview hunk" })
 
 keymap("n", "<C-f>", "<C-f>zz", "Scroll down")
 keymap("n", "<C-b>", "<C-b>zz", "Scroll up")
 keymap("n", "n", "nzzzv", "Next search result")
 keymap("n", "N", "Nzzzv", "Previous search result")
 
-keymap("n", "<C-h>", ":LspClangdSwitchSourceHeader<CR>", "Switch source and header")
+keymap("n", "<C-k>", ":LspClangdSwitchSourceHeader<CR>", "Switch source and header")
 
 -- Obsidian --
 keymap("n", "<leader>on", ":ObsidianNew<CR>", "Open new note [Obsidian]")

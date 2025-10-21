@@ -104,10 +104,10 @@
 local width = 100
 local margin = 1
 
-local function add_inner_left_margin(lines, margin)
+local function add_inner_left_margin(lines, mgin)
     local padded = {}
     for _, line in ipairs(lines) do
-        table.insert(padded, string.rep(" ", margin) .. line)
+        table.insert(padded, string.rep(" ", mgin) .. line)
     end
     return padded
 end
@@ -161,10 +161,12 @@ local function split_string(str, size)
 end
 
 local ts = require("nvim-treesitter")
+local gitsigns = require("gitsigns")
 
 local opts = {
     indicator_size = 10000,
     type_patterns = { "namespace", "class", "struct", "function", "method", "interface" },
+    ---@diagnostic disable-next-line: unused-local
     transform_fn = function(line, _node)
         return line:gsub("%s*[%[%(%{]*%s*$", "")
     end,
@@ -172,7 +174,38 @@ local opts = {
     allow_duplicates = false,
 }
 
-require("shared.utils").keymap("n", "<C-k>", function()
-    local bread = ts.statusline(opts)
-    breadscrumb_popup(split_string(bread, width))
+local function line_in_hunk()
+    local hunks = gitsigns.get_hunks()
+    if not hunks then
+        return false
+    end
+
+    local current_line = vim.fn.line(".")
+    for _, hunk in ipairs(hunks) do
+        if hunk.type == "delete" then
+            start_line = hunk.removed.start - 1
+            if start_line == 0 then
+                start_line = 1
+            end
+            end_line = start_line
+        else
+            start_line = hunk.added.start
+            end_line = hunk.added.start + hunk.added.count - 1
+        end
+        if current_line >= start_line and current_line <= end_line then
+            return true
+        end
+    end
+    return false
+end
+
+require("shared.utils").keymap("n", "KK", function()
+    if line_in_hunk() then
+        gitsigns.preview_hunk()
+    else
+        local bread = ts.statusline(opts)
+        if bread ~= nil and bread ~= "" then
+            breadscrumb_popup(split_string(bread, width))
+        end
+    end
 end, { desc = "Show treesitter breadcrumb" })
