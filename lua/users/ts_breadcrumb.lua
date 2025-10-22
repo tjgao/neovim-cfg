@@ -182,6 +182,7 @@ local function line_in_hunk()
 
     local current_line = vim.fn.line(".")
     local start_line
+    local end_line
     for _, hunk in ipairs(hunks) do
         if hunk.type == "delete" then
             start_line = hunk.removed.start - 1
