@@ -83,8 +83,22 @@ M = {
             telescope.load_extension("live_grep_args")
 
             builtin = require("telescope.builtin")
-            local live_grep_args = require("telescope").extensions.live_grep_args
-            local live_grep_args_shortcut = require("telescope-live-grep-args.shortcuts")
+            local live_grep_args = telescope.extensions.live_grep_args
+
+            local function grep_in_git_files()
+                local live_grep_args_shortcut = require("telescope-live-grep-args.shortcuts")
+                local is_git_repo = vim.fn.system("git rev-parse --is-inside-work-tree 2> /dev/null") == "true\n"
+                if is_git_repo then
+                    local git_files = vim.fn.systemlist("git ls-files")
+                    live_grep_args_shortcut.grep_word_under_cursor({
+                        grep_open_files = false,
+                        search_dirs = git_files,
+                    })
+                else
+                    live_grep_args_shortcut.grep_word_under_cursor()
+                end
+            end
+
             keymap("n", "<C-p>", regular_file_search, { desc = "Search file in current folder" })
             keymap("n", "<leader>p", repo_file_search, { desc = "Search file in repo" })
             keymap("n", "<leader>b", function()
@@ -94,8 +108,8 @@ M = {
                 live_grep_args.live_grep_args()
             end, { desc = "Live rg search" })
             keymap("n", "<leader>sh", builtin.help_tags, { desc = "Search help" })
+            keymap("n", "<leader>ss", grep_in_git_files, { desc = "Search the word under cursor" })
             keymap("n", "<leader>sk", builtin.keymaps, { desc = "Search keymaps" })
-            keymap("n", "<leader>ss", live_grep_args_shortcut.grep_word_under_cursor, { desc = "Search any word" })
             keymap("n", "<leader>sd", builtin.diagnostics, { desc = "Search diagnostics" })
             keymap("n", "<leader>so", builtin.oldfiles, { desc = "Search recent files" })
             keymap("n", "<leader>sn", nvim_file_search, { desc = "Search neovim files" })
