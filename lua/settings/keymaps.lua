@@ -89,7 +89,7 @@ keymap("n", "<C-b>", "<C-b>zz", "Scroll up")
 keymap("n", "n", "nzzzv", "Next search result")
 keymap("n", "N", "Nzzzv", "Previous search result")
 
-keymap("n", "<A-k>", ":LspClangdSwitchSourceHeader<CR>", "Switch source and header")
+keymap("n", "<C-,>", ":LspClangdSwitchSourceHeader<CR>", "Switch source and header")
 
 -- Obsidian --
 keymap("n", "<leader>on", ":ObsidianNew<CR>", "Open new note [Obsidian]")
