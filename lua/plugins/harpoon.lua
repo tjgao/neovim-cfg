@@ -14,7 +14,7 @@ return {
             -- we remove it first and then append it back
             -- this allows us to update the file row/col location
             harpoon:list():remove()
-            harpoon:list():append()
+            harpoon:list():add()
         end, { desc = "Add current file [Harpoon]" })
         vim.keymap.set("n", "<leader>hm", function()
             harpoon.ui:toggle_quick_menu(harpoon:list())
