@@ -85,7 +85,9 @@ return {
         {
             "<leader>p",
             function()
-                Snacks.picker.git_files()
+                Snacks.picker.git_files({
+                    layout = "vertical",
+                })
             end,
             desc = "Search git files",
         },
@@ -93,10 +95,14 @@ return {
             "<leader>b",
             function()
                 Snacks.picker.buffers({
-                    on_show = function()
-                        vim.cmd.stopinsert()
-                    end,
+                    focus = "list",
                     current = false,
+                    layout = {
+                        layout = {
+                            width = 0.3,
+                        },
+                        preview = false,
+                    },
                 })
             end,
             desc = "Search buffers",
@@ -104,7 +110,9 @@ return {
         {
             "<C-p>",
             function()
-                Snacks.picker.files()
+                Snacks.picker.files({
+                    layout = "vertical",
+                })
             end,
             desc = "Search files",
         },
