@@ -11,7 +11,7 @@ return {
                 javascript = { "template_string" },
                 java = false, -- don't check treesitter on java
             },
-            disable_filetype = { "TelescopePrompt" },
+            disable_filetype = { "TelescopePrompt", "snacks_picker_input" },
         })
         local ts_conds = require("nvim-autopairs.ts-conds")
         -- press % => %% only while inside a comment or string
