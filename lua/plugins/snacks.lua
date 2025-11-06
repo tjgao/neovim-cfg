@@ -8,7 +8,7 @@ return {
         picker = {
             enabled = true,
             layout = {
-                blackdrop = true,
+                backdrop = true,
             },
             matcher = { frecency = true },
             formatters = {
@@ -16,9 +16,19 @@ return {
                     filename_first = true,
                 },
             },
-            previewer = {
+            previewers = {
                 diff = {
                     style = "syntax",
+                },
+            },
+            win = {
+                input = {
+                    keys = {
+                        ["<C-j>"] = { "preview_scroll_down", mode = { "i", "n" } },
+                        ["<C-k>"] = { "preview_scroll_up", mode = { "i", "n" } },
+                        ["<C-h>"] = { "preview_scroll_left", mode = { "i", "n" } },
+                        ["<C-l>"] = { "preview_scroll_right", mode = { "i", "n" } },
+                    },
                 },
             },
         },
@@ -136,9 +146,18 @@ return {
         {
             "<leader>si",
             function()
-                Snacks.picker.icons()
+                Snacks.picker.icons({
+                    layout = "select",
+                })
             end,
             desc = "Search icons",
+        },
+        {
+            "<leader>sk",
+            function()
+                Snacks.picker.keymaps()
+            end,
+            desc = "Search keymaps",
         },
         {
             "<leader>sd",
@@ -153,6 +172,29 @@ return {
                 Snacks.picker.marks({ focus = "list" })
             end,
             desc = "Search marks",
+        },
+        {
+            "<leader>sgb",
+            function()
+                Snacks.picker.git_branches({
+                    layout = "select",
+                })
+            end,
+            desc = "Search git branches",
+        },
+        {
+            "<leader>sgl",
+            function()
+                Snacks.picker.git_log()
+            end,
+            desc = "Search git log",
+        },
+        {
+            "<leader>sl",
+            function()
+                Snacks.picker.lsp_symbols()
+            end,
+            desc = "Search lsp symbols",
         },
     },
 }
