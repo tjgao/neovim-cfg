@@ -59,6 +59,7 @@ end
 M = {
     {
         "nvim-telescope/telescope.nvim",
+        enabled = false,
         dependencies = {
             { "nvim-lua/plenary.nvim" },
             { "nvim-telescope/telescope-rg.nvim" },
@@ -95,6 +96,7 @@ M = {
     },
     {
         "nvim-telescope/telescope-ui-select.nvim",
+        enabled = false,
         config = function()
             local trouble = require("trouble.sources.telescope")
             local actions = require("telescope.actions")
@@ -151,6 +153,7 @@ M = {
     },
     {
         "nvim-telescope/telescope-fzf-native.nvim",
+        enabled = false,
         build = "make",
         config = function()
             local t = require("telescope")
