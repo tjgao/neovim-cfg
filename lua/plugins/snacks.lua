@@ -186,6 +186,7 @@ return {
             function()
                 Snacks.picker.git_branches({
                     layout = "select",
+                    focus = "list",
                 })
             end,
             desc = "Search git branches",
@@ -193,7 +194,7 @@ return {
         {
             "<leader>sgl",
             function()
-                Snacks.picker.git_log()
+                Snacks.picker.git_log({ focus = "list" })
             end,
             desc = "Search git log",
         },

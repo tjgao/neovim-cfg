@@ -52,7 +52,6 @@ keymap("x", "J", ":move '>+1<CR>gv-gv", "Move visual selected down")
 keymap("x", "K", ":move '<-2<CR>gv-gv", "Move visual selected up")
 keymap("x", "<A-j>", ":move '>+1<CR>gv-gv", "Move visual selected down")
 keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", "Move visual selected up")
-
 keymap("n", "<C-m>", ":noh<CR>", "Clear search highlight")
 
 keymap("n", "<leader>rh", ":Gitsigns reset_hunk<CR>", "Reset hunk [Gitsigns]")
@@ -94,3 +93,5 @@ keymap("n", "<C-,>", ":LspClangdSwitchSourceHeader<CR>", "Switch source and head
 -- Obsidian --
 keymap("n", "<leader>on", ":ObsidianNew<CR>", "Open new note [Obsidian]")
 keymap("n", "<leader>os", ":ObsidianSearch<CR>", "Search note [Obsidian]")
+
+keymap("n", "<leader>tt", ":TSJToggle<CR>", "Toggle treesitter join")
