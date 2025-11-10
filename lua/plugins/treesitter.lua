@@ -20,6 +20,11 @@ local langs = {
     "vim",
     "vimdoc",
     "yaml",
+    "norg",
+    "scss",
+    "svelte",
+    "typst",
+    "vue",
 }
 return {
     "nvim-treesitter/nvim-treesitter",
