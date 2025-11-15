@@ -5,6 +5,13 @@ return {
     opts = {
         bigfile = { enabled = true },
         explorer = { enabled = false },
+        image = {
+            enabled = true,
+            doc = {
+                inline = false,
+                float = true,
+            },
+        },
         picker = {
             enabled = true,
             layout = {
@@ -119,6 +126,13 @@ return {
         {
             "<leader>/",
             function()
+                Snacks.picker.git_grep()
+            end,
+            desc = "Git live grep",
+        },
+        {
+            "<leader>?",
+            function()
                 Snacks.picker.grep()
             end,
             desc = "Live grep",
@@ -132,6 +146,22 @@ return {
         },
         {
             "<leader>ss",
+            function()
+                Snacks.picker.pick({
+                    focus = "list",
+                    source = "git_grep",
+                    regex = false,
+                    live = false,
+                    search = function(picker)
+                        return picker:word()
+                    end,
+                    supports_live = true,
+                })
+            end,
+            desc = "Grep current word in git files",
+        },
+        {
+            "<leader>sS",
             function()
                 Snacks.picker.grep_word({ focus = "list" })
             end,
