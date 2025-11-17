@@ -101,13 +101,16 @@ return {
         {
             "<leader>b",
             function()
-                Snacks.picker.buffers({
+                Snacks.picker.pick({
                     focus = "list",
+                    source = "buffers",
                     current = false,
                     layout = {
                         layout = {
-                            width = 0.3,
+                            height = 0.5,
+                            width = 40,
                         },
+                        preset = "vertical",
                         preview = false,
                     },
                 })
@@ -151,11 +154,18 @@ return {
                     focus = "list",
                     source = "git_grep",
                     regex = false,
+                    format = "file",
                     live = false,
                     search = function(picker)
                         return picker:word()
                     end,
                     supports_live = true,
+                    formatters = {
+                        file = {
+                            filename_first = true,
+                            min_width = 100,
+                        },
+                    },
                 })
             end,
             desc = "Grep current word in git files",
