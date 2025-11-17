@@ -183,7 +183,7 @@ end
 local function custom_mode()
     local mode = vim.fn.mode()
     local mode_map = {
-        ["n"] = "N", -- Normal mode
+        ["n"] = "󰝆", -- Normal mode
         ["no"] = "O-PENDING",
         ["nov"] = "O-PENDING",
         ["noV"] = "O-PENDING",
@@ -194,7 +194,7 @@ local function custom_mode()
         ["nt"] = "N",
         ["v"] = "V",
         ["V"] = "V",
-        [" "] = "V",
+        ["CTRL-V"] = "V",
         ["s"] = "S",
         ["S"] = "S",
         [" S"] = "S",
@@ -229,6 +229,7 @@ return {
         --     fore = utils.extract_color_from_hllist("fg", { "Normal", "StatusLine" }, "#000000"),
         --     back2 = utils.extract_color_from_hllist("bg", { "StatusLine" }, "#000000"),
         -- }
+
         local gi_component = create_gitinfo_component()
         local config = {
             options = {

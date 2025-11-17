@@ -42,5 +42,21 @@ vim.api.nvim_create_autocmd("ColorScheme", {
     pattern = "*",
     callback = function()
         vim.api.nvim_set_hl(0, "SnacksIndentScope", { fg = "#666666" })
+
+        local modes = {
+            "lualine_a_insert",
+            "lualine_a_replace",
+            "lualine_a_command",
+            "lualine_a_terminal",
+            "lualine_a_visual",
+            "lualine_a_normal",
+            "lualine_a_inactive",
+        }
+
+        for _, mode in pairs(modes) do
+            local mode_hl = vim.api.nvim_get_hl(0, { name = mode, link = false })
+            mode_hl.bold = true
+            vim.api.nvim_set_hl(0, mode, mode_hl)
+        end
     end,
 })
