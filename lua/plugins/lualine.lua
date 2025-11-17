@@ -180,6 +180,39 @@ end
 -- this should not be used for inactive case,
 -- as it is using current window's width
 
+local function custom_mode()
+    local mode = vim.fn.mode()
+    local mode_map = {
+        ["n"] = "N", -- Normal mode
+        ["no"] = "O-PENDING",
+        ["nov"] = "O-PENDING",
+        ["noV"] = "O-PENDING",
+        ["no "] = "O-PENDING",
+        ["niI"] = "N",
+        ["niR"] = "N",
+        ["niV"] = "N",
+        ["nt"] = "N",
+        ["v"] = "V",
+        ["V"] = "V",
+        [" "] = "V",
+        ["s"] = "S",
+        ["S"] = "S",
+        [" S"] = "S",
+        ["i"] = "I",
+        ["R"] = "R",
+        ["Rv"] = "VR",
+        ["c"] = "C",
+        ["cv"] = "EX",
+        ["ce"] = "EX",
+        ["r"] = "R",
+        ["rm"] = "MORE",
+        ["r?"] = "CFM",
+        ["!"] = "SH",
+        ["t"] = "T",
+    }
+    return mode_map[mode] or mode -- Fallback to original mode if not mapped
+end
+
 return {
     "nvim-lualine/lualine.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons", opt = true },
@@ -200,11 +233,12 @@ return {
         local config = {
             options = {
                 icons_enabled = vim.opt.termguicolors,
-                -- theme = "nord",
-                --    	component_separators = '',
-                --    	section_separators = '',
+                -- theme = "iceberg",
+                component_separators = "",
+                section_separators = "",
             },
             sections = {
+                lualine_a = { custom_mode },
                 lualine_b = {
                     { gi_component },
                     "branch",
