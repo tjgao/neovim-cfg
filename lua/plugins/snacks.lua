@@ -25,7 +25,7 @@ return {
             },
             previewers = {
                 diff = {
-                    style = "syntax",
+                    style = "fancy",
                 },
             },
             win = {

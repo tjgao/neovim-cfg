@@ -7,12 +7,27 @@ return {
             name = "catppuccin",
             priority = 1000,
         },
-        -- {
-        --     "rafi/awesome-vim-colorschemes",
-        -- },
+        {
+            "rafi/awesome-vim-colorschemes",
+        },
+        {
+            "sainnhe/everforest",
+            config = function()
+                vim.g.everforest_background = "hard"
+            end,
+        },
+        {
+            "rose-pine/neovim",
+            name = "rose-ine",
+        },
+        {
+            "folke/tokyonight.nvim",
+            name = "tokyonight",
+        },
         {
             "tjgao/nord.nvim",
             branch = "wsl",
+            name = "tjnord",
             config = function()
                 vim.g.nord_italic = false
                 vim.g.nord_treesitter_bold = false
