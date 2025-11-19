@@ -8,6 +8,12 @@ return {
             priority = 1000,
         },
         {
+            "vague-theme/vague.nvim",
+        },
+        {
+            "webhooked/kanso.nvim",
+        },
+        {
             "rafi/awesome-vim-colorschemes",
         },
         {
