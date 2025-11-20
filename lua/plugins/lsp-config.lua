@@ -67,41 +67,10 @@ return {
         },
         config = function()
             local masonlsp = require("mason-lspconfig")
-            masonlsp.setup({
-                handlers = {
-                    function(server_name)
-                        local capabilities = vim.lsp.protocol.make_client_capabilities()
-                        if server_name == "tsserver" then
-                            server_name = "ts_ls"
-                        end
-                        local server = servers[server_name] or {}
-                        -- This handles overriding only values explicitly passed
-                        -- by the server configuration above. Useful when disabling
-                        -- certain features of an LSP (for example, turning off formatting for tsserver)
-                        server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-                        -- '🭽', '▔', '🭾', '▕', '🭿', '▁', '🭼', '▏'
-                        local border = {
-                            { "🭽", "FloatBorder" },
-                            { "▔", "FloatBorder" },
-                            { "🭾", "FloatBorder" },
-                            { "▕", "FloatBorder" },
-                            { "🭿", "FloatBorder" },
-                            { "▁", "FloatBorder" },
-                            { "🭼", "FloatBorder" },
-                            { "▏", "FloatBorder" },
-                        }
-                        local modified_handlers = {
-                            ["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = border }),
-                            ["textDocument/signatureHelp"] = vim.lsp.with(
-                                vim.lsp.handlers.signature_help,
-                                { border = border }
-                            ),
-                        }
-                        server.handlers = modified_handlers
-                        require("lspconfig")[server_name].setup(server)
-                    end,
-                },
-            })
+            for server_name, server in pairs(servers) do
+                vim.lsp.config(server_name, server)
+            end
+            masonlsp.setup()
         end,
     },
     {
@@ -120,19 +89,37 @@ return {
                     end
                 end,
             })
-
+            local Snacks = require("snacks")
             keymap("n", "K", vim.lsp.buf.hover, { desc = "Hover help" })
-            -- keymap("n", "Z", vim.diagnostic.open_float, { desc = "Show current diagnostic info" })
-            keymap("n", "gd", ":Trouble lsp_definitions focus=true<CR>", { desc = "Go to definition" })
-            -- keymap("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
+            keymap("n", "gd", function()
+                Snacks.picker.pick({
+                    source = "lsp_definitions",
+                    formatters = {
+                        file = {
+                            filename_first = true,
+                            min_width = 100,
+                        },
+                    },
+                    focus = "list",
+                })
+            end, { desc = "Go to definition" })
             keymap("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
 
             keymap("n", "gi", vim.lsp.buf.implementation, { desc = "Go to implementation" })
             -- keymap("n", "KK", vim.lsp.buf.signature_help, { desc = "Signature help" })
             keymap("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename func/var" })
-            keymap("n", "gR", vim.lsp.buf.references, { desc = "Find references" })
-            keymap("n", "gr", ":Trouble lsp_references focus=true<CR>", { desc = "Find references in Trouble" })
-            keymap("n", "<leader>gd", ":Trouble diagnostics focus=true<CR>", { desc = "Show workspace diagnostics" })
+            keymap("n", "gr", function()
+                Snacks.picker.pick({
+                    source = "lsp_references",
+                    formatters = {
+                        file = {
+                            filename_first = true,
+                            min_width = 100,
+                        },
+                    },
+                    focus = "list",
+                })
+            end, { desc = "Find LSP references" })
             keymap("n", "[d", function()
                 vim.diagnostic.jump({ count = -1 })
             end, { desc = "Go to prev diagnostic" })
