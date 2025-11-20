@@ -56,19 +56,6 @@ keymap("n", "<C-m>", ":noh<CR>", "Clear search highlight")
 
 keymap("n", "<leader>rh", ":Gitsigns reset_hunk<CR>", "Reset hunk [Gitsigns]")
 
-keymap("n", "<leader>td", function()
-    vim.g.last_trouble_mode = "diagnostics"
-    vim.cmd("Trouble diagnostics toggle focus=true")
-end, "Diagnostics toggle [Trouble]")
-keymap("n", "<leader>tq", function()
-    vim.g.last_trouble_mode = "qflist"
-    vim.cmd("Trouble qflist toggle focus=true")
-end, "Quickfix toggle [Trouble]")
-keymap("n", "<leader>tl", function()
-    vim.g.last_trouble_mode = "loclist"
-    vim.cmd("Trouble loclist toggle focus=true")
-end, "Loclist toggle [Trouble]")
-
 -- Diffview handy keymaps --
 -- keymap("n", "<leader>dd", ":DiffviewClose<CR>", "Close [Diffview]")
 -- for some reason DiffviewClose sometimes doesn't work, have to close tab directly
@@ -95,3 +82,11 @@ keymap("n", "<leader>on", ":ObsidianNew<CR>", "Open new note [Obsidian]")
 keymap("n", "<leader>os", ":ObsidianSearch<CR>", "Search note [Obsidian]")
 
 keymap("n", "<leader>tt", ":TSJToggle<CR>", "Toggle treesitter join")
+
+keymap("n", "<leader>qq", function()
+    require("quicker").toggle()
+end, "Toggle quickfix")
+
+keymap("n", "<leader>ql", function()
+    require("quicker").toggle({ loclist = true })
+end, "Toggle loclist")
