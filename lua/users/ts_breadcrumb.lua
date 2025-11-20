@@ -117,7 +117,6 @@ local function breadscrumb_popup(text)
     local buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 
-    local cursor = vim.api.nvim_win_get_cursor(0)
     local opts = {
         relative = "cursor",
         row = 1,
