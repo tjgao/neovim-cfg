@@ -10,7 +10,7 @@ end
 
 local Snacks = require("snacks")
 
-function removeRedundantSpaces(str)
+local function removeRedundantSpaces(str)
     -- Replace multiple spaces with a single space
     local cleanedStr = string.gsub(str, "%s+", " ")
     -- Trim leading and trailing spaces
@@ -18,9 +18,9 @@ function removeRedundantSpaces(str)
     return cleanedStr
 end
 
-function escapeText(str)
+local function escapeText(str)
     local escapedStr = string.gsub(str, "%$", "\\%$")
-    -- escapedStr = string.gsub(escapedStr, "#", "\\#")
+    escapedStr = string.gsub(escapedStr, "%*", "\\*")
     return escapedStr
 end
 
@@ -36,6 +36,7 @@ local dedoc = function(opts)
             },
         },
 
+        ---@diagnostic disable-next-line: unused-local
         finder = function(config, ctx)
             local command = string.format("dedoc ss %s | tail -n +3", opts.lang)
             return require("snacks.picker.source.proc").proc({
@@ -54,6 +55,7 @@ local dedoc = function(opts)
             }, ctx)
         end,
 
+        ---@diagnostic disable-next-line: unused-local
         preview = function(item, ctx)
             local buf = item.picker.preview.win.buf
             local lines = vim.fn.systemlist("dedoc op " .. opts.lang .. " " .. escapeText(item.item.file))
@@ -100,6 +102,9 @@ end, { desc = "Toggle dedoc window" })
 vim.api.nvim_create_autocmd("BufEnter", {
     pattern = "dedoc",
     callback = function()
+        if dedoc_win == nil then
+            return
+        end
         vim.opt_local.number = false
         vim.opt_local.relativenumber = false
         vim.keymap.set("n", "q", function()
