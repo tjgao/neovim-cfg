@@ -20,5 +20,11 @@ return {
         vim.keymap.set("i", "<c-x>", function()
             return vim.fn["codeium#Clear"]()
         end, { expr = true, silent = true })
+
+        vim.g.codeium_filetypes = {
+            DressingInput = false,
+            ["snacks_picker_input"] = false,
+            ["dap-repl"] = false,
+        }
     end,
 }

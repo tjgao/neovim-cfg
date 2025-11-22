@@ -32,12 +32,13 @@ vim.api.nvim_create_autocmd("ModeChanged", {
     end,
 })
 
--- This is to change the color of the indent scope
 vim.api.nvim_create_autocmd("ColorScheme", {
     pattern = "*",
     callback = function()
+        -- This is to change the color of the indent scope
         vim.api.nvim_set_hl(0, "SnacksIndentScope", { fg = "#666666" })
 
+        -- This is to change the boldness of mode text
         local modes = {
             "lualine_a_insert",
             "lualine_a_replace",
