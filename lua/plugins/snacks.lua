@@ -224,9 +224,34 @@ return {
         {
             "<leader>sgb",
             function()
-                require("snacks").picker.git_branches({
-                    layout = "select",
+                require("snacks").picker.pick({
                     focus = "list",
+                    layout = "select",
+                    source = "git_branches",
+                    actions = {
+                        diffview_d = function(picker, item)
+                            vim.cmd(("DiffviewOpen %s^!"):format(item.commit))
+                            picker:close()
+                        end,
+                        diffview_D = function(picker, item)
+                            vim.cmd(("DiffviewOpen %s"):format(item.commit))
+                            picker:close()
+                        end,
+                    },
+                    win = {
+                        list = {
+                            keys = {
+                                ["d"] = {
+                                    "diffview_d",
+                                    mode = { "n" },
+                                },
+                                ["D"] = {
+                                    "diffview_D",
+                                    mode = { "n" },
+                                },
+                            },
+                        },
+                    },
                 })
             end,
             desc = "Search git branches",
@@ -234,7 +259,34 @@ return {
         {
             "<leader>sgl",
             function()
-                require("snacks").picker.git_log({ focus = "list" })
+                require("snacks").picker.pick({
+                    focus = "list",
+                    source = "git_log",
+                    actions = {
+                        diffview_d = function(picker, item)
+                            vim.cmd(("DiffviewOpen %s^!"):format(item.commit))
+                            picker:close()
+                        end,
+                        diffview_D = function(picker, item)
+                            vim.cmd(("DiffviewOpen %s"):format(item.commit))
+                            picker:close()
+                        end,
+                    },
+                    win = {
+                        list = {
+                            keys = {
+                                ["d"] = {
+                                    "diffview_d",
+                                    mode = { "n" },
+                                },
+                                ["D"] = {
+                                    "diffview_D",
+                                    mode = { "n" },
+                                },
+                            },
+                        },
+                    },
+                })
             end,
             desc = "Search git log",
         },
