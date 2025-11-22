@@ -7,15 +7,11 @@ local servers = {
             Lua = {
                 runtime = { version = "LuaJIT" },
                 workspace = {
-                    checkThirdParty = false,
-                    -- Tells lua_ls where to find all the Lua files that you have loaded
-                    -- for your neovim configuration.
                     library = {
                         { path = "${3rd}/luv/library", words = { "vim%.uv" } },
-                        -- table.unpack(vim.api.nvim_get_runtime_file("", true)),
+                        { path = "lazy.nvim", words = { "LazyVim" } },
+                        table.unpack(vim.api.nvim_get_runtime_file("", true)),
                     },
-                    -- If lua_ls is really slow on your computer, you can try this instead:
-                    -- library = { vim.env.VIMRUNTIME },
                 },
                 completion = {
                     callSnippet = "Replace",
@@ -24,7 +20,6 @@ local servers = {
                 -- diagnostics = { disable = { "missing-fields" } },
                 diagnostics = {
                     disable = { "missing-fields" },
-                    globals = { "vim" },
                 },
             },
         },
@@ -104,9 +99,7 @@ return {
                 })
             end, { desc = "Go to definition" })
             keymap("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
-
             keymap("n", "gi", vim.lsp.buf.implementation, { desc = "Go to implementation" })
-            -- keymap("n", "KK", vim.lsp.buf.signature_help, { desc = "Signature help" })
             keymap("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename func/var" })
             keymap("n", "gr", function()
                 Snacks.picker.pick({

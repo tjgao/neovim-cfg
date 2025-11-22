@@ -85,14 +85,14 @@ return {
         {
             "<leader><space>",
             function()
-                Snacks.picker()
+                require("snacks").picker()
             end,
             desc = "Snacks Menu",
         },
         {
             "<leader>p",
             function()
-                Snacks.picker.git_files({
+                require("snacks").picker.git_files({
                     layout = "vertical",
                 })
             end,
@@ -101,7 +101,7 @@ return {
         {
             "<leader>b",
             function()
-                Snacks.picker.pick({
+                require("snacks").picker.pick({
                     focus = "list",
                     source = "buffers",
                     current = false,
@@ -120,7 +120,7 @@ return {
         {
             "<C-p>",
             function()
-                Snacks.picker.files({
+                require("snacks").picker.files({
                     layout = "vertical",
                 })
             end,
@@ -129,28 +129,28 @@ return {
         {
             "<leader>/",
             function()
-                Snacks.picker.git_grep()
+                require("snacks").picker.git_grep()
             end,
             desc = "Git live grep",
         },
         {
             "<leader>?",
             function()
-                Snacks.picker.grep()
+                require("snacks").picker.grep()
             end,
             desc = "Live grep",
         },
         {
             "<leader>sr",
             function()
-                Snacks.picker.resume()
+                require("snacks").picker.resume()
             end,
             desc = "Resume search",
         },
         {
             "<leader>ss",
             function()
-                Snacks.picker.pick({
+                require("snacks").picker.pick({
                     focus = "list",
                     source = "git_grep",
                     regex = false,
@@ -173,28 +173,28 @@ return {
         {
             "<leader>sS",
             function()
-                Snacks.picker.grep_word({ focus = "list" })
+                require("snacks").picker.grep_word({ focus = "list" })
             end,
             desc = "Grep current word",
         },
         {
             "<leader>sh",
             function()
-                Snacks.picker.help()
+                require("snacks").picker.help()
             end,
             desc = "Search help",
         },
         {
             "<leader>so",
             function()
-                Snacks.picker.recent()
+                require("snacks").picker.recent()
             end,
             desc = "Recent files",
         },
         {
             "<leader>si",
             function()
-                Snacks.picker.icons({
+                require("snacks").picker.icons({
                     layout = "select",
                 })
             end,
@@ -203,28 +203,28 @@ return {
         {
             "<leader>sk",
             function()
-                Snacks.picker.keymaps()
+                require("snacks").picker.keymaps()
             end,
             desc = "Search keymaps",
         },
         {
             "<leader>sd",
             function()
-                Snacks.picker.diagnostics({ focus = "list" })
+                require("snacks").picker.diagnostics({ focus = "list" })
             end,
             desc = "Diagnositcs",
         },
         {
             "<leader>sm",
             function()
-                Snacks.picker.marks({ focus = "list" })
+                require("snacks").picker.marks({ focus = "list" })
             end,
             desc = "Search marks",
         },
         {
             "<leader>sgb",
             function()
-                Snacks.picker.git_branches({
+                require("snacks").picker.git_branches({
                     layout = "select",
                     focus = "list",
                 })
@@ -234,14 +234,14 @@ return {
         {
             "<leader>sgl",
             function()
-                Snacks.picker.git_log({ focus = "list" })
+                require("snacks").picker.git_log({ focus = "list" })
             end,
             desc = "Search git log",
         },
         {
             "<leader>sl",
             function()
-                Snacks.picker.lsp_symbols()
+                require("snacks").picker.lsp_symbols()
             end,
             desc = "Search lsp symbols",
         },
