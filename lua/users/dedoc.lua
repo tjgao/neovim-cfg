@@ -18,6 +18,12 @@ function removeRedundantSpaces(str)
     return cleanedStr
 end
 
+function escapeText(str)
+    local escapedStr = string.gsub(str, "%$", "\\%$")
+    -- escapedStr = string.gsub(escapedStr, "#", "\\#")
+    return escapedStr
+end
+
 local dedoc = function(opts)
     opts = opts or { lang = "cpp" }
 
@@ -37,6 +43,7 @@ local dedoc = function(opts)
                 args = { "-c", command },
                 transform = function(item)
                     local line = removeRedundantSpaces(item.text)
+                    vim.print(line)
                     local ln = vim.split(line, " ")
                     return {
                         text = ln[2],
@@ -49,7 +56,7 @@ local dedoc = function(opts)
 
         preview = function(item, ctx)
             local buf = item.picker.preview.win.buf
-            local lines = vim.fn.systemlist("dedoc op " .. opts.lang .. " " .. item.item.file)
+            local lines = vim.fn.systemlist("dedoc op " .. opts.lang .. " " .. escapeText(item.item.file))
             vim.bo[buf].modifiable = true
             vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
             vim.bo[buf].filetype = "markdown"
@@ -59,7 +66,7 @@ local dedoc = function(opts)
         confirm = function(picker, item)
             picker:close()
 
-            local lines = vim.fn.systemlist("dedoc op " .. opts.lang .. " " .. item.text)
+            local lines = vim.fn.systemlist("dedoc op " .. opts.lang .. " " .. escapeText(item.text))
             local bufnr = get_dedoc_buf()
             vim.bo[bufnr].modifiable = true
             vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
@@ -93,6 +100,8 @@ end, { desc = "Toggle dedoc window" })
 vim.api.nvim_create_autocmd("BufEnter", {
     pattern = "dedoc",
     callback = function()
+        vim.opt_local.number = false
+        vim.opt_local.relativenumber = false
         vim.keymap.set("n", "q", function()
             vim.api.nvim_win_close(dedoc_win, false)
         end)
@@ -107,4 +116,33 @@ vim.api.nvim_create_user_command("Jsd", function()
     dedoc({ lang = "javascript", title = "DeDoc Javascript" })
 end, { desc = "DeDoc Javascript" })
 
-require("shared.utils").keymap("n", "<C-a>", ":ToggleDedoc<CR>", { desc = "Toggle dedoc window" })
+local keymap = require("shared.utils").keymap
+keymap("n", "<C-a>", ":ToggleDedoc<CR>", { desc = "Toggle dedoc window" })
+
+keymap("n", "<leader>dec", function()
+    dedoc({ lang = "cpp", title = "DeDoc C++" })
+end, { desc = "C++ dedoc" })
+
+keymap("n", "<leader>dej", function()
+    dedoc({ lang = "javascript", title = "DeDoc Javascript" })
+end, { desc = "Javascript dedoc" })
+
+keymap("n", "<leader>dem", function()
+    dedoc({ lang = "cmake", title = "DeDoc CMake" })
+end, { desc = "CMake dedoc" })
+
+-- keymap("n", "<leader>den", function()
+--     dedoc({ lang = "node", title = "DeDoc Node" })
+-- end, { desc = "Node dedoc" })
+
+keymap("n", "<leader>deg", function()
+    dedoc({ lang = "git", title = "DeDoc Git" })
+end, { desc = "Git dedoc" })
+
+-- keymap("n", "<leader>deb", function()
+--     dedoc({ lang = "bash", title = "DeDoc Bash" })
+-- end, { desc = "Bash dedoc" })
+
+keymap("n", "<leader>des", function()
+    dedoc({ lang = "svelte", title = "DeDoc Svelte" })
+end, { desc = "Svelte dedoc" })
