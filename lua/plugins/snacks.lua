@@ -1,6 +1,7 @@
 return {
     "folke/snacks.nvim",
     lazy = false,
+    ---@diagnostic disable-next-line: undefined-doc-name
     ---@type snacks.Config
     opts = {
         bigfile = { enabled = true },
@@ -76,7 +77,7 @@ return {
                     indent = 1,
                     padding = 1,
                 },
-                { section = "recent_files", title = "Recent Files" },
+                { section = "recent_files", title = "Recent Files", cwd = true },
                 { section = "startup" },
             },
         },
@@ -237,6 +238,18 @@ return {
                             vim.cmd(("DiffviewOpen %s"):format(item.commit))
                             picker:close()
                         end,
+                        commit_to_cmd = function(picker, item)
+                            picker:close()
+                            local home = vim.api.nvim_replace_termcodes("<Home>", true, false, true)
+                            vim.api.nvim_feedkeys(":" .. item.commit .. home, "n", false)
+                        end,
+                        commit_to_reg = function(picker, item)
+                            picker:close()
+                            -- Yank first, before command mode
+                            vim.fn.setreg('"', item.commit)
+                            vim.fn.setreg("0", item.commit)
+                            vim.fn.setreg("+", item.commit) -- Also put in clipboard
+                        end,
                     },
                     win = {
                         list = {
@@ -247,6 +260,34 @@ return {
                                 },
                                 ["D"] = {
                                     "diffview_D",
+                                    mode = { "n" },
+                                },
+                                ["."] = {
+                                    "commit_to_cmd",
+                                    mode = { "n" },
+                                },
+                                [","] = {
+                                    "commit_to_reg",
+                                    mode = { "n" },
+                                },
+                            },
+                        },
+                        input = {
+                            keys = {
+                                ["d"] = {
+                                    "diffview_d",
+                                    mode = { "n" },
+                                },
+                                ["D"] = {
+                                    "diffview_D",
+                                    mode = { "n" },
+                                },
+                                ["."] = {
+                                    "commit_to_cmd",
+                                    mode = { "n" },
+                                },
+                                [","] = {
+                                    "commit_to_reg",
                                     mode = { "n" },
                                 },
                             },
@@ -271,7 +312,20 @@ return {
                             vim.cmd(("DiffviewOpen %s"):format(item.commit))
                             picker:close()
                         end,
+                        commit_to_cmd = function(picker, item)
+                            picker:close()
+                            local home = vim.api.nvim_replace_termcodes("<Home>", true, false, true)
+                            vim.api.nvim_feedkeys(":" .. item.commit .. home, "n", false)
+                        end,
+                        commit_to_reg = function(picker, item)
+                            picker:close()
+                            -- Yank first, before command mode
+                            vim.fn.setreg('"', item.commit)
+                            vim.fn.setreg("0", item.commit)
+                            vim.fn.setreg("+", item.commit) -- Also put in clipboard
+                        end,
                     },
+
                     win = {
                         list = {
                             keys = {
@@ -281,6 +335,34 @@ return {
                                 },
                                 ["D"] = {
                                     "diffview_D",
+                                    mode = { "n" },
+                                },
+                                ["."] = {
+                                    "commit_to_cmd",
+                                    mode = { "n" },
+                                },
+                                [","] = {
+                                    "commit_to_reg",
+                                    mode = { "n" },
+                                },
+                            },
+                        },
+                        input = {
+                            keys = {
+                                ["d"] = {
+                                    "diffview_d",
+                                    mode = { "n" },
+                                },
+                                ["D"] = {
+                                    "diffview_D",
+                                    mode = { "n" },
+                                },
+                                ["."] = {
+                                    "commit_to_cmd",
+                                    mode = { "n" },
+                                },
+                                [","] = {
+                                    "commit_to_reg",
                                     mode = { "n" },
                                 },
                             },
