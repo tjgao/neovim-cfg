@@ -105,11 +105,13 @@ return {
                 require("snacks").picker.pick({
                     focus = "list",
                     current = false,
+                    source = "buffers",
                     layout = {
                         layout = {
                             height = 0.5,
                             width = 40,
                         },
+                        preset = "vertical",
                         preview = false,
                     },
                 })
