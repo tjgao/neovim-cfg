@@ -236,7 +236,7 @@ return {
                         end,
                         commit_to_reg = function(picker, item)
                             picker:close()
-                            -- Yank first, before command mode
+                            -- yank
                             vim.fn.setreg('"', item.commit)
                             vim.fn.setreg("0", item.commit)
                             vim.fn.setreg("+", item.commit) -- Also put in clipboard
@@ -310,7 +310,7 @@ return {
                         end,
                         commit_to_reg = function(picker, item)
                             picker:close()
-                            -- Yank first, before command mode
+                            -- yank
                             vim.fn.setreg('"', item.commit)
                             vim.fn.setreg("0", item.commit)
                             vim.fn.setreg("+", item.commit) -- Also put in clipboard
