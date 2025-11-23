@@ -2,6 +2,7 @@ return {
     "stevearc/quicker.nvim",
     ft = "qf",
     ---@module "quicker"
+    ---@diagnostic disable-next-line: undefined-doc-name
     ---@type quicker.SetupOptions
     opts = {},
     config = function()
@@ -21,6 +22,13 @@ return {
                         Q.collapse()
                     end,
                     desc = "Collapse quickfix context",
+                },
+                {
+                    "q",
+                    function()
+                        Q.close()
+                    end,
+                    desc = "Close quickfix",
                 },
             },
         })
