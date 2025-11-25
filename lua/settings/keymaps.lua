@@ -68,7 +68,7 @@ keymap("n", "<leader>an", ":set relativenumber!<CR>", "Toggle relativenumber")
 keymap("n", "<leader>ad", ":lua vim.diagnostic.enable(not vim.diagnostic.is_enabled())<CR>", "Toggle diagnostics")
 
 keymap("n", "]h", ":Gitsigns next_hunk<CR>", { desc = "Gitsigns: Go to next hunk" })
-keymap("n", "[h", ":Gitsigns previous_hunk<CR>", { desc = "Gitsigns: Go to previous hunk" })
+keymap("n", "[h", ":Gitsigns prev_hunk<CR>", { desc = "Gitsigns: Go to previous hunk" })
 
 keymap("n", "<C-f>", "<C-f>zz", "Scroll down")
 keymap("n", "<C-b>", "<C-b>zz", "Scroll up")
