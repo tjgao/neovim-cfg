@@ -63,7 +63,7 @@ return {
                     ["<C-b>"] = cmp.mapping.scroll_docs(-4),
                     ["<C-f>"] = cmp.mapping.scroll_docs(4),
                     ["<C-Space>"] = cmp.mapping.complete(),
-                    ["<C-e>"] = cmp.mapping.abort(),
+                    ["<C-c>"] = cmp.mapping.abort(),
                     ["<CR>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
                 }),
                 sources = cmp.config.sources({
@@ -90,7 +90,26 @@ return {
 
             -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
             cmp.setup.cmdline(":", {
-                mapping = cmp.mapping.preset.cmdline(),
+                mapping = cmp.mapping.preset.cmdline({
+                    ["<C-a>"] = {
+                        c = function()
+                            vim.api.nvim_feedkeys(
+                                vim.api.nvim_replace_termcodes("<Home>", true, false, true),
+                                "n",
+                                false
+                            )
+                        end,
+                    },
+                    ["<C-e>"] = {
+                        c = function()
+                            vim.api.nvim_feedkeys(
+                                vim.api.nvim_replace_termcodes("<End>", true, false, true),
+                                "n",
+                                false
+                            )
+                        end,
+                    },
+                }),
                 sources = cmp.config.sources({
                     { name = "path" },
                 }, {
