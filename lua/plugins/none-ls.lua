@@ -29,7 +29,7 @@ local remove_autofmt = function()
 end
 
 local toggle_autofmt = function(show_notification)
-    local notify = require("notify")
+    local notify = require("snacks").notifier.notify
     local group = vim.api.nvim_create_augroup(group_name, { clear = false })
     local cmds = vim.api.nvim_get_autocmds({
         group = group,
@@ -51,7 +51,9 @@ end
 
 return {
     "nvimtools/none-ls.nvim",
-    dependencies = { "rcarriga/nvim-notify" },
+    dependencies = {
+        "nvimtools/none-ls-extras.nvim",
+    },
     config = function()
         local null_ls = require("null-ls")
         null_ls.setup({
@@ -67,7 +69,8 @@ return {
                         return utils.root_has_file({ ".clang_format" })
                     end,
                 }),
-                null_ls.builtins.formatting.black,
+                require("none-ls.formatting.ruff"),
+                -- null_ls.builtins.formatting.black,
                 null_ls.builtins.formatting.gofumpt,
                 null_ls.builtins.formatting.goimports,
                 null_ls.builtins.formatting.prettier.with({

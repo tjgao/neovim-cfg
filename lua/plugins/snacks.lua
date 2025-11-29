@@ -13,6 +13,9 @@ return {
                 float = true,
             },
         },
+        notifier = {
+            enabled = true,
+        },
         picker = {
             enabled = true,
             layout = {
