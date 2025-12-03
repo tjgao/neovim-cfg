@@ -90,3 +90,7 @@ end, "Toggle quickfix")
 keymap("n", "<leader>ql", function()
     require("quicker").toggle({ loclist = true })
 end, "Toggle loclist")
+
+keymap("n", "<leader>sn", function()
+    require("snacks").notifier.show_history()
+end, "Show notifier history")
