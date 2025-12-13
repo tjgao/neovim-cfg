@@ -94,3 +94,5 @@ end, "Toggle loclist")
 keymap("n", "<leader>sn", function()
     require("snacks").notifier.show_history()
 end, "Show notifier history")
+
+keymap("n", "<Tab>", ":b#<CR>zz", "Jump to the most recent buffer")
