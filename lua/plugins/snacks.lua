@@ -133,14 +133,28 @@ return {
         {
             "<leader>/",
             function()
-                require("snacks").picker.git_grep()
+                require("snacks").picker.git_grep({
+                    formatters = {
+                        file = {
+                            filename_first = true,
+                            min_width = 100,
+                        },
+                    },
+                })
             end,
             desc = "Git live grep",
         },
         {
             "<leader>?",
             function()
-                require("snacks").picker.grep()
+                require("snacks").picker.grep({
+                    formatters = {
+                        file = {
+                            filename_first = true,
+                            min_width = 100,
+                        },
+                    },
+                })
             end,
             desc = "Live grep",
         },
@@ -177,7 +191,15 @@ return {
         {
             "<leader>sS",
             function()
-                require("snacks").picker.grep_word({ focus = "list" })
+                require("snacks").picker.grep_word({
+                    focus = "list",
+                    formatters = {
+                        file = {
+                            filename_first = true,
+                            min_width = 100,
+                        },
+                    },
+                })
             end,
             desc = "Grep current word",
         },
