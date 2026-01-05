@@ -170,6 +170,12 @@ return {
             function()
                 require("snacks").picker.pick({
                     focus = "list",
+                    formatters = {
+                        file = {
+                            filename_first = true,
+                            min_width = 100,
+                        },
+                    },
                     source = "git_grep",
                     regex = false,
                     live = false,
