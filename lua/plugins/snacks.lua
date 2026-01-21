@@ -265,6 +265,11 @@ return {
                             vim.cmd(("DiffviewOpen %s"):format(item.commit))
                             picker:close()
                         end,
+                        diffview_x = function(picker, item)
+                            picker:close()
+                            local fname = vim.api.nvim_buf_get_name(0)
+                            vim.cmd(("DiffviewOpen %s HEAD -- %s"):format(item.commit, fname))
+                        end,
                         commit_to_cmd = function(picker, item)
                             picker:close()
                             local home = vim.api.nvim_replace_termcodes("<Home>", true, false, true)
@@ -287,6 +292,10 @@ return {
                                 },
                                 ["D"] = {
                                     "diffview_D",
+                                    mode = { "n" },
+                                },
+                                ["x"] = {
+                                    "diffview_x",
                                     mode = { "n" },
                                 },
                                 ["."] = {
@@ -339,6 +348,11 @@ return {
                             vim.cmd(("DiffviewOpen %s"):format(item.commit))
                             picker:close()
                         end,
+                        diffview_x = function(picker, item)
+                            picker:close()
+                            local fname = vim.api.nvim_buf_get_name(0)
+                            vim.cmd(("DiffviewOpen %s HEAD -- %s"):format(item.commit, fname))
+                        end,
                         commit_to_cmd = function(picker, item)
                             picker:close()
                             local home = vim.api.nvim_replace_termcodes("<Home>", true, false, true)
@@ -362,6 +376,10 @@ return {
                                 },
                                 ["D"] = {
                                     "diffview_D",
+                                    mode = { "n" },
+                                },
+                                ["x"] = {
+                                    "diffview_x",
                                     mode = { "n" },
                                 },
                                 ["."] = {
