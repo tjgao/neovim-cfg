@@ -21,6 +21,9 @@ return {
             layout = {
                 backdrop = true,
             },
+            git_branches = {
+                all = true,
+            },
             matcher = { frecency = true },
             formatters = {
                 file = {
