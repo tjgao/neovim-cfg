@@ -47,3 +47,15 @@ vim.diagnostic.config({
 vim.g.tmux_navigator_disable_when_zoomed = 1
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
+
+-- Better diff for moved/changed code blocks
+vim.opt.diffopt = {
+    "internal",
+    "filler",
+    "closeoff",
+    "algorithm:histogram",
+    "indent-heuristic",
+}
+
+-- Fold unchanged sections in diff mode
+vim.opt.foldmethod = "diff"
