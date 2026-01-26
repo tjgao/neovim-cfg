@@ -122,7 +122,7 @@ vim.api.nvim_create_user_command("Jsd", function()
 end, { desc = "DeDoc Javascript" })
 
 local keymap = require("shared.utils").keymap
-keymap("n", "<C-a>", ":ToggleDedoc<CR>", { desc = "Toggle dedoc window" })
+keymap("n", "<leader>det", ":ToggleDedoc<CR>", { desc = "Toggle dedoc window" })
 
 keymap("n", "<leader>dec", function()
     dedoc({ lang = "cpp", title = "DeDoc C++" })
