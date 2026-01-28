@@ -95,9 +95,42 @@ return {
         },
         {
             "<leader>p",
+
             function()
-                require("snacks").picker.git_files({
-                    layout = "vertical",
+                require("snacks").picker.pick({
+                    focus = "list",
+                    source = "git_files",
+                    layout = {
+                        preset = "vertical",
+                    },
+                    actions = {
+                        get_path = function(picker, item)
+                            picker:close()
+                            local home = vim.api.nvim_replace_termcodes("<Home>", true, false, true)
+                            vim.api.nvim_feedkeys(":" .. item.file .. home, "n", false)
+                        end,
+                        copy_path = function(picker, item)
+                            picker:close()
+                            -- yank
+                            vim.fn.setreg('"', item.file)
+                            vim.fn.setreg("0", item.file)
+                            vim.fn.setreg("+", item.file) -- Also put in clipboard
+                        end,
+                    },
+                    win = {
+                        list = {
+                            keys = {
+                                ["."] = {
+                                    "get_path",
+                                    mode = { "n" },
+                                },
+                                [","] = {
+                                    "copy_path",
+                                    mode = { "n" },
+                                },
+                            },
+                        },
+                    },
                 })
             end,
             desc = "Search git files",
@@ -124,8 +157,40 @@ return {
         {
             "<C-p>",
             function()
-                require("snacks").picker.files({
-                    layout = "vertical",
+                require("snacks").picker.pick({
+                    focus = "list",
+                    source = "files",
+                    layout = {
+                        preset = "vertical",
+                    },
+                    actions = {
+                        get_path = function(picker, item)
+                            picker:close()
+                            local home = vim.api.nvim_replace_termcodes("<Home>", true, false, true)
+                            vim.api.nvim_feedkeys(":" .. item.file .. home, "n", false)
+                        end,
+                        copy_path = function(picker, item)
+                            picker:close()
+                            -- yank
+                            vim.fn.setreg('"', item.file)
+                            vim.fn.setreg("0", item.file)
+                            vim.fn.setreg("+", item.file) -- Also put in clipboard
+                        end,
+                    },
+                    win = {
+                        list = {
+                            keys = {
+                                ["."] = {
+                                    "get_path",
+                                    mode = { "n" },
+                                },
+                                [","] = {
+                                    "copy_path",
+                                    mode = { "n" },
+                                },
+                            },
+                        },
+                    },
                 })
             end,
             desc = "Search files",
