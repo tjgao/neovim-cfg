@@ -131,6 +131,18 @@ return {
                                 },
                             },
                         },
+                        input = {
+                            keys = {
+                                ["."] = {
+                                    "get_path",
+                                    mode = { "n" },
+                                },
+                                [","] = {
+                                    "copy_path",
+                                    mode = { "n" },
+                                },
+                            },
+                        },
                     },
                 })
             end,
@@ -179,6 +191,18 @@ return {
                     },
                     win = {
                         list = {
+                            keys = {
+                                ["."] = {
+                                    "get_path",
+                                    mode = { "n" },
+                                },
+                                [","] = {
+                                    "copy_path",
+                                    mode = { "n" },
+                                },
+                            },
+                        },
+                        input = {
                             keys = {
                                 ["."] = {
                                     "get_path",
@@ -380,6 +404,10 @@ return {
                                     "diffview_D",
                                     mode = { "n" },
                                 },
+                                ["x"] = {
+                                    "diffview_x",
+                                    mode = { "n" },
+                                },
                                 ["."] = {
                                     "commit_to_cmd",
                                     mode = { "n" },
@@ -462,6 +490,10 @@ return {
                                 },
                                 ["D"] = {
                                     "diffview_D",
+                                    mode = { "n" },
+                                },
+                                ["x"] = {
+                                    "diffview_x",
                                     mode = { "n" },
                                 },
                                 ["."] = {
