@@ -95,10 +95,8 @@ return {
         },
         {
             "<leader>p",
-
             function()
                 require("snacks").picker.pick({
-                    focus = "list",
                     source = "git_files",
                     layout = {
                         preset = "vertical",
@@ -158,7 +156,6 @@ return {
             "<C-p>",
             function()
                 require("snacks").picker.pick({
-                    focus = "list",
                     source = "files",
                     layout = {
                         preset = "vertical",
