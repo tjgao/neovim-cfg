@@ -75,3 +75,16 @@ vim.api.nvim_create_user_command("Df", function(opts)
     local args = table.concat(opts.fargs, " ")
     vim.cmd(("DiffviewOpen %s"):format(args))
 end, { nargs = "*" })
+
+vim.api.nvim_create_user_command("T", function(opts)
+    local args = table.concat(opts.fargs, " ")
+    vim.cmd(("tab split | %s"):format(args))
+end, { nargs = "*", desc = "Create a tab and execute command" })
+
+vim.api.nvim_create_user_command("Tvd", function(opts)
+    if #opts.fargs == 0 then
+        return
+    end
+    vim.print("tab split | vertical diffsplit " .. opts.fargs[1])
+    vim.cmd("tab split | vertical diffsplit " .. opts.fargs[1])
+end, { nargs = 1, desc = "Create a tab and diff the file with current buffer" })
