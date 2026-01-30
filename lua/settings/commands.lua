@@ -85,6 +85,5 @@ vim.api.nvim_create_user_command("Tvd", function(opts)
     if #opts.fargs == 0 then
         return
     end
-    vim.print("tab split | vertical diffsplit " .. opts.fargs[1])
     vim.cmd("tab split | vertical diffsplit " .. opts.fargs[1])
 end, { nargs = 1, desc = "Create a tab and diff the file with current buffer" })
