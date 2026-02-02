@@ -340,8 +340,28 @@ return {
             function()
                 require("snacks").picker.pick({
                     focus = "list",
-                    layout = "select",
                     source = "git_branches",
+                    layout = {
+                        preset = "select",
+                        -- layout = { min_width = 120, max_width = 160 },
+                    },
+                    format = function(item, picker)
+                        local Snacks = require("snacks")
+                        local a = Snacks.picker.util.align
+                        local ret = {}
+                        ret[#ret + 1] = item.current and { a("", 2), "SnacksPickerGitBranchCurrent" } or { a("", 2) }
+
+                        local w = 60 -- branch column width
+                        if item.detached then
+                            ret[#ret + 1] = { a("(detached HEAD)", w, { truncate = true }), "SnacksPickerGitDetached" }
+                        else
+                            ret[#ret + 1] = { a(item.branch, w, { truncate = true }), "SnacksPickerGitBranch" }
+                        end
+
+                        ret[#ret + 1] = { " " }
+                        Snacks.picker.highlight.extend(ret, Snacks.picker.format.git_log(item, picker))
+                        return ret
+                    end,
                     actions = {
                         diffview_d = function(picker, item)
                             vim.cmd(("DiffviewOpen %s^!"):format(item.commit))
