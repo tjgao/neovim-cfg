@@ -64,8 +64,18 @@ keymap("n", "<leader>df", ":DiffviewFileHistory %<CR>", "File history [Diffview]
 
 -- Small things --
 keymap("n", "<C-0>", "^", "Go to beginning of line")
-keymap("n", "<leader>an", ":set relativenumber!<CR>", "Toggle relativenumber")
-keymap("n", "<leader>ad", ":lua vim.diagnostic.enable(not vim.diagnostic.is_enabled())<CR>", "Toggle diagnostics")
+keymap("n", "<leader>aN", ":set relativenumber!<CR>", "Toggle relativenumber")
+keymap("n", "<leader>an", ":set nu!<CR>", "Toggle number")
+keymap("n", "<leader>ad", function()
+    local notify = require("snacks").notifier.notify
+    notify("Diagnostics are turned " .. (vim.diagnostic.is_enabled() and "off" or "on"))
+    vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+end, "Toggle diagnostics")
+keymap("n", "<leader>ai", function()
+    local notify = require("snacks").notifier.notify
+    notify("Case sensitive for * search is turned " .. (vim.o.ignorecase and "on" or "off"))
+    vim.cmd("set ignorecase!")
+end, "Toggle case sensitive for * search")
 
 keymap("n", "]h", ":Gitsigns next_hunk<CR>", { desc = "Gitsigns: Go to next hunk" })
 keymap("n", "[h", ":Gitsigns prev_hunk<CR>", { desc = "Gitsigns: Go to previous hunk" })
