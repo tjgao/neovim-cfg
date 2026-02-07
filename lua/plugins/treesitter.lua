@@ -20,7 +20,6 @@ local langs = {
     "vim",
     "vimdoc",
     "yaml",
-    "norg",
     "scss",
     "svelte",
     "typst",
@@ -29,13 +28,11 @@ local langs = {
 return {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
+    lazy = false,
+    branch = "main",
     event = { "BufReadPre", "BufNewFile" },
     config = function()
-        local treesitter = require("nvim-treesitter.configs")
-        treesitter.setup({
-            ensure_installed = langs,
-            highlight = { enable = true },
-            indent = { enable = true },
-        })
+        local treesitter = require("nvim-treesitter")
+        treesitter.install(langs)
     end,
 }
