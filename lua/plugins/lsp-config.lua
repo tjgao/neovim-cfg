@@ -35,7 +35,7 @@ local keymap = require("shared.utils").keymap
 
 return {
     {
-        "williamboman/mason.nvim",
+        "mason-org/mason.nvim",
         -- branch = "main",
         config = function()
             local mason = require("mason")
@@ -47,18 +47,10 @@ return {
         end,
     },
     {
-        "WhoIsSethDaniel/mason-tool-installer.nvim",
-        config = function()
-            require("mason-tool-installer").setup({
-                ensure_installed = servers,
-            })
-        end,
-    },
-    {
-        "williamboman/mason-lspconfig.nvim",
+        "mason-org/mason-lspconfig.nvim",
         dependencies = {
             "nvim-lua/plenary.nvim",
-            "williamboman/mason.nvim",
+            "mason-org/mason.nvim",
         },
         config = function()
             local masonlsp = require("mason-lspconfig")
