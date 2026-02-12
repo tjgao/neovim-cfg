@@ -200,11 +200,172 @@ local function line_in_hunk()
     return false
 end
 
+local capture_types = {
+    -- Functions/Methods
+    "function_declaration",
+    "function_definition",
+    "method_declaration",
+    "method_definition",
+    "function_item", -- Rust
+    "arrow_function",
+    "function_expression",
+    "method",
+    "function",
+    "lambda",
+    "closure_expression",
+
+    -- Classes/Structs/Objects
+    "class_declaration",
+    "class_definition",
+    "struct_item", -- Rust
+    "struct_specifier", -- C/C++
+    "union_specifier", -- C/C++
+    "impl_item", -- Rust
+    "trait_item", -- Rust
+    "interface_declaration",
+    "type_declaration",
+    "class_specifier", -- C++
+    "object_definition", -- Scala
+    "enum_declaration",
+    "enum_item", -- Rust
+
+    -- Namespaces/Modules/Packages
+    "namespace_definition",
+    "namespace_declaration", -- C++/C#
+    "module",
+    "mod_item", -- Rust
+    "package_declaration",
+    "package_clause", -- Go
+    "module_definition", -- Python (if using module-level structure)
+
+    -- Language-specific
+    "for_statement", -- Sometimes useful for context
+    "if_statement", -- Sometimes useful
+}
+
+local function get_treesitter_breadcrumb()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local cursor = vim.api.nvim_win_get_cursor(0)
+    local row = cursor[1] - 1
+    local col = cursor[2]
+
+    -- Get parser - new API
+    local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
+    if not ok or not parser then
+        return nil
+    end
+
+    -- Parse and get root
+    local trees = parser:parse()
+    if not trees or #trees == 0 then
+        return nil
+    end
+
+    local root = trees[1]:root()
+
+    -- Get node at cursor - new API
+    local node = root:named_descendant_for_range(row, col, row, col)
+    if not node then
+        return nil
+    end
+
+    -- Build breadcrumb by walking up the tree
+    local breadcrumb = {}
+    local current = node
+
+    -- More comprehensive list of context nodes
+    local function is_context_node(node_type)
+        -- Namespace/Module level
+        if node_type:match("namespace") or node_type:match("module") or node_type:match("package") then
+            return true, "namespace"
+        end
+
+        -- Class/Struct/Interface level
+        if
+            node_type:match("class")
+            or node_type:match("struct")
+            or node_type:match("interface")
+            or node_type:match("trait")
+            or node_type:match("impl")
+            or node_type:match("object")
+            or node_type:match("enum")
+        then
+            return true, "class"
+        end
+
+        -- Function/Method level
+        if
+            node_type:match("function")
+            or node_type:match("method")
+            or node_type:match("closure")
+            or node_type:match("lambda")
+        then
+            return true, "function"
+        end
+
+        return false, nil
+    end
+
+    while current do
+        local type = current:type()
+        -- vim.print(type .. ": " .. vim.treesitter.get_node_text(current, bufnr))
+        local is_context, context_type = is_context_node(type)
+
+        if is_context then
+            local name = nil
+
+            -- Try to find identifier child
+            for child in current:iter_children() do
+                local child_type = child:type()
+                if
+                    child_type:match("function")
+                    or child_type:match("method")
+                    or child_type:match("class")
+                    or child_type:match("structure")
+                    or child_type:match("namespace")
+                    -- child_type == "function"
+                    -- or child_type == "name"
+                    -- or child_type == "function_declarator"
+                    -- or child_type == "function_definition"
+                    -- or child_type == "generator_function_declaration"
+                    -- or child_type == "structure_specifier"
+                    -- or child_type == "structure_definition"
+                    -- or child_type == "structure_declaration"
+                    -- or child_type == "class_specifier"
+                    -- or child_type == "class_definintion"
+                    -- or child_type == "class_declaration"
+                    -- or child_type == "namespace"
+                    -- or child_type == "namespace_identifier"
+                    -- or child_type == "interface_declaration"
+                then
+                    local text = vim.treesitter.get_node_text(child, bufnr)
+                    name = string.gsub(text, "[\r\n]", "")
+                    name = string.gsub(name, "%s+", " ")
+                    -- name = text:match("^([^%(]+)") or text
+                    -- name = name:match("^%s*(.-)%s*$")
+                end
+            end
+
+            if name and name ~= "" then
+                table.insert(breadcrumb, 1, name)
+            end
+        end
+
+        current = current:parent()
+    end
+
+    if #breadcrumb == 0 then
+        return nil
+    end
+
+    return table.concat(breadcrumb, " -> ")
+end
+
 require("shared.utils").keymap("n", "KK", function()
     if line_in_hunk() then
         gitsigns.preview_hunk()
     else
-        local bread = ts.statusline(opts)
+        local bread = get_treesitter_breadcrumb()
         if bread ~= nil and bread ~= "" then
             breadscrumb_popup(split_string(bread, width))
         end
