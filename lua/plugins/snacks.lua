@@ -35,10 +35,21 @@ return {
             win = {
                 input = {
                     keys = {
+                        ["<S-l>"] = { "focus_preview", mode = { "n" } },
                         ["<C-j>"] = { "preview_scroll_down", mode = { "i", "n" } },
                         ["<C-k>"] = { "preview_scroll_up", mode = { "i", "n" } },
                         ["<C-h>"] = { "preview_scroll_left", mode = { "i", "n" } },
                         ["<C-l>"] = { "preview_scroll_right", mode = { "i", "n" } },
+                    },
+                },
+                list = {
+                    keys = {
+                        ["<S-l>"] = { "focus_preview", mode = { "n" } },
+                    },
+                },
+                preview = {
+                    keys = {
+                        ["<S-h>"] = { "focus_list", mode = { "n" } },
                     },
                 },
             },
