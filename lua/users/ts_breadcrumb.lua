@@ -116,7 +116,10 @@ local function breadscrumb_popup(text)
     local lines = type(text) == "string" and add_inner_left_margin(vim.split(text, "\n"), margin) or text
     local buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-
+    local w = width
+    if #lines == 1 and #lines[1] < w then
+        w = #lines[1]
+    end
     local opts = {
         relative = "cursor",
         row = 1,
@@ -125,7 +128,7 @@ local function breadscrumb_popup(text)
         border = "rounded",
         focusable = false,
         noautocmd = true,
-        width = width + margin * 2,
+        width = w,
         height = #lines,
     }
 
@@ -200,49 +203,6 @@ local function line_in_hunk()
     return false
 end
 
-local capture_types = {
-    -- Functions/Methods
-    "function_declaration",
-    "function_definition",
-    "method_declaration",
-    "method_definition",
-    "function_item", -- Rust
-    "arrow_function",
-    "function_expression",
-    "method",
-    "function",
-    "lambda",
-    "closure_expression",
-
-    -- Classes/Structs/Objects
-    "class_declaration",
-    "class_definition",
-    "struct_item", -- Rust
-    "struct_specifier", -- C/C++
-    "union_specifier", -- C/C++
-    "impl_item", -- Rust
-    "trait_item", -- Rust
-    "interface_declaration",
-    "type_declaration",
-    "class_specifier", -- C++
-    "object_definition", -- Scala
-    "enum_declaration",
-    "enum_item", -- Rust
-
-    -- Namespaces/Modules/Packages
-    "namespace_definition",
-    "namespace_declaration", -- C++/C#
-    "module",
-    "mod_item", -- Rust
-    "package_declaration",
-    "package_clause", -- Go
-    "module_definition", -- Python (if using module-level structure)
-
-    -- Language-specific
-    "for_statement", -- Sometimes useful for context
-    "if_statement", -- Sometimes useful
-}
-
 local function get_treesitter_breadcrumb()
     local bufnr = vim.api.nvim_get_current_buf()
     local cursor = vim.api.nvim_win_get_cursor(0)
@@ -308,39 +268,27 @@ local function get_treesitter_breadcrumb()
 
     while current do
         local type = current:type()
-        -- vim.print(type .. ": " .. vim.treesitter.get_node_text(current, bufnr))
         local is_context, context_type = is_context_node(type)
 
         if is_context then
-            local name = nil
+            local name = ""
 
             -- Try to find identifier child
             for child in current:iter_children() do
                 local child_type = child:type()
                 if
-                    child_type:match("function")
-                    or child_type:match("method")
-                    or child_type:match("class")
-                    or child_type:match("structure")
-                    or child_type:match("namespace")
-                    -- child_type == "function"
-                    -- or child_type == "name"
-                    -- or child_type == "function_declarator"
-                    -- or child_type == "function_definition"
-                    -- or child_type == "generator_function_declaration"
-                    -- or child_type == "structure_specifier"
-                    -- or child_type == "structure_definition"
-                    -- or child_type == "structure_declaration"
-                    -- or child_type == "class_specifier"
-                    -- or child_type == "class_definintion"
-                    -- or child_type == "class_declaration"
-                    -- or child_type == "namespace"
-                    -- or child_type == "namespace_identifier"
-                    -- or child_type == "interface_declaration"
+                    child_type == "name"
+                    or child_type:match("declarator")
+                    or child_type:match("identifier")
+                    -- or child_type:match("specifier")
+                    or (child_type:match("type") and context_type == "function")
                 then
-                    local text = vim.treesitter.get_node_text(child, bufnr)
-                    name = string.gsub(text, "[\r\n]", "")
-                    name = string.gsub(name, "%s+", " ")
+                    local text = vim.trim(vim.treesitter.get_node_text(child, bufnr))
+                    if name ~= "" then
+                        name = name .. " " .. text:gsub("[\r\n]", ""):gsub("%s+", " ")
+                    else
+                        name = name .. text:gsub("[\r\n]", ""):gsub("%s+", " ")
+                    end
                     -- name = text:match("^([^%(]+)") or text
                     -- name = name:match("^%s*(.-)%s*$")
                 end
@@ -358,7 +306,7 @@ local function get_treesitter_breadcrumb()
         return nil
     end
 
-    return table.concat(breadcrumb, " -> ")
+    return table.concat(breadcrumb, "   ")
 end
 
 require("shared.utils").keymap("n", "KK", function()
