@@ -1,107 +1,4 @@
--- local ts_utils = require("nvim-treesitter.ts_utils")
--- local ts = vim.treesitter
--- local ts = require("nvim-treesitter")
-
--- local function get_node_text(node, bufnr)
---     local start_row, start_col, end_row, end_col = node:range()
---     local lines = vim.api.nvim_buf_get_lines(bufnr, start_row, end_row + 1, false)
---     if #lines == 0 then
---         return ""
---     end
---     lines[1] = string.sub(lines[1], start_col + 1)
---     lines[#lines] = string.sub(lines[#lines], 1, end_col)
---     return table.concat(lines, " ")
--- end
---
--- local breadcrumb_nodes = {
---     { "function", "" },
---     { "function_definition", "" },
---     { "generator_function_declaration", "" },
---     { "method_declaration", "" },
---     { "method_definition", "" },
---     { "enum_specifier", "" },
---     { "structure_specifier", "" },
---     { "structure_declaration", "" },
---     { "class_specifier", "" },
---     { "class_definition", "" },
---     { "class_declaration", "" },
---     { "struct_specifier", "" },
---     { "namespace_definition", "" },
---     { "interface_declaration", "" },
--- }
---
--- local function check_breadcrumb_node(node)
---     for _, kind in ipairs(breadcrumb_nodes) do
---         if node:type() == kind[1] then
---             return kind
---         end
---     end
---     return nil
--- end
---
--- local function get_clean_node_name(node, buf)
---     if not node then
---         return ""
---     end
---     buf = buf or 0
---
---     -- Preferred: look for name/identifier fields
---     for _, field_name in ipairs({ "name", "identifier", "declarator" }) do
---         local field = node:field(field_name)[1]
---         if field then
---             return vim.trim(ts.get_node_text(field, buf))
---         end
---     end
---
---     local t = node:type()
---
---     -- Special handling for C/C++ functions
---     if t == "function_definition" or t == "function_declarator" then
---         -- Find the identifier child of the declarator
---         for child in node:iter_children() do
---             local ctype = child:type()
---             if ctype:find("declarator") or ctype == "identifier" then
---                 return get_clean_node_name(child, buf)
---             end
---         end
---     end
---
---     -- If this node *is* the identifier, just return it
---     if t == "identifier" or t == "field_identifier" then
---         return vim.trim(ts.get_node_text(node, buf))
---     end
---
---     -- Strip text before '(' if all else fails
---     local text = ts.get_node_text(node, buf) or ""
---     text = text:match("^([^%(%s]+)") or text
---     text = vim.trim(text)
---
---     return text
--- end
---
--- local function get_breadcrumb()
---     local node = ts_utils.get_node_at_cursor()
---     local bufnr = vim.api.nvim_get_current_buf()
---     local breadcrumb = {}
---
---     while node do
---         local symbol = check_breadcrumb_node(node)
---         if symbol ~= nil then
---             local text = get_clean_node_name(node, bufnr)
---             -- Optional: clean up long lines
---             text = text:gsub("%s+", " ")
---             text = symbol[2] .. " " .. vim.trim(text)
---             table.insert(breadcrumb, 1, text)
---         end
---         node = node:parent()
---     end
---
---     return table.concat(breadcrumb, " > ")
--- end
-
---------
-
-local width = 100
+local width = 160
 local margin = 1
 
 local function add_inner_left_margin(lines, mgin)
@@ -164,17 +61,6 @@ end
 
 local ts = require("nvim-treesitter")
 local gitsigns = require("gitsigns")
-
-local opts = {
-    indicator_size = 10000,
-    type_patterns = { "namespace", "class", "struct", "function", "method", "interface" },
-    ---@diagnostic disable-next-line: unused-local
-    transform_fn = function(line, _node)
-        return line:gsub("%s*[%[%(%{]*%s*$", "")
-    end,
-    separator = " → ",
-    allow_duplicates = false,
-}
 
 local function line_in_hunk()
     local hunks = gitsigns.get_hunks()
@@ -280,14 +166,16 @@ local function get_treesitter_breadcrumb()
                     child_type == "name"
                     or child_type:match("declarator")
                     or child_type:match("identifier")
-                    -- or child_type:match("specifier")
+                    or child_type:match("parameter")
                     or (child_type:match("type") and context_type == "function")
                 then
                     local text = vim.trim(vim.treesitter.get_node_text(child, bufnr))
                     if name ~= "" then
-                        name = name .. " " .. text:gsub("[\r\n]", ""):gsub("%s+", " ")
+                        name = name
+                            .. " "
+                            .. text:gsub("[\r\n]", ""):gsub("%s+", " "):gsub("%(%s+", "("):gsub("%s+%)", ")")
                     else
-                        name = name .. text:gsub("[\r\n]", ""):gsub("%s+", " ")
+                        name = name .. text:gsub("[\r\n]", ""):gsub("%s+", " "):gsub("%(%s+", "("):gsub("%s+%)", ")")
                     end
                     -- name = text:match("^([^%(]+)") or text
                     -- name = name:match("^%s*(.-)%s*$")
