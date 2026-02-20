@@ -25,7 +25,7 @@ local function breadscrumb_popup(text)
         border = "rounded",
         focusable = false,
         noautocmd = true,
-        width = w,
+        width = w + margin,
         height = #lines,
     }
 
