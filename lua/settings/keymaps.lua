@@ -54,7 +54,8 @@ keymap("x", "<A-j>", ":move '>+1<CR>gv-gv", "Move visual selected down")
 keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", "Move visual selected up")
 keymap("n", "<C-m>", ":noh<CR>", "Clear search highlight")
 
-keymap("n", "<leader>rh", ":Gitsigns reset_hunk<CR>", "Reset hunk [Gitsigns]")
+keymap("n", "<leader>grh", ":Gitsigns reset_hunk<CR>", "Reset hunk [Gitsigns]")
+keymap("n", "<leader>gsh", ":Gitsigns stage_hunk<CR>", "Stage hunk [Gitsigns]")
 
 -- Diffview handy keymaps --
 -- keymap("n", "<leader>dd", ":DiffviewClose<CR>", "Close [Diffview]")
