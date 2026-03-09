@@ -56,6 +56,7 @@ keymap("n", "<C-m>", ":noh<CR>", "Clear search highlight")
 
 keymap("n", "<leader>grh", ":Gitsigns reset_hunk<CR>", "Reset hunk [Gitsigns]")
 keymap("n", "<leader>gsh", ":Gitsigns stage_hunk<CR>", "Stage hunk [Gitsigns]")
+keymap("n", "<leader>guh", ":Gitsigns undo_stage_hunk<CR>", "Undo stage hunk [Gitsigns]")
 
 -- Diffview handy keymaps --
 -- keymap("n", "<leader>dd", ":DiffviewClose<CR>", "Close [Diffview]")
