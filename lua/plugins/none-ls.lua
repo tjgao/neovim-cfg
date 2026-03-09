@@ -10,7 +10,8 @@
 --     end,
 -- })
 
-local autofmt_patterns = { "*.go", "*.lua", "*.json", "*.py", "*.js", "*.ts", "*.tsx", "*.jsx", "*.html" }
+local autofmt_patterns =
+    { "*.go", "*.lua", "*.json", "*.py", "*.js", "*.ts", "*.tsx", "*.jsx", "*.html", "*.cpp", "*.h" }
 local group_name = "AutoFormatGroup_None-ls"
 local install_autofmt = function(patterns)
     local group = vim.api.nvim_create_augroup(group_name, {})
