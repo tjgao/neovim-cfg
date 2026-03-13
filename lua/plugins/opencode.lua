@@ -48,5 +48,12 @@ return {
         -- You may want these if you stick with the opinionated "<C-a>" and "<C-x>" above — otherwise consider "<leader>o…".
         vim.keymap.set("n", "+", "<C-a>", { desc = "Increment under cursor", noremap = true })
         vim.keymap.set("n", "-", "<C-x>", { desc = "Decrement under cursor", noremap = true })
+
+        -- Clean up opencode instance created by this nvim when exiting
+        vim.api.nvim_create_autocmd("VimLeavePre", {
+            callback = function()
+                vim.fn.system("pkill -P " .. vim.fn.getpid())
+            end,
+        })
     end,
 }
