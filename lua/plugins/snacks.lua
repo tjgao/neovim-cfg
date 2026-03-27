@@ -1,3 +1,159 @@
+local function get_git_root()
+    local cwd = vim.fn.expand("%:p:h")
+    if cwd == "" then
+        cwd = vim.uv.cwd() or "."
+    end
+
+    local proc = vim.system({ "git", "-C", cwd, "rev-parse", "--show-toplevel" }, { text = true }):wait()
+    if proc.code ~= 0 then
+        return nil
+    end
+
+    return vim.trim(proc.stdout)
+end
+
+local function get_git_tracked_files(root)
+    local proc = vim.system({ "git", "-C", root, "grep", "-I", "--name-only", "-z", "-e", "." }, { text = true }):wait()
+    if proc.code ~= 0 then
+        proc = vim.system({ "git", "-C", root, "ls-files", "-z" }, { text = true }):wait()
+        if proc.code ~= 0 then
+            return {}
+        end
+    end
+
+    local files = {}
+    for file in proc.stdout:gmatch("([^%z]+)") do
+        files[#files + 1] = file
+    end
+    return files
+end
+
+local function strip_quotes(s)
+    local first = s:sub(1, 1)
+    local last = s:sub(-1)
+    if (first == '"' and last == '"') or (first == "'" and last == "'") then
+        return s:sub(2, -2)
+    end
+    return s
+end
+
+local function parse_query_filters(search)
+    local util = require("snacks.picker.util")
+    local text, args = util.parse(search)
+    local keep = {}
+    local types = {}
+
+    local i = 1
+    while i <= #args do
+        local arg = args[i]
+        local t = arg:match("^%-t=(.+)$") or arg:match("^%-%-type=(.+)$")
+        if t then
+            types[#types + 1] = strip_quotes(t)
+        elseif arg == "-t" or arg == "--type" then
+            if args[i + 1] then
+                types[#types + 1] = strip_quotes(args[i + 1])
+                i = i + 1
+            end
+        else
+            keep[#keep + 1] = arg
+        end
+        i = i + 1
+    end
+
+    if #keep == 0 then
+        return {
+            search = text,
+            types = types,
+            has_rg_args = false,
+        }
+    end
+    return {
+        search = text .. " -- " .. table.concat(keep, " "),
+        types = types,
+        has_rg_args = true,
+    }
+end
+
+local function filter_files_by_types(files, types)
+    if #types == 0 then
+        return files
+    end
+
+    local allowed = {}
+    for _, t in ipairs(types) do
+        if t ~= "all" and t ~= "" then
+            allowed[t] = true
+        end
+    end
+    if vim.tbl_isempty(allowed) then
+        return files
+    end
+
+    local filtered = {}
+    for _, file in ipairs(files) do
+        local ext = file:match("%.([%w_+-]+)$")
+        if ext and allowed[ext] then
+            filtered[#filtered + 1] = file
+        end
+    end
+    return filtered
+end
+
+local function git_rg(opts)
+    local snacks = require("snacks")
+    local root = get_git_root()
+    if not root then
+        return snacks.picker.git_grep(opts)
+    end
+
+    local files = get_git_tracked_files(root)
+    if #files == 0 then
+        return snacks.picker.git_grep(opts)
+    end
+
+    return snacks.picker.pick(vim.tbl_deep_extend("force", {
+        source = "grep",
+        cwd = root,
+        dirs = files,
+        finder = function(fopts, ctx)
+            local parsed = parse_query_filters(ctx.filter.search)
+            local has_base_rg_opts = opts
+                and (
+                    (opts.args and #opts.args > 0)
+                    or opts.ft ~= nil
+                    or opts.glob ~= nil
+                    or opts.regex == false
+                )
+
+            if #parsed.types == 0 and not parsed.has_rg_args and not has_base_rg_opts then
+                local git_finder = require("snacks.picker.source.git").grep
+                return git_finder(vim.tbl_deep_extend("force", {
+                    cwd = root,
+                    need_search = true,
+                    untracked = false,
+                    submodules = false,
+                }, opts or {}), ctx)
+            end
+
+            local filtered_files = filter_files_by_types(files, parsed.types)
+            if #filtered_files == 0 then
+                return function() end
+            end
+
+            local nctx = ctx:clone()
+            nctx.filter = nctx.filter:clone()
+            nctx.filter.search = parsed.search
+
+            local next_opts = vim.tbl_deep_extend("force", fopts, { dirs = filtered_files })
+            return require("snacks.picker.source.grep").grep(next_opts, nctx)
+        end,
+        args = { "--no-messages", "--no-binary" },
+        title = "Git Rg",
+        supports_live = true,
+        live = true,
+    }, opts or {}))
+end
+
 return {
     "folke/snacks.nvim",
     lazy = false,
@@ -233,7 +389,7 @@ return {
         {
             "<leader>/",
             function()
-                require("snacks").picker.git_grep({
+                git_rg({
                     formatters = {
                         file = {
                             filename_first = true,
@@ -268,7 +424,7 @@ return {
         {
             "<leader>ss",
             function()
-                require("snacks").picker.pick({
+                git_rg({
                     focus = "list",
                     formatters = {
                         file = {
@@ -276,7 +432,6 @@ return {
                             min_width = 100,
                         },
                     },
-                    source = "git_grep",
                     regex = false,
                     live = false,
                     search = function(picker)
