@@ -12,6 +12,9 @@ return {
             "rust",
             "bash",
             "python",
+            "qml",
+            "html",
+            "svelte",
             html = {
                 mode = "foreground",
             },

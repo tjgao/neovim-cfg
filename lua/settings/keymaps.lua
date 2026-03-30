@@ -78,6 +78,7 @@ keymap("n", "<leader>ai", function()
     notify("Case sensitive for * search is turned " .. (vim.o.ignorecase and "on" or "off"))
     vim.cmd("set ignorecase!")
 end, "Toggle case sensitive for * search")
+keymap("n", "<leader>ac", ":ColorizerToggle<CR>", "Toggle Colorizer for current buffer")
 
 keymap("n", "]h", ":Gitsigns next_hunk<CR>", { desc = "Gitsigns: Go to next hunk" })
 keymap("n", "[h", ":Gitsigns prev_hunk<CR>", { desc = "Gitsigns: Go to previous hunk" })
