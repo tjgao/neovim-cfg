@@ -59,3 +59,63 @@ vim.opt.diffopt = {
 
 -- Fold unchanged sections in diff mode
 vim.opt.foldmethod = "diff"
+
+if vim.fn.has("wsl") == 1 and vim.fn.executable("win32yank.exe") == 1 then
+    local clipboard_cache = {
+        ["+"] = nil,
+        ["*"] = nil,
+    }
+
+    local function set_cache(lines, regtype)
+        local value = {
+            lines = vim.deepcopy(lines),
+            regtype = regtype or "v",
+        }
+        clipboard_cache["+"] = value
+        clipboard_cache["*"] = value
+    end
+
+    local function clipboard_copy(lines, regtype)
+        local text = table.concat(lines, "\n")
+        local job = vim.fn.jobstart({ "win32yank.exe", "-i", "--crlf" }, { stdin = "pipe" })
+        if job <= 0 then
+            return
+        end
+        vim.fn.chansend(job, text)
+        vim.fn.chanclose(job, "stdin")
+        set_cache(lines, regtype)
+    end
+
+    local function clipboard_paste(reg)
+        local cached = clipboard_cache[reg]
+        if cached then
+            return vim.deepcopy(cached.lines), cached.regtype
+        end
+        return vim.fn.systemlist("win32yank.exe -o --lf"), "v"
+    end
+
+    vim.api.nvim_create_autocmd({ "FocusGained", "VimResume" }, {
+        group = vim.api.nvim_create_augroup("wsl-clipboard-cache", { clear = true }),
+        callback = function()
+            clipboard_cache["+"] = nil
+            clipboard_cache["*"] = nil
+        end,
+    })
+
+    vim.g.clipboard = {
+        name = "win32yank-wsl",
+        copy = {
+            ["+"] = clipboard_copy,
+            ["*"] = clipboard_copy,
+        },
+        paste = {
+            ["+"] = function()
+                return clipboard_paste("+")
+            end,
+            ["*"] = function()
+                return clipboard_paste("*")
+            end,
+        },
+        cache_enabled = 0,
+    }
+end
