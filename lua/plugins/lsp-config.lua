@@ -51,13 +51,17 @@ return {
         dependencies = {
             "nvim-lua/plenary.nvim",
             "mason-org/mason.nvim",
+            "neovim/nvim-lspconfig",
         },
         config = function()
             local masonlsp = require("mason-lspconfig")
             for server_name, server in pairs(servers) do
                 vim.lsp.config(server_name, server)
             end
-            masonlsp.setup()
+            masonlsp.setup({
+                ensure_installed = vim.tbl_keys(servers),
+                automatic_enable = vim.tbl_keys(servers),
+            })
         end,
     },
     {
