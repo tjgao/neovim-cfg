@@ -2,6 +2,13 @@ return {
     "sudo-tee/opencode.nvim",
     config = function()
         require("opencode").setup({
+            ui = {
+                input = {
+                    text = {
+                        wrap = true,
+                    },
+                },
+            },
             keymap = {
                 editor = {
                     ["<C-.>"] = { "toggle" },
