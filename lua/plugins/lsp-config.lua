@@ -27,7 +27,13 @@ local servers = {
     rust_analyzer = {},
     pyright = {},
     gopls = {},
-    clangd = {},
+    clangd = {
+        cmd = {
+            "clangd",
+            "--background-index",
+            "--log=error",
+        },
+    },
     ts_ls = {},
 }
 

@@ -37,6 +37,8 @@ for k, v in pairs(options) do
     vim.opt[k] = v
 end
 
+vim.lsp.log.set_level("ERROR")
+
 vim.diagnostic.config({
     virtual_text = false,
     underline = false,
