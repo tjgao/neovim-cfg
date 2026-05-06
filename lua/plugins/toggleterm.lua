@@ -7,10 +7,9 @@ vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
 local keymap_opts = { noremap = true, silent = true }
 
 local cfg = {
-    { name = "F9",  key = "<F9>",  direction = "float",      size = 0,                  cmd = "" },
-    { name = "F10", key = "<F10>", direction = "float",      szie = 0,                  cmd = "" },
-    { name = "F11", key = "<F11>", direction = "float",      size = 0,                  cmd = "" },
-    { name = "F12", key = "<F12>", direction = "horizontal", size = vim.o.lines * 0.35, cmd = "" },
+    { name = "F2", key = "<F2>", direction = "float",      size = 0,                  cmd = "" },
+    { name = "F3", key = "<F3>", direction = "float",      szie = 0,                  cmd = "" },
+    { name = "F4", key = "<F4>", direction = "horizontal", size = vim.o.lines * 0.35, cmd = "" },
     -- { name = "F10", key = "<F10>", direction = "float",      szie = 0,               cmd = 'cmd="lazygit"' },
 }
 
