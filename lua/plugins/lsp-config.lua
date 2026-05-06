@@ -25,7 +25,7 @@ local servers = {
         },
     },
     rust_analyzer = {},
-    pyright = {},
+    basedpyright = {},
     gopls = {},
     clangd = {
         cmd = {
