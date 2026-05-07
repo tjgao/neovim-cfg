@@ -39,7 +39,15 @@ end
 vim.diagnostic.config({
     virtual_text = false,
     underline = false,
-    jump = { float = true },
+    jump = {
+        on_jump = function(_, bufnr)
+            vim.diagnostic.open_float({
+                bufnr = bufnr,
+                scope = "cursor",
+                focus = false,
+            })
+        end,
+    },
 })
 
 -- disable tmux nav when zoomed
