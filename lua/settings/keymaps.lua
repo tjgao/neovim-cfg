@@ -39,6 +39,31 @@ keymap("n", "<F1>", ":NvimTreeToggle<CR>", "Toggle NvimTree")
 -- Press jk fast to enter
 keymap("i", "jk", "<ESC>", "Alternative for ESC in insert mode")
 
+local function delete_to_word_start()
+    local col = vim.fn.col(".")
+    if col <= 1 then
+        return ""
+    end
+
+    local before_cursor = vim.fn.getline("."):sub(1, col - 1)
+    local word_start = vim.fn.match(before_cursor, [[\k\+$]])
+    local delete_count = 1
+
+    if word_start >= 0 then
+        delete_count = #before_cursor - word_start
+    end
+
+    return "<C-g>u" .. string.rep("<BS>", delete_count)
+end
+
+vim.keymap.set("i", "<C-d>", delete_to_word_start, {
+    expr = true,
+    replace_keycodes = true,
+    noremap = true,
+    silent = true,
+    desc = "Delete to start of word",
+})
+
 -- Visual --
 -- Stay in indent mode
 keymap("v", "<", "<gv", "Move visual selected left")
