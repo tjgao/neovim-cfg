@@ -1,24 +1,11 @@
 local keymap = require("shared.utils").keymap
 
-local JS_FILETYPES = {
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact",
-    "svelte",
-}
-
 local DEBUG_SETUP = {
     initialized = false,
     js_enabled = false,
-    has_cppdbg = false,
-    has_codelldb = false,
-    has_gdb = false,
 }
 
 local run_selected_config
-local setup_python_configs
-local setup_js_configs
 local open_config_picker
 
 local function find_executable(candidates)
@@ -30,25 +17,25 @@ local function find_executable(candidates)
     return nil
 end
 
-local function python_path()
-    local venv = os.getenv("VIRTUAL_ENV")
-    if venv and venv ~= "" then
-        local venv_python = venv .. "/bin/python"
-        if vim.fn.executable(venv_python) == 1 then
-            return venv_python
+local function find_js_debug_adapter()
+    local from_path = find_executable({ "js-debug-adapter", "js-debug-adapter.cmd" })
+    if from_path then
+        return from_path
+    end
+
+    local mason_bin = vim.fn.stdpath("data") .. "/mason/bin"
+    local candidates = {
+        mason_bin .. "/js-debug-adapter",
+        mason_bin .. "/js-debug-adapter.cmd",
+    }
+
+    for _, candidate in ipairs(candidates) do
+        if vim.fn.filereadable(candidate) == 1 and vim.fn.executable(candidate) == 1 then
+            return candidate
         end
     end
 
-    local cwd = vim.fn.getcwd()
-    local candidates = {
-        cwd .. "/.venv/bin/python",
-        cwd .. "/venv/bin/python",
-        cwd .. "/.python-venv/bin/python",
-        "python3",
-        "python",
-    }
-
-    return find_executable(candidates) or "python3"
+    return nil
 end
 
 local function sanitize_for_json(value)
@@ -424,8 +411,12 @@ local function open_config_editor(dap, selected_config, picker, source_index, pi
 end
 
 local function setup_js_adapter()
-    local js_debug_adapter = find_executable({ "js-debug-adapter", "js-debug-adapter.cmd" })
+    local js_debug_adapter = find_js_debug_adapter()
     if not js_debug_adapter then
+        vim.notify(
+            "js-debug-adapter not found (install 'js' via Mason and ensure Mason bin is executable)",
+            vim.log.levels.WARN
+        )
         return false
     end
 
@@ -439,36 +430,6 @@ local function setup_js_adapter()
             "pwa-extensionHost",
         },
     })
-    return true
-end
-
-local function setup_codelldb(dap)
-    local codelldb = find_executable({ "codelldb" })
-    if codelldb then
-        dap.adapters.codelldb = {
-            type = "server",
-            port = "${port}",
-            executable = {
-                command = codelldb,
-                args = { "--port", "${port}" },
-            },
-        }
-    end
-    return codelldb ~= nil
-end
-
-local function setup_cppdbg_adapter(dap)
-    local mason_cppdbg = vim.fn.stdpath("data") .. "/mason/packages/cpptools/extension/debugAdapters/bin/OpenDebugAD7"
-    local cppdbg = find_executable({ "OpenDebugAD7", mason_cppdbg })
-    if not cppdbg then
-        return false
-    end
-
-    dap.adapters.cppdbg = {
-        id = "cppdbg",
-        type = "executable",
-        command = cppdbg,
-    }
     return true
 end
 
@@ -486,44 +447,38 @@ local function setup_gdb_adapter(dap)
     return true
 end
 
+local function adapter_is_configured(dap, adapter_name)
+    return dap.adapters and dap.adapters[adapter_name] ~= nil
+end
+
 local function initialize_debug_backends(dap)
     if DEBUG_SETUP.initialized then
         return
     end
 
     DEBUG_SETUP.js_enabled = setup_js_adapter()
-    DEBUG_SETUP.has_cppdbg = setup_cppdbg_adapter(dap)
-    DEBUG_SETUP.has_codelldb = setup_codelldb(dap)
-    DEBUG_SETUP.has_gdb = setup_gdb_adapter(dap)
-
-    setup_python_configs(dap)
-    if DEBUG_SETUP.js_enabled then
-        setup_js_configs(dap)
-    end
+    setup_gdb_adapter(dap)
 
     DEBUG_SETUP.initialized = true
 end
 
-local function prepare_config_for_run(config)
+local function prepare_config_for_run(dap, config)
     local runnable = vim.deepcopy(config)
 
-    if runnable.type == "cppdbg" then
-        if not DEBUG_SETUP.has_cppdbg then
-            return nil, "cppdbg adapter is not available (install cpptools via Mason)"
-        end
-    end
+    local adapter_checks = {
+        cppdbg = "cppdbg adapter is not available (install cpptools via Mason)",
+        codelldb = "codelldb adapter is not available",
+        gdb = "gdb adapter is not available",
+        go = "go adapter is not available (install delve via Mason)",
+        python = "python adapter is not available (install debugpy via Mason)",
+        ["pwa-node"] = "js-debug-adapter is not available",
+        ["pwa-chrome"] = "js-debug-adapter is not available",
+        ["pwa-msedge"] = "js-debug-adapter is not available",
+    }
 
-    if runnable.type == "codelldb" and not DEBUG_SETUP.has_codelldb then
-        return nil, "codelldb adapter is not available"
-    end
-    if runnable.type == "gdb" and not DEBUG_SETUP.has_gdb then
-        return nil, "gdb adapter is not available"
-    end
-    if
-        (runnable.type == "pwa-node" or runnable.type == "pwa-chrome" or runnable.type == "pwa-msedge")
-        and not DEBUG_SETUP.js_enabled
-    then
-        return nil, "js-debug-adapter is not available"
+    local error_message = adapter_checks[runnable.type]
+    if error_message and not adapter_is_configured(dap, runnable.type) then
+        return nil, error_message
     end
 
     return runnable
@@ -531,60 +486,12 @@ end
 
 run_selected_config = function(dap, config)
     initialize_debug_backends(dap)
-    local runnable, err = prepare_config_for_run(config)
+    local runnable, err = prepare_config_for_run(dap, config)
     if not runnable then
         vim.notify(err or "Debug config cannot run", vim.log.levels.ERROR)
         return
     end
     dap.run(runnable)
-end
-
-setup_python_configs = function(dap)
-    require("dap-python").setup(python_path())
-    dap.configurations.python = dap.configurations.python
-        or {
-            {
-                type = "python",
-                request = "launch",
-                name = "Launch current file",
-                program = "${file}",
-                pythonPath = python_path,
-                cwd = "${workspaceFolder}",
-            },
-            {
-                type = "python",
-                request = "launch",
-                name = "Launch module",
-                module = function()
-                    return vim.fn.input("Python module: ")
-                end,
-                pythonPath = python_path,
-                cwd = "${workspaceFolder}",
-            },
-        }
-end
-
-setup_js_configs = function(dap)
-    local js_configs = {
-        {
-            type = "pwa-node",
-            request = "launch",
-            name = "Launch current file (Node)",
-            program = "${file}",
-            cwd = "${workspaceFolder}",
-        },
-        {
-            type = "pwa-node",
-            request = "attach",
-            name = "Attach to process (Node)",
-            processId = require("dap.utils").pick_process,
-            cwd = "${workspaceFolder}",
-        },
-    }
-
-    for _, ft in ipairs(JS_FILETYPES) do
-        dap.configurations[ft] = dap.configurations[ft] or vim.deepcopy(js_configs)
-    end
 end
 
 local function load_launch_json_configs()
@@ -608,9 +515,9 @@ end
 local function default_launch_config()
     return {
         {
-            label = "C++ (cppdbg + gdb)",
+            label = "C/C++ (cppdbg + gdb)",
             config = {
-                name = "New C++ config",
+                name = "New C/C++ config",
                 type = "cppdbg",
                 request = "launch",
                 program = "${workspaceFolder}/path/to/executable",
@@ -631,6 +538,18 @@ local function default_launch_config()
             },
         },
         {
+            label = "C/C++ or Rust (codelldb)",
+            config = {
+                name = "New codelldb config",
+                type = "codelldb",
+                request = "launch",
+                program = "${workspaceFolder}/path/to/binary",
+                args = {},
+                cwd = "${workspaceFolder}",
+                stopOnEntry = false,
+            },
+        },
+        {
             label = "Python (launch file)",
             config = {
                 name = "New Python config",
@@ -638,6 +557,72 @@ local function default_launch_config()
                 request = "launch",
                 program = "${file}",
                 pythonPath = "python3",
+                cwd = "${workspaceFolder}",
+            },
+        },
+        {
+            label = "Python (launch module)",
+            config = {
+                name = "New Python module config",
+                type = "python",
+                request = "launch",
+                module = "package.module",
+                pythonPath = "python3",
+                cwd = "${workspaceFolder}",
+            },
+        },
+        {
+            label = "Go (launch current file)",
+            config = {
+                name = "New Go file config",
+                type = "go",
+                request = "launch",
+                mode = "debug",
+                program = "${file}",
+                cwd = "${workspaceFolder}",
+            },
+        },
+        {
+            label = "Go (launch package)",
+            config = {
+                name = "New Go package config",
+                type = "go",
+                request = "launch",
+                mode = "debug",
+                program = "${workspaceFolder}",
+                cwd = "${workspaceFolder}",
+            },
+        },
+        {
+            label = "Go (test current file)",
+            config = {
+                name = "New Go file test config",
+                type = "go",
+                request = "launch",
+                mode = "test",
+                program = "${file}",
+                cwd = "${workspaceFolder}",
+            },
+        },
+        {
+            label = "Go (test package)",
+            config = {
+                name = "New Go package test config",
+                type = "go",
+                request = "launch",
+                mode = "test",
+                program = "${workspaceFolder}",
+                cwd = "${workspaceFolder}",
+            },
+        },
+        {
+            label = "Go (attach local process)",
+            config = {
+                name = "New Go attach config",
+                type = "go",
+                request = "attach",
+                mode = "local",
+                processId = "${command:PickProcess}",
                 cwd = "${workspaceFolder}",
             },
         },
@@ -659,6 +644,26 @@ local function default_launch_config()
                 request = "attach",
                 processId = "${command:PickProcess}",
                 cwd = "${workspaceFolder}",
+            },
+        },
+        {
+            label = "React (Chrome launch)",
+            config = {
+                name = "React Chrome",
+                type = "pwa-chrome",
+                request = "launch",
+                url = "http://localhost:3000",
+                webRoot = "${workspaceFolder}",
+            },
+        },
+        {
+            label = "Svelte (Chrome launch)",
+            config = {
+                name = "Svelte Chrome",
+                type = "pwa-chrome",
+                request = "launch",
+                url = "http://localhost:5173",
+                webRoot = "${workspaceFolder}",
             },
         },
         {
@@ -921,13 +926,26 @@ return {
             version = "1.*",
             opts = {},
         },
+        "jay-babu/mason-nvim-dap.nvim",
         "leoluz/nvim-dap-go",
-        "mfussenegger/nvim-dap-python",
         "mxsdev/nvim-dap-vscode-js",
     },
     config = function()
         local dap = require("dap")
         local dapview = require("dap-view")
+
+        local mason_dap = require("mason-nvim-dap")
+        mason_dap.setup({
+            ensure_installed = {
+                "cppdbg",
+                "codelldb",
+                "delve",
+                "js",
+                "python",
+            },
+            automatic_installation = true,
+            handlers = {},
+        })
 
         dapview.setup()
         require("dap-go").setup()
