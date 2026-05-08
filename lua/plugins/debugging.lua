@@ -203,7 +203,7 @@ local function write_launch_json(path, launch)
     return true
 end
 
-local function save_config_to_launch_json(config, previous_name, previous_index)
+local function save_config_to_launch_json(config, previous_index)
     local path = get_launch_json_path()
     local launch, read_err = read_launch_json(path)
     if not launch then
@@ -218,13 +218,6 @@ local function save_config_to_launch_json(config, previous_name, previous_index)
         replaced = true
     end
 
-    for i, item in ipairs(configurations) do
-        if not replaced and type(item) == "table" and (item.name == previous_name or item.name == config.name) then
-            configurations[i] = vim.deepcopy(config)
-            replaced = true
-            break
-        end
-    end
     if not replaced then
         configurations[#configurations + 1] = vim.deepcopy(config)
     end
@@ -283,8 +276,9 @@ local function open_config_editor(dap, selected_config, picker, source_index, pi
 
     local sanitized_table = type(sanitized) == "table" and sanitized or {}
     local lines = vim.split(encode_json_pretty(sanitized_table), "\n", { plain = true })
-    local original_name = type(sanitized_table.name) == "string" and sanitized_table.name or nil
+    local launch_json_path = get_launch_json_path()
     local buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_set_name(buf, launch_json_path)
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 
     local width = math.min(math.floor(vim.o.columns * 0.75), 110)
@@ -301,9 +295,11 @@ local function open_config_editor(dap, selected_config, picker, source_index, pi
         col = col,
         title = " Edit DAP Config JSON ",
         title_pos = "center",
+        footer = " :w save  |  R run  |  q close ",
+        footer_pos = "center",
     })
 
-    vim.bo[buf].buftype = "nofile"
+    vim.bo[buf].buftype = "acwrite"
     vim.bo[buf].bufhidden = "wipe"
     vim.bo[buf].swapfile = false
     vim.bo[buf].filetype = "json"
@@ -370,10 +366,9 @@ local function open_config_editor(dap, selected_config, picker, source_index, pi
         end
 
         if should_save then
-            if not save_config_to_launch_json(parsed, original_name, source_index) then
+            if not save_config_to_launch_json(parsed, source_index) then
                 return
             end
-            original_name = parsed.name
         end
 
         close_editor(false)
@@ -397,8 +392,8 @@ local function open_config_editor(dap, selected_config, picker, source_index, pi
             return
         end
 
-        if save_config_to_launch_json(parsed, original_name, source_index) then
-            original_name = parsed.name
+        if save_config_to_launch_json(parsed, source_index) then
+            vim.bo[buf].modified = false
 
             if picker_item then
                 local config_name = type(parsed.name) == "string" and parsed.name or "(unnamed)"
@@ -415,6 +410,10 @@ local function open_config_editor(dap, selected_config, picker, source_index, pi
     end
 
     local opts = { buffer = buf, silent = true, nowait = true }
+    vim.api.nvim_create_autocmd("BufWriteCmd", {
+        buffer = buf,
+        callback = save_from_editor,
+    })
     vim.keymap.set("n", "q", close_editor, vim.tbl_extend("force", opts, { desc = "Close editor" }))
     vim.keymap.set("n", "R", function()
         run_from_editor(false)
@@ -422,12 +421,6 @@ local function open_config_editor(dap, selected_config, picker, source_index, pi
     vim.keymap.set("n", "<S-r>", function()
         run_from_editor(false)
     end, vim.tbl_extend("force", opts, { desc = "Run edited config" }))
-    vim.keymap.set("n", "W", function()
-        save_from_editor()
-    end, vim.tbl_extend("force", opts, { desc = "Write launch.json" }))
-    vim.keymap.set("n", "<S-w>", function()
-        save_from_editor()
-    end, vim.tbl_extend("force", opts, { desc = "Write launch.json" }))
 end
 
 local function setup_js_adapter()
@@ -594,21 +587,6 @@ setup_js_configs = function(dap)
     end
 end
 
-local function collect_configs(dap, bufnr, callback)
-    require("dap.async").run(function()
-        local configs = {}
-        for _, get_configs in pairs(dap.providers.configs) do
-            local provided = get_configs(bufnr) or {}
-            for _, config in ipairs(provided) do
-                configs[#configs + 1] = config
-            end
-        end
-        vim.schedule(function()
-            callback(configs)
-        end)
-    end)
-end
-
 local function load_launch_json_configs()
     local path = get_launch_json_path()
     local ok, configs_or_err = pcall(function()
@@ -724,16 +702,14 @@ local function choose_new_config_template(dap, picker, on_saved)
 end
 
 local function resolve_debug_configs(dap, callback)
-    local bufnr = vim.api.nvim_get_current_buf()
     initialize_debug_backends(dap)
 
-    collect_configs(dap, bufnr, function(configs)
-        if has_launch_json() then
-            configs = load_launch_json_configs()
-        end
+    if has_launch_json() then
+        callback(load_launch_json_configs())
+        return
+    end
 
-        callback(configs)
-    end)
+    callback({})
 end
 
 local function show_config_picker(dap, configs)
