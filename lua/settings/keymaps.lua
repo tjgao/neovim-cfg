@@ -119,8 +119,6 @@ keymap("n", "<C-,>", ":LspClangdSwitchSourceHeader<CR>", "Switch source and head
 keymap("n", "<leader>on", ":ObsidianNew<CR>", "Open new note [Obsidian]")
 keymap("n", "<leader>os", ":ObsidianSearch<CR>", "Search note [Obsidian]")
 
-keymap("n", "<leader>tt", ":TSJToggle<CR>", "Toggle treesitter join")
-
 keymap("n", "<leader>qq", function()
     require("quicker").toggle()
 end, "Toggle quickfix")
