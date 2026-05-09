@@ -3,10 +3,70 @@ local keymap = require("shared.utils").keymap
 local DEBUG_SETUP = {
     initialized = false,
     js_enabled = false,
+    last_launch = nil,
 }
 
 local run_selected_config
 local open_config_picker
+
+local function clear_last_launch_config()
+    DEBUG_SETUP.last_launch = nil
+end
+
+local function launch_json_mtime_token(path)
+    local uv = vim.uv or vim.loop
+    local stat = uv.fs_stat(path)
+    if not stat or not stat.mtime then
+        return nil
+    end
+    local sec = stat.mtime.sec or 0
+    local nsec = stat.mtime.nsec or 0
+    local size = stat.size or 0
+    return string.format("%s:%d:%d:%d", path, sec, nsec, size)
+end
+
+local function remember_last_launch_config(config)
+    local path = vim.fn.getcwd() .. "/.vscode/launch.json"
+    local token = launch_json_mtime_token(path)
+    if not token then
+        clear_last_launch_config()
+        return
+    end
+
+    DEBUG_SETUP.last_launch = {
+        config = vim.deepcopy(config),
+        token = token,
+        path = path,
+    }
+end
+
+local function get_valid_last_launch_config()
+    local last = DEBUG_SETUP.last_launch
+    if type(last) ~= "table" or type(last.config) ~= "table" or type(last.path) ~= "string" then
+        clear_last_launch_config()
+        return nil
+    end
+
+    local current_token = launch_json_mtime_token(last.path)
+    if not current_token or current_token ~= last.token then
+        clear_last_launch_config()
+        return nil
+    end
+
+    return vim.deepcopy(last.config)
+end
+
+local function toggle_dap_term()
+    local term = require("dap-view.console.view")
+    local state = require("dap-view.state")
+    local util = require("dap-view.util")
+
+    if util.is_win_valid(state.term_winnr) then
+        term.hide_term_buf_win()
+    else
+        term.open_term_buf_win()
+    end
+end
 
 local function find_executable(candidates)
     for _, candidate in ipairs(candidates) do
@@ -187,6 +247,7 @@ local function write_launch_json(path, launch)
 
     file:write(serialized)
     file:close()
+    clear_last_launch_config()
     return true
 end
 
@@ -361,7 +422,7 @@ local function open_config_editor(dap, selected_config, picker, source_index, pi
         close_editor(false)
         close_picker()
         vim.schedule(function()
-            run_selected_config(dap, parsed)
+            run_selected_config(dap, parsed, { remember = should_save })
         end)
     end
 
@@ -484,12 +545,16 @@ local function prepare_config_for_run(dap, config)
     return runnable
 end
 
-run_selected_config = function(dap, config)
+run_selected_config = function(dap, config, opts)
+    opts = opts or {}
     initialize_debug_backends(dap)
     local runnable, err = prepare_config_for_run(dap, config)
     if not runnable then
         vim.notify(err or "Debug config cannot run", vim.log.levels.ERROR)
         return
+    end
+    if opts.remember ~= false then
+        remember_last_launch_config(runnable)
     end
     dap.run(runnable)
 end
@@ -866,15 +931,29 @@ local function continue_or_run_single_or_pick(dap)
             return
         end
 
+        local remembered = get_valid_last_launch_config()
+        if remembered then
+            run_selected_config(dap, remembered, { remember = false })
+            return
+        end
+
         show_config_picker(dap, configs)
     end)
 end
 
+local function setup_launch_json_cache_invalidation()
+    local group = vim.api.nvim_create_augroup("debug-launch-json-cache", { clear = true })
+    vim.api.nvim_create_autocmd({ "BufWritePost", "FileChangedShellPost" }, {
+        group = group,
+        pattern = { "*/.vscode/launch.json", ".vscode/launch.json" },
+        callback = function()
+            clear_last_launch_config()
+        end,
+    })
+end
+
 local function setup_ui_listeners(dap, dapview)
-    dap.listeners.before.attach.dapui_config = function()
-        dapview.open()
-    end
-    dap.listeners.before.launch.dapui_config = function()
+    dap.listeners.after.event_stopped.dapui_config = function()
         dapview.open()
     end
     dap.listeners.before.event_terminated.dapui_config = function()
@@ -913,9 +992,23 @@ local function setup_keymaps(dap)
         end
         open_config_picker(dap)
     end, { desc = "Continue or pick config" })
+    keymap("n", "<Leader>dt", toggle_dap_term, { desc = "Toggle DAP terminal" })
     keymap("n", "<Leader>di", dap.step_into, { desc = "Step into<F11>" })
     keymap("n", "<Leader>do", dap.step_out, { desc = "Step out<S-F11>" })
     keymap("n", "<Leader>dv", dap.step_over, { desc = "Step over<F10>" })
+end
+
+local function setup_dap_term_buffer_keymap()
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = "dap-view-term",
+        callback = function(args)
+            vim.keymap.set("n", "q", toggle_dap_term, {
+                buffer = args.buf,
+                silent = true,
+                desc = "Toggle DAP terminal",
+            })
+        end,
+    })
 end
 
 return {
@@ -949,7 +1042,9 @@ return {
             handlers = {},
         })
 
-        dapview.setup()
+        dapview.setup({
+            auto_toggle = "open_term",
+        })
         require("dap-go").setup()
 
         if ok_overseer then
@@ -957,7 +1052,9 @@ return {
         end
 
         setup_ui_listeners(dap, dapview)
+        setup_launch_json_cache_invalidation()
         setup_keymaps(dap)
+        setup_dap_term_buffer_keymap()
         keymap("n", "<Leader>dx", function()
             dap.terminate()
             dapview.close()
