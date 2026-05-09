@@ -929,10 +929,12 @@ return {
         "jay-babu/mason-nvim-dap.nvim",
         "leoluz/nvim-dap-go",
         "mxsdev/nvim-dap-vscode-js",
+        "stevearc/overseer.nvim",
     },
     config = function()
         local dap = require("dap")
         local dapview = require("dap-view")
+        local ok_overseer, overseer = pcall(require, "overseer")
 
         local mason_dap = require("mason-nvim-dap")
         mason_dap.setup({
@@ -949,6 +951,10 @@ return {
 
         dapview.setup()
         require("dap-go").setup()
+
+        if ok_overseer then
+            overseer.enable_dap()
+        end
 
         setup_ui_listeners(dap, dapview)
         setup_keymaps(dap)
