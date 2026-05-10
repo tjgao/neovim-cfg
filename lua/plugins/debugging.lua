@@ -1044,6 +1044,11 @@ return {
 
         dapview.setup({
             auto_toggle = "open_term",
+            windows = {
+                terminal = {
+                    position = "right",
+                },
+            },
         })
         require("dap-go").setup()
 
