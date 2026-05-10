@@ -906,10 +906,10 @@ return {
         "OverseerInfo",
     },
     keys = {
-        { "<leader>tr", run_task_picker_and_remember, desc = "Overseer run task" },
-        { "<leader>tt", "<cmd>OverseerToggle<cr>", desc = "Overseer toggle list" },
+        { "<leader>tr", run_task_picker_and_remember,  desc = "Overseer run task" },
+        { "<leader>tt", "<cmd>OverseerToggle<cr>",     desc = "Overseer toggle list" },
         { "<leader>ta", "<cmd>OverseerTaskAction<cr>", desc = "Overseer task action" },
-        { "<leader>tq", run_recent_task_action, desc = "Run last task or pick" },
+        { "<leader>tq", run_recent_task_action,        desc = "Run last task or pick" },
         {
             "<leader>tm",
             function()
@@ -917,6 +917,8 @@ return {
             end,
             desc = "Manage tasks.json",
         },
+        { "<S-F5>", run_recent_task_action, desc = "Run last task or pick" },
+        { "<F17>",  run_recent_task_action, desc = "Run last task or pick" },
     },
     opts = {
         dap = true,
