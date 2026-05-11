@@ -4,6 +4,7 @@ local DEBUG_SETUP = {
     initialized = false,
     js_enabled = false,
     last_launch = nil,
+    active_prelaunch_tasks = {},
 }
 
 local run_selected_config
@@ -11,6 +12,75 @@ local open_config_picker
 
 local function clear_last_launch_config()
     DEBUG_SETUP.last_launch = nil
+end
+
+local function clear_active_prelaunch_task()
+    DEBUG_SETUP.active_prelaunch_tasks = {}
+end
+
+local function get_prelaunch_task_names(config)
+    if type(config) ~= "table" then
+        return {}
+    end
+
+    local task_names = {}
+    local prelaunch = config.preLaunchTask
+
+    if type(prelaunch) == "string" and prelaunch ~= "" then
+        task_names[#task_names + 1] = prelaunch
+    elseif type(prelaunch) == "table" then
+        for _, name in ipairs(prelaunch) do
+            if type(name) == "string" and name ~= "" then
+                task_names[#task_names + 1] = name
+            end
+        end
+    end
+
+    return task_names
+end
+
+local function set_active_prelaunch_task(config)
+    local task_names = get_prelaunch_task_names(config)
+    DEBUG_SETUP.active_prelaunch_tasks = task_names
+end
+
+local function stop_active_prelaunch_task()
+    local task_names = DEBUG_SETUP.active_prelaunch_tasks
+    if type(task_names) ~= "table" or #task_names == 0 then
+        return
+    end
+
+    local ok_overseer, overseer = pcall(require, "overseer")
+    if not ok_overseer then
+        clear_active_prelaunch_task()
+        return
+    end
+
+    local stopped_names = {}
+
+    for _, task_name in ipairs(task_names) do
+        local tasks = overseer.list_tasks({
+            status = "RUNNING",
+            include_ephemeral = true,
+            filter = function(task)
+                return task.name == task_name
+            end,
+        })
+
+        for _, task in ipairs(tasks) do
+            task:stop()
+        end
+
+        if #tasks > 0 then
+            stopped_names[#stopped_names + 1] = task_name
+        end
+    end
+
+    if #stopped_names > 0 then
+        vim.notify(("Stopped preLaunchTask(s): %s"):format(table.concat(stopped_names, ", ")), vim.log.levels.INFO)
+    end
+
+    clear_active_prelaunch_task()
 end
 
 local function launch_json_mtime_token(path)
@@ -556,6 +626,11 @@ run_selected_config = function(dap, config, opts)
     if opts.remember ~= false then
         remember_last_launch_config(runnable)
     end
+    local prelaunch_tasks = get_prelaunch_task_names(runnable)
+    if #prelaunch_tasks > 0 then
+        vim.notify(("Running preLaunchTask(s): %s"):format(table.concat(prelaunch_tasks, ", ")), vim.log.levels.INFO)
+    end
+    set_active_prelaunch_task(runnable)
     dap.run(runnable)
 end
 
@@ -953,14 +1028,25 @@ local function setup_launch_json_cache_invalidation()
 end
 
 local function setup_ui_listeners(dap, dapview)
+    dap.listeners.after.event_initialized.dap_prelaunch_status = function()
+        local task_names = DEBUG_SETUP.active_prelaunch_tasks
+        if type(task_names) == "table" and #task_names > 0 then
+            vim.notify("preLaunchTask finished, debugger started", vim.log.levels.INFO)
+        end
+    end
     dap.listeners.after.event_stopped.dapui_config = function()
         dapview.open()
     end
     dap.listeners.before.event_terminated.dapui_config = function()
+        stop_active_prelaunch_task()
         dapview.close()
     end
     dap.listeners.before.event_exited.dapui_config = function()
+        stop_active_prelaunch_task()
         dapview.close()
+    end
+    dap.listeners.before.disconnect.dap_prelaunch_cleanup = function()
+        stop_active_prelaunch_task()
     end
 end
 

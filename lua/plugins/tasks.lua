@@ -77,6 +77,17 @@ local function attach_running_notification(task)
         close_running_notification()
         return true
     end)
+    task:subscribe("on_result", function()
+        if task:is_running() then
+            close_running_notification()
+            notifier.notify(("%s is running in background"):format(task.name), vim.log.levels.INFO, {
+                title = "Overseer",
+                timeout = 2500,
+            })
+            return true
+        end
+        return false
+    end)
 end
 
 local function sanitize_for_json(value)
