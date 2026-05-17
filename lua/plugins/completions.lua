@@ -52,12 +52,14 @@ return {
                     end,
                 },
                 window = {
-                    completion = cmp.config.window.bordered({
+                    completion = {
+                        border = "single",
                         winhighlight = "Normal:MyCmpMenu,FloatBorder:MyCmpMenu,CursorLine:PmenuSel,Search:None",
-                    }),
-                    documentation = cmp.config.window.bordered({
+                    },
+                    documentation = {
+                        border = "single",
                         winhighlight = "Normal:MyCmpMenu,FloatBorder:MyCmpMenu,CursorLine:PmenuSel,Search:None",
-                    }),
+                    },
                 },
                 mapping = cmp.mapping.preset.insert({
                     ["<C-b>"] = cmp.mapping.scroll_docs(-4),
