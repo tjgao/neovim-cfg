@@ -231,12 +231,15 @@ local function git_rg(opts)
 
             if not has_path_filters and not parsed.has_rg_args and not has_base_rg_opts then
                 local git_finder = require("snacks.picker.source.git").grep
+                local search = parsed.search or ""
+                local smart_ignorecase = search ~= "" and search == search:lower()
                 return git_finder(
                     vim.tbl_deep_extend("force", {
                         cwd = root,
                         need_search = true,
                         untracked = false,
                         submodules = false,
+                        ignorecase = smart_ignorecase,
                     }, opts or {}),
                     ctx
                 )
