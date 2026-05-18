@@ -223,12 +223,7 @@ local function git_rg(opts)
         finder = function(fopts, ctx)
             local parsed = parse_query_filters(ctx.filter.search)
             local has_base_rg_opts = opts
-                and (
-                    (opts.args and #opts.args > 0)
-                    or opts.ft ~= nil
-                    or opts.glob ~= nil
-                    or opts.regex == false
-                )
+                and ((opts.args and #opts.args > 0) or opts.ft ~= nil or opts.glob ~= nil or opts.regex == false)
             local has_path_filters = #parsed.include_types > 0
                 or #parsed.exclude_types > 0
                 or #parsed.include_globs > 0
@@ -236,12 +231,18 @@ local function git_rg(opts)
 
             if not has_path_filters and not parsed.has_rg_args and not has_base_rg_opts then
                 local git_finder = require("snacks.picker.source.git").grep
-                return git_finder(vim.tbl_deep_extend("force", {
-                    cwd = root,
-                    need_search = true,
-                    untracked = false,
-                    submodules = false,
-                }, opts or {}), ctx)
+                local search = parsed.search or ""
+                local smart_ignorecase = search ~= "" and search == search:lower()
+                return git_finder(
+                    vim.tbl_deep_extend("force", {
+                        cwd = root,
+                        need_search = true,
+                        untracked = false,
+                        submodules = false,
+                        ignorecase = smart_ignorecase,
+                    }, opts or {}),
+                    ctx
+                )
             end
 
             local filtered_files = filter_files(get_files(), parsed)
