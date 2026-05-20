@@ -294,6 +294,179 @@ local function commit_to_reg(picker, item)
     vim.fn.setreg("+", item.commit) -- Also put in clipboard
 end
 
+local SHOW_REMOTE_BRANCHES = false
+
+local function set_hl_bold(name)
+    local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = name, link = false })
+    if not ok then
+        return
+    end
+
+    vim.api.nvim_set_hl(0, name, {
+        fg = hl.fg,
+        bg = hl.bg,
+        sp = hl.sp,
+        bold = true,
+        italic = hl.italic,
+        reverse = hl.reverse,
+        underline = hl.underline,
+        undercurl = hl.undercurl,
+        strikethrough = hl.strikethrough,
+        nocombine = hl.nocombine,
+        blend = hl.blend,
+    })
+end
+
+local function ensure_git_branch_highlights()
+    vim.api.nvim_set_hl(0, "SnacksPickerGitBranchRemote", { default = true, link = "DiagnosticHint" })
+    set_hl_bold("SnacksPickerGitBranch")
+    set_hl_bold("SnacksPickerGitBranchRemote")
+end
+
+local function open_git_branches_picker()
+    ensure_git_branch_highlights()
+    require("snacks").picker.pick({
+        focus = "list",
+        source = "git_branches",
+        finder = function(fopts, ctx)
+            local base = require("snacks.picker.source.git").branches(fopts, ctx)
+            return function(cb)
+                base(function(item)
+                    if item then
+                        item.text = item.branch or "(detached HEAD)"
+                    end
+                    cb(item)
+                end)
+            end
+        end,
+        all = SHOW_REMOTE_BRANCHES,
+        title = SHOW_REMOTE_BRANCHES and "Git Branches (local + remote)" or "Git Branches (local)",
+        layout = {
+            preset = "select",
+            -- layout = { min_width = 120, max_width = 160 },
+        },
+        format = function(item, picker)
+            local Snacks = require("snacks")
+            local a = Snacks.picker.util.align
+            local ret = {}
+            ret[#ret + 1] = item.current and { a("", 2), "SnacksPickerGitBranchCurrent" } or { a("", 2) }
+
+            local w = 60 -- branch column width
+            if item.detached then
+                ret[#ret + 1] = { a("(detached HEAD)", w, { truncate = true }), "SnacksPickerGitDetached" }
+            else
+                local branch_hl = item.branch and item.branch:match("^remotes/") and "SnacksPickerGitBranchRemote"
+                    or "SnacksPickerGitBranch"
+                ret[#ret + 1] = { a(item.branch, w, { truncate = true }), branch_hl }
+            end
+
+            ret[#ret + 1] = { " " }
+            Snacks.picker.highlight.extend(ret, Snacks.picker.format.git_log(item, picker))
+            return ret
+        end,
+        actions = {
+            diffview_d = diffview_d,
+            diffview_D = diffview_D,
+            diffview_x = diffview_x,
+            commit_to_cmd = commit_to_cmd,
+            commit_to_reg = commit_to_reg,
+            checkout_detached = function(picker, item)
+                if not item or not item.commit then
+                    vim.notify("No branch selected for detached checkout", vim.log.levels.WARN)
+                    return
+                end
+
+                local proc = vim.system({ "git", "switch", "--detach", item.commit }, {
+                    cwd = item.cwd,
+                    text = true,
+                }):wait()
+                if proc.code ~= 0 then
+                    local err = vim.trim(proc.stderr or "")
+                    if err == "" then
+                        err = vim.trim(proc.stdout or "")
+                    end
+                    vim.notify(err ~= "" and err or "Detached checkout failed", vim.log.levels.ERROR)
+                    return
+                end
+
+                picker:close()
+                vim.notify(("Detached HEAD at %s"):format(item.commit), vim.log.levels.INFO)
+            end,
+            toggle_remote_branches = function(picker)
+                SHOW_REMOTE_BRANCHES = not SHOW_REMOTE_BRANCHES
+                picker:close()
+                vim.schedule(open_git_branches_picker)
+            end,
+        },
+        win = {
+            list = {
+                keys = {
+                    ["d"] = {
+                        "diffview_d",
+                        mode = { "n" },
+                    },
+                    ["D"] = {
+                        "diffview_D",
+                        mode = { "n" },
+                    },
+                    ["x"] = {
+                        "diffview_x",
+                        mode = { "n" },
+                    },
+                    ["."] = {
+                        "commit_to_cmd",
+                        mode = { "n" },
+                    },
+                    [","] = {
+                        "commit_to_reg",
+                        mode = { "n" },
+                    },
+                    ["<S-CR>"] = {
+                        "checkout_detached",
+                        mode = { "n", "i" },
+                    },
+                    ["zr"] = {
+                        "toggle_remote_branches",
+                        mode = { "n" },
+                    },
+                },
+            },
+            input = {
+                keys = {
+                    ["d"] = {
+                        "diffview_d",
+                        mode = { "n" },
+                    },
+                    ["D"] = {
+                        "diffview_D",
+                        mode = { "n" },
+                    },
+                    ["x"] = {
+                        "diffview_x",
+                        mode = { "n" },
+                    },
+                    ["."] = {
+                        "commit_to_cmd",
+                        mode = { "n" },
+                    },
+                    [","] = {
+                        "commit_to_reg",
+                        mode = { "n" },
+                    },
+                    ["<S-CR>"] = {
+                        "checkout_detached",
+                        mode = { "n", "i" },
+                    },
+                    ["zr"] = {
+                        "toggle_remote_branches",
+                        mode = { "n" },
+                    },
+                },
+            },
+        },
+    })
+end
+
 return {
     "folke/snacks.nvim",
     lazy = false,
@@ -318,7 +491,7 @@ return {
                 backdrop = true,
             },
             git_branches = {
-                all = true,
+                all = false,
             },
             sources = {
                 select = {
@@ -659,88 +832,7 @@ return {
         {
             "<leader>sgb",
             function()
-                require("snacks").picker.pick({
-                    focus = "list",
-                    source = "git_branches",
-                    layout = {
-                        preset = "select",
-                        -- layout = { min_width = 120, max_width = 160 },
-                    },
-                    format = function(item, picker)
-                        local Snacks = require("snacks")
-                        local a = Snacks.picker.util.align
-                        local ret = {}
-                        ret[#ret + 1] = item.current and { a("", 2), "SnacksPickerGitBranchCurrent" } or { a("", 2) }
-
-                        local w = 60 -- branch column width
-                        if item.detached then
-                            ret[#ret + 1] = { a("(detached HEAD)", w, { truncate = true }), "SnacksPickerGitDetached" }
-                        else
-                            ret[#ret + 1] = { a(item.branch, w, { truncate = true }), "SnacksPickerGitBranch" }
-                        end
-
-                        ret[#ret + 1] = { " " }
-                        Snacks.picker.highlight.extend(ret, Snacks.picker.format.git_log(item, picker))
-                        return ret
-                    end,
-                    actions = {
-                        diffview_d = diffview_d,
-                        diffview_D = diffview_D,
-                        diffview_x = diffview_x,
-                        commit_to_cmd = commit_to_cmd,
-                        commit_to_reg = commit_to_reg,
-                    },
-                    win = {
-                        list = {
-                            keys = {
-                                ["d"] = {
-                                    "diffview_d",
-                                    mode = { "n" },
-                                },
-                                ["D"] = {
-                                    "diffview_D",
-                                    mode = { "n" },
-                                },
-                                ["x"] = {
-                                    "diffview_x",
-                                    mode = { "n" },
-                                },
-                                ["."] = {
-                                    "commit_to_cmd",
-                                    mode = { "n" },
-                                },
-                                [","] = {
-                                    "commit_to_reg",
-                                    mode = { "n" },
-                                },
-                            },
-                        },
-                        input = {
-                            keys = {
-                                ["d"] = {
-                                    "diffview_d",
-                                    mode = { "n" },
-                                },
-                                ["D"] = {
-                                    "diffview_D",
-                                    mode = { "n" },
-                                },
-                                ["x"] = {
-                                    "diffview_x",
-                                    mode = { "n" },
-                                },
-                                ["."] = {
-                                    "commit_to_cmd",
-                                    mode = { "n" },
-                                },
-                                [","] = {
-                                    "commit_to_reg",
-                                    mode = { "n" },
-                                },
-                            },
-                        },
-                    },
-                })
+                open_git_branches_picker()
             end,
             desc = "Search git branches",
         },
