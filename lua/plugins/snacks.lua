@@ -264,6 +264,36 @@ local function git_rg(opts)
     }, opts or {}))
 end
 
+local function diffview_d(picker, item)
+    vim.cmd(("DiffviewOpen %s^!"):format(item.commit))
+    picker:close()
+end
+
+local function diffview_D(picker, item)
+    vim.cmd(("DiffviewOpen %s"):format(item.commit))
+    picker:close()
+end
+
+local function diffview_x(picker, item)
+    picker:close()
+    local fname = vim.api.nvim_buf_get_name(0)
+    vim.cmd(("DiffviewOpen %s HEAD -- %s"):format(item.commit, fname))
+end
+
+local function commit_to_cmd(picker, item)
+    picker:close()
+    local home = vim.api.nvim_replace_termcodes("<Home>", true, false, true)
+    vim.api.nvim_feedkeys(":" .. item.commit .. home, "n", false)
+end
+
+local function commit_to_reg(picker, item)
+    picker:close()
+    -- yank
+    vim.fn.setreg('"', item.commit)
+    vim.fn.setreg("0", item.commit)
+    vim.fn.setreg("+", item.commit) -- Also put in clipboard
+end
+
 return {
     "folke/snacks.nvim",
     lazy = false,
@@ -654,31 +684,11 @@ return {
                         return ret
                     end,
                     actions = {
-                        diffview_d = function(picker, item)
-                            vim.cmd(("DiffviewOpen %s^!"):format(item.commit))
-                            picker:close()
-                        end,
-                        diffview_D = function(picker, item)
-                            vim.cmd(("DiffviewOpen %s"):format(item.commit))
-                            picker:close()
-                        end,
-                        diffview_x = function(picker, item)
-                            picker:close()
-                            local fname = vim.api.nvim_buf_get_name(0)
-                            vim.cmd(("DiffviewOpen %s HEAD -- %s"):format(item.commit, fname))
-                        end,
-                        commit_to_cmd = function(picker, item)
-                            picker:close()
-                            local home = vim.api.nvim_replace_termcodes("<Home>", true, false, true)
-                            vim.api.nvim_feedkeys(":" .. item.commit .. home, "n", false)
-                        end,
-                        commit_to_reg = function(picker, item)
-                            picker:close()
-                            -- yank
-                            vim.fn.setreg('"', item.commit)
-                            vim.fn.setreg("0", item.commit)
-                            vim.fn.setreg("+", item.commit) -- Also put in clipboard
-                        end,
+                        diffview_d = diffview_d,
+                        diffview_D = diffview_D,
+                        diffview_x = diffview_x,
+                        commit_to_cmd = commit_to_cmd,
+                        commit_to_reg = commit_to_reg,
                     },
                     win = {
                         list = {
@@ -741,31 +751,11 @@ return {
                     focus = "list",
                     source = "git_log",
                     actions = {
-                        diffview_d = function(picker, item)
-                            vim.cmd(("DiffviewOpen %s^!"):format(item.commit))
-                            picker:close()
-                        end,
-                        diffview_D = function(picker, item)
-                            vim.cmd(("DiffviewOpen %s"):format(item.commit))
-                            picker:close()
-                        end,
-                        diffview_x = function(picker, item)
-                            picker:close()
-                            local fname = vim.api.nvim_buf_get_name(0)
-                            vim.cmd(("DiffviewOpen %s HEAD -- %s"):format(item.commit, fname))
-                        end,
-                        commit_to_cmd = function(picker, item)
-                            picker:close()
-                            local home = vim.api.nvim_replace_termcodes("<Home>", true, false, true)
-                            vim.api.nvim_feedkeys(":" .. item.commit .. home, "n", false)
-                        end,
-                        commit_to_reg = function(picker, item)
-                            picker:close()
-                            -- yank
-                            vim.fn.setreg('"', item.commit)
-                            vim.fn.setreg("0", item.commit)
-                            vim.fn.setreg("+", item.commit) -- Also put in clipboard
-                        end,
+                        diffview_d = diffview_d,
+                        diffview_D = diffview_D,
+                        diffview_x = diffview_x,
+                        commit_to_cmd = commit_to_cmd,
+                        commit_to_reg = commit_to_reg,
                     },
 
                     win = {
