@@ -325,6 +325,114 @@ end
 
 local function open_git_branches_picker()
     ensure_git_branch_highlights()
+
+    local function selected_branch_items(picker, item)
+        local selected = {}
+        if picker and type(picker.selected) == "function" then
+            selected = picker:selected({ fallback = true })
+        end
+        if #selected == 0 and item then
+            selected = { item }
+        end
+
+        local seen = {}
+        local ret = {}
+        for _, it in ipairs(selected) do
+            if type(it) == "table" and type(it.branch) == "string" and it.branch ~= "" and not seen[it.branch] then
+                seen[it.branch] = true
+                ret[#ret + 1] = it
+            end
+        end
+        return ret
+    end
+
+    local function delete_selected_branches(picker, item, force_local)
+        local selected = selected_branch_items(picker, item)
+        if #selected == 0 then
+            vim.notify("No branch selected", vim.log.levels.WARN)
+            return
+        end
+
+        local local_items = {}
+        local remote_items = {}
+        local skipped_current = {}
+
+        for _, it in ipairs(selected) do
+            local remote, remote_branch = it.branch:match("^remotes/([^/]+)/(.+)$")
+            if remote and remote_branch then
+                remote_items[#remote_items + 1] = {
+                    item = it,
+                    remote = remote,
+                    branch = remote_branch,
+                }
+            elseif it.current then
+                skipped_current[#skipped_current + 1] = it.branch
+            else
+                local_items[#local_items + 1] = it
+            end
+        end
+
+        if #local_items == 0 and #remote_items == 0 then
+            vim.notify("No deletable branches selected", vim.log.levels.WARN)
+            return
+        end
+
+        local local_mode = force_local and "force" or "safe"
+        local prompt = ("Delete %d local (%s) and %d remote branch(es)?"):format(#local_items, local_mode, #remote_items)
+        local ok = vim.fn.confirm(prompt, "&No\n&Yes", 1)
+        if ok ~= 2 then
+            return
+        end
+
+        local deleted = {}
+        local failed = {}
+
+        for _, ri in ipairs(remote_items) do
+            local proc = vim.system({ "git", "push", ri.remote, "--delete", ri.branch }, {
+                cwd = ri.item.cwd,
+                text = true,
+            }):wait()
+            if proc.code == 0 then
+                deleted[#deleted + 1] = ("remote:%s/%s"):format(ri.remote, ri.branch)
+            else
+                local err = vim.trim(proc.stderr or "")
+                if err == "" then
+                    err = vim.trim(proc.stdout or "")
+                end
+                failed[#failed + 1] = ("remote:%s/%s (%s)"):format(ri.remote, ri.branch, err ~= "" and err or "failed")
+            end
+        end
+
+        for _, li in ipairs(local_items) do
+            local flag = force_local and "-D" or "-d"
+            local proc = vim.system({ "git", "branch", flag, li.branch }, {
+                cwd = li.cwd,
+                text = true,
+            }):wait()
+            if proc.code == 0 then
+                deleted[#deleted + 1] = ("local:%s"):format(li.branch)
+            else
+                local err = vim.trim(proc.stderr or "")
+                if err == "" then
+                    err = vim.trim(proc.stdout or "")
+                end
+                failed[#failed + 1] = ("local:%s (%s)"):format(li.branch, err ~= "" and err or "failed")
+            end
+        end
+
+        if #skipped_current > 0 then
+            vim.notify("Skipped current branch: " .. table.concat(skipped_current, ", "), vim.log.levels.WARN)
+        end
+        if #deleted > 0 then
+            vim.notify(("Deleted %d branch(es)"):format(#deleted), vim.log.levels.INFO)
+            picker:close()
+            vim.schedule(open_git_branches_picker)
+        end
+        if #failed > 0 then
+            vim.notify("Failed to delete: " .. table.concat(failed, " | "), vim.log.levels.ERROR)
+        end
+    end
+
     require("snacks").picker.pick({
         focus = "list",
         source = "git_branches",
@@ -392,6 +500,12 @@ local function open_git_branches_picker()
                 picker:close()
                 vim.notify(("Detached HEAD at %s"):format(item.commit), vim.log.levels.INFO)
             end,
+            delete_branch = function(picker, item)
+                delete_selected_branches(picker, item, false)
+            end,
+            delete_branch_force = function(picker, item)
+                delete_selected_branches(picker, item, true)
+            end,
             toggle_remote_branches = function(picker)
                 SHOW_REMOTE_BRANCHES = not SHOW_REMOTE_BRANCHES
                 picker:close()
@@ -425,6 +539,14 @@ local function open_git_branches_picker()
                         "checkout_detached",
                         mode = { "n", "i" },
                     },
+                    ["zd"] = {
+                        "delete_branch",
+                        mode = { "n" },
+                    },
+                    ["zD"] = {
+                        "delete_branch_force",
+                        mode = { "n" },
+                    },
                     ["zr"] = {
                         "toggle_remote_branches",
                         mode = { "n" },
@@ -456,6 +578,14 @@ local function open_git_branches_picker()
                     ["<S-CR>"] = {
                         "checkout_detached",
                         mode = { "n", "i" },
+                    },
+                    ["zd"] = {
+                        "delete_branch",
+                        mode = { "n" },
+                    },
+                    ["zD"] = {
+                        "delete_branch_force",
+                        mode = { "n" },
                     },
                     ["zr"] = {
                         "toggle_remote_branches",
