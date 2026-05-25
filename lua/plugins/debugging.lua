@@ -5,6 +5,7 @@ local DEBUG_SETUP = {
     js_enabled = false,
     last_launch = nil,
     active_prelaunch_tasks = {},
+    disabled_breakpoints = {},
 }
 
 local run_selected_config
@@ -12,6 +13,35 @@ local open_config_picker
 
 local function clear_last_launch_config()
     DEBUG_SETUP.last_launch = nil
+end
+
+local function breakpoint_key(bufnr, line)
+    return tostring(bufnr) .. ":" .. tostring(line)
+end
+
+local function save_disabled_breakpoint(bp)
+    local bufnr = bp.buf or bp.bufnr
+    local line = bp.line
+    if type(bufnr) ~= "number" or type(line) ~= "number" then
+        return
+    end
+
+    local key = breakpoint_key(bufnr, line)
+    DEBUG_SETUP.disabled_breakpoints[key] = {
+        buf = bufnr,
+        line = line,
+        condition = bp.condition,
+        hitCondition = bp.hitCondition,
+        logMessage = bp.logMessage,
+    }
+end
+
+local function remove_disabled_breakpoint(bufnr, line)
+    DEBUG_SETUP.disabled_breakpoints[breakpoint_key(bufnr, line)] = nil
+end
+
+local function clear_disabled_breakpoints()
+    DEBUG_SETUP.disabled_breakpoints = {}
 end
 
 local function clear_active_prelaunch_task()
@@ -1050,6 +1080,273 @@ local function setup_ui_listeners(dap, dapview)
     end
 end
 
+local function collect_breakpoint_items()
+    local bps = require("dap.breakpoints")
+    local grouped = bps.get()
+    local items = {}
+    local enabled_keys = {}
+
+    for bufnr, entries in pairs(grouped) do
+        local file = vim.api.nvim_buf_get_name(bufnr)
+        for _, bp in ipairs(entries) do
+            local key = breakpoint_key(bp.buf, bp.line)
+            enabled_keys[key] = true
+            items[#items + 1] = {
+                text = ("[E] %s:%d"):format(
+                    file ~= "" and vim.fn.fnamemodify(file, ":~:.") or ("[buf " .. bufnr .. "]"),
+                    bp.line
+                ),
+                file = file,
+                bufnr = bp.buf,
+                line = bp.line,
+                condition = bp.condition,
+                hitCondition = bp.hitCondition,
+                logMessage = bp.logMessage,
+                enabled = true,
+            }
+        end
+    end
+
+    for key, bp in pairs(DEBUG_SETUP.disabled_breakpoints) do
+        if not enabled_keys[key] then
+            if type(bp.buf) ~= "number" or type(bp.line) ~= "number" then
+                goto continue
+            end
+
+            local file = vim.api.nvim_buf_get_name(bp.buf)
+            items[#items + 1] = {
+                text = ("[D] %s:%d"):format(
+                    file ~= "" and vim.fn.fnamemodify(file, ":~:.") or ("[buf " .. bp.buf .. "]"),
+                    bp.line
+                ),
+                file = file,
+                bufnr = bp.buf,
+                line = bp.line,
+                condition = bp.condition,
+                hitCondition = bp.hitCondition,
+                logMessage = bp.logMessage,
+                enabled = false,
+            }
+        end
+        ::continue::
+    end
+
+    table.sort(items, function(a, b)
+        if a.enabled ~= b.enabled then
+            return a.enabled == true
+        end
+
+        local af = a.file ~= "" and a.file or ("buf:" .. tostring(a.bufnr))
+        local bf = b.file ~= "" and b.file or ("buf:" .. tostring(b.bufnr))
+        if af ~= bf then
+            return af < bf
+        end
+        return a.line < b.line
+    end)
+
+    return items
+end
+
+local function open_breakpoint_picker(dap)
+    local function reopen_picker()
+        vim.schedule(function()
+            open_breakpoint_picker(dap)
+        end)
+    end
+
+    local items = collect_breakpoint_items()
+    if #items == 0 then
+        items[1] = {
+            text = "No breakpoints",
+            is_placeholder = true,
+        }
+    end
+
+    local Snacks = require("snacks")
+    vim.api.nvim_set_hl(0, "DapBreakpointDisabled", { default = true, link = "Comment" })
+
+    Snacks.picker.pick({
+        source = "select",
+        title = "Breakpoints (Enter jump, E edit, dd delete, t toggle, da clear all)",
+        focus = "list",
+        auto_close = false,
+        format = function(item)
+            if item.is_placeholder then
+                return { { item.text } }
+            end
+
+            local hl = item.enabled == false and "DapBreakpointDisabled" or "SnacksPickerText"
+            return { { item.text, hl } }
+        end,
+        preview = "none",
+        finder = function()
+            return items
+        end,
+        confirm = function(picker, item)
+            if not item or item.is_placeholder then
+                return
+            end
+
+            picker:close()
+            if item.file and item.file ~= "" then
+                vim.cmd("edit " .. vim.fn.fnameescape(item.file))
+            elseif item.bufnr and vim.api.nvim_buf_is_valid(item.bufnr) then
+                vim.api.nvim_set_current_buf(item.bufnr)
+            end
+            pcall(vim.api.nvim_win_set_cursor, 0, { item.line, 0 })
+            vim.cmd("normal! zz")
+        end,
+        actions = {
+            edit_breakpoint = function(picker, item)
+                local selected = picker:selected({ fallback = true })
+                if #selected == 0 and item then
+                    selected = { item }
+                end
+
+                local target = selected[1]
+                if not target or target.is_placeholder or not target.bufnr or not target.line then
+                    vim.notify("No breakpoint selected", vim.log.levels.WARN)
+                    return
+                end
+
+                local condition = vim.fn.input("Condition: ", target.condition or "")
+                local hit_condition = vim.fn.input("Hit condition: ", target.hitCondition or "")
+                local log_message = vim.fn.input("Log message: ", target.logMessage or "")
+
+                condition = condition ~= "" and condition or nil
+                hit_condition = hit_condition ~= "" and hit_condition or nil
+                log_message = log_message ~= "" and log_message or nil
+
+                if target.enabled then
+                    require("dap.breakpoints").set({
+                        condition = condition,
+                        hit_condition = hit_condition,
+                        log_message = log_message,
+                    }, target.bufnr, target.line)
+                    remove_disabled_breakpoint(target.bufnr, target.line)
+
+                    local session = dap.session()
+                    if session then
+                        session:set_breakpoints(require("dap.breakpoints").get())
+                    end
+                else
+                    save_disabled_breakpoint({
+                        bufnr = target.bufnr,
+                        line = target.line,
+                        condition = condition,
+                        hitCondition = hit_condition,
+                        logMessage = log_message,
+                    })
+                end
+
+                picker:close()
+                reopen_picker()
+            end,
+            delete_selected_breakpoints = function(picker, item)
+                local selected = picker:selected({ fallback = true })
+                if #selected == 0 and item then
+                    selected = { item }
+                end
+
+                local bps = require("dap.breakpoints")
+                local removed = 0
+                for _, it in ipairs(selected) do
+                    if not it.is_placeholder and it.bufnr and it.line then
+                        if it.enabled then
+                            if bps.remove(it.bufnr, it.line) then
+                                removed = removed + 1
+                            end
+                        end
+                        remove_disabled_breakpoint(it.bufnr, it.line)
+                    end
+                end
+
+                if removed > 0 then
+                    local session = dap.session()
+                    if session then
+                        session:set_breakpoints(require("dap.breakpoints").get())
+                    end
+                end
+
+                picker:close()
+                reopen_picker()
+            end,
+            toggle_selected_breakpoints = function(picker, item)
+                local selected = picker:selected({ fallback = true })
+                if #selected == 0 and item then
+                    selected = { item }
+                end
+
+                local bps = require("dap.breakpoints")
+                local changed = false
+                for _, it in ipairs(selected) do
+                    if not it.is_placeholder and it.bufnr and it.line then
+                        if it.enabled then
+                            if bps.remove(it.bufnr, it.line) then
+                                save_disabled_breakpoint(it)
+                                changed = true
+                            end
+                        else
+                            bps.set({
+                                condition = it.condition,
+                                hit_condition = it.hitCondition,
+                                log_message = it.logMessage,
+                            }, it.bufnr, it.line)
+                            remove_disabled_breakpoint(it.bufnr, it.line)
+                            changed = true
+                        end
+                    end
+                end
+
+                if changed then
+                    local session = dap.session()
+                    if session then
+                        session:set_breakpoints(require("dap.breakpoints").get())
+                    end
+                end
+
+                picker:close()
+                reopen_picker()
+            end,
+            clear_all_breakpoints = function(picker)
+                local choice = vim.fn.confirm("Clear all breakpoints?", "&No\n&Yes", 1)
+                if choice ~= 2 then
+                    return
+                end
+
+                require("dap.breakpoints").clear()
+                clear_disabled_breakpoints()
+
+                local session = dap.session()
+                if session then
+                    session:set_breakpoints(require("dap.breakpoints").get())
+                end
+
+                picker:close()
+                vim.notify("Cleared all breakpoints", vim.log.levels.INFO)
+            end,
+        },
+        win = {
+            list = {
+                keys = {
+                    ["E"] = "edit_breakpoint",
+                    ["dd"] = "delete_selected_breakpoints",
+                    ["t"] = "toggle_selected_breakpoints",
+                    ["da"] = "clear_all_breakpoints",
+                },
+            },
+            input = {
+                keys = {
+                    ["E"] = "edit_breakpoint",
+                    ["dd"] = "delete_selected_breakpoints",
+                    ["t"] = "toggle_selected_breakpoints",
+                    ["da"] = "clear_all_breakpoints",
+                },
+            },
+        },
+    })
+end
+
 local function setup_keymaps(dap)
     local break_cond = function()
         dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
@@ -1078,6 +1375,9 @@ local function setup_keymaps(dap)
         end
         open_config_picker(dap)
     end, { desc = "Continue or pick config" })
+    keymap("n", "<Leader>dl", function()
+        open_breakpoint_picker(dap)
+    end, { desc = "List breakpoints" })
     keymap("n", "<Leader>dt", toggle_dap_term, { desc = "Toggle DAP terminal" })
     keymap("n", "<Leader>di", dap.step_into, { desc = "Step into<F11>" })
     keymap("n", "<Leader>do", dap.step_out, { desc = "Step out<S-F11>" })
