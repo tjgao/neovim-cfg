@@ -9,7 +9,7 @@ local servers = {
                 workspace = {
                     library = {
                         { path = "${3rd}/luv/library", words = { "vim%.uv" } },
-                        { path = "lazy.nvim", words = { "LazyVim" } },
+                        { path = "lazy.nvim",          words = { "LazyVim" } },
                         table.unpack(vim.api.nvim_get_runtime_file("", true)),
                     },
                 },
@@ -73,6 +73,20 @@ return {
         },
         opts = { inlay_hints = { enabled = true } },
         config = function()
+            local c = vim.api.nvim_get_hl(0, { name = "Normal" })
+            vim.api.nvim_set_hl(0, "LspHoverBorder", { fg = c.fg, bg = c.bg })
+
+            local border = {
+                { "┌", "LspHoverBorder" },
+                { "─", "LspHoverBorder" },
+                { "┐", "LspHoverBorder" },
+                { "│", "LspHoverBorder" },
+                { "┘", "LspHoverBorder" },
+                { "─", "LspHoverBorder" },
+                { "└", "LspHoverBorder" },
+                { "│", "LspHoverBorder" },
+            }
+
             vim.api.nvim_create_autocmd("CursorHold", {
                 desc = "Show errors/warnings when cursor stopped for some time",
                 group = vim.api.nvim_create_augroup("CursorHoldGroup", { clear = true }),
@@ -83,7 +97,12 @@ return {
                 end,
             })
             local Snacks = require("snacks")
-            keymap("n", "K", vim.lsp.buf.hover, { desc = "Hover help" })
+            keymap("n", "K", function()
+                vim.lsp.buf.hover({
+                    border = border,
+                    focusable = false,
+                })
+            end, { desc = "Hover help" })
             keymap("n", "gd", function()
                 Snacks.picker.pick({
                     source = "lsp_definitions",
