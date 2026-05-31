@@ -1,0 +1,46 @@
+local M = {}
+
+function M.setup()
+    vim.api.nvim_create_autocmd("TextYankPost", {
+        desc = "Highlight when yanking (copying) text",
+        group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+        callback = function()
+            vim.highlight.on_yank()
+        end,
+    })
+
+    vim.api.nvim_create_autocmd("BufReadPost", {
+        desc = "Go to the last location when openning a buffer",
+        group = vim.api.nvim_create_augroup("last_location", { clear = true }),
+        callback = function(args)
+            local mark = vim.api.nvim_buf_get_mark(args.buf, '"')
+            local line_count = vim.api.nvim_buf_line_count(args.buf)
+            if mark[1] > 0 and mark[1] <= line_count then
+                vim.cmd('normal! g`"zz')
+            end
+        end,
+    })
+
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = "qf",
+        group = vim.api.nvim_create_augroup("quickfix", { clear = true }),
+        callback = function()
+            local winid = vim.api.nvim_get_current_win()
+            local win_info = vim.fn.getwininfo(winid)[1]
+            local cmd
+            if win_info.loclist == 1 then
+                cmd = "ll"
+            elseif win_info.quickfix == 1 then
+                cmd = "cc"
+            else
+                return
+            end
+            vim.keymap.set("n", "<CR>", function()
+                local cur = tostring(vim.fn.line("."))
+                vim.cmd(cmd .. cur)
+            end)
+        end,
+    })
+end
+
+return M

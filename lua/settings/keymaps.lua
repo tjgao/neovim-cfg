@@ -1,4 +1,5 @@
 local keymap = require("shared.utils").keymap
+local message = require("settings.commands.messages")
 
 --Remap space as leader key
 keymap("", "<Space>", "<Nop>", "Leader remap")
@@ -129,6 +130,10 @@ end, "Toggle loclist")
 
 keymap("n", "<leader>sn", function()
     require("snacks").notifier.show_history()
+end, "Show notifier history")
+
+keymap("n", "<leader>sN", function()
+    message.open_messages_window()
 end, "Show notifier history")
 
 keymap("n", "<Tab>", ":b#<CR>zz", "Jump to the most recent buffer")
