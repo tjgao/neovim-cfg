@@ -7,7 +7,7 @@ function M.setup()
     vim.cmd([[set laststatus=3]])
 
     vim.cmd([[set fillchars+=diff:\ ]])
-    vim.cmd("colorscheme kanso-ink")
+    vim.cmd("colorscheme kanso-mist")
 
     vim.cmd("highlight WinSeparator guibg=none guifg=#4C566A")
 end
