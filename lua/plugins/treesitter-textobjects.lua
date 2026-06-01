@@ -50,6 +50,7 @@ return {
         -- vim.keymap.set({ "n", "o", "x" }, "T", ts_repeat_move.builtin_T_expr, { expr = true })
 
         local sel = require("nvim-treesitter-textobjects.select")
+        require("users.quote_textobj").setup()
 
         vim.keymap.set({ "x", "o" }, "am", function()
             sel.select_textobject("@caller.outer", "textobjects")
@@ -100,7 +101,6 @@ return {
         vim.keymap.set({ "x", "o" }, "as", function()
             require("nvim-treesitter-textobjects.select").select_textobject("@local.scope", "locals")
         end, { desc = "Select local scope" })
-
         ----------------------------------------------------------
         local mv = require("nvim-treesitter-textobjects.move")
         vim.keymap.set({ "n", "x", "o" }, "]f", function()
