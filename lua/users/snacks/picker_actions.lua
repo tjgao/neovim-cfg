@@ -61,7 +61,9 @@ function M.open_in_tab(picker, item)
         return
     end
     picker:close()
-    local ok = pcall(vim.cmd, "tabedit " .. vim.fn.fnameescape(path))
+    local ok = pcall(function()
+        vim.cmd("tabedit " .. vim.fn.fnameescape(path))
+    end)
     if not ok then
         notify_action(vim.log.levels.ERROR, "open in tab", "failed to open file")
     end
