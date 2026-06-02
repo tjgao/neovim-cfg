@@ -22,11 +22,36 @@ function M.commit_to_cmd(picker, item)
     vim.api.nvim_feedkeys(":" .. item.commit .. home, "n", false)
 end
 
+function M.branch_to_cmd(picker, item)
+    local branch = type(item) == "table" and item.branch or nil
+    if type(branch) ~= "string" or branch == "" then
+        vim.notify("No branch name found", vim.log.levels.WARN)
+        return
+    end
+
+    picker:close()
+    local home = vim.api.nvim_replace_termcodes("<Home>", true, false, true)
+    vim.api.nvim_feedkeys(":" .. branch .. home, "n", false)
+end
+
 function M.commit_to_reg(picker, item)
     picker:close()
     vim.fn.setreg('"', item.commit)
     vim.fn.setreg("0", item.commit)
     vim.fn.setreg("+", item.commit)
+end
+
+function M.branch_to_reg(picker, item)
+    local branch = type(item) == "table" and item.branch or nil
+    if type(branch) ~= "string" or branch == "" then
+        vim.notify("No branch name found", vim.log.levels.WARN)
+        return
+    end
+
+    picker:close()
+    vim.fn.setreg('"', branch)
+    vim.fn.setreg("0", branch)
+    vim.fn.setreg("+", branch)
 end
 
 return M

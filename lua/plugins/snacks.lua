@@ -1,6 +1,7 @@
 local git_actions = require("users.snacks.git_actions")
 local git_branches = require("users.snacks.git_branches")
 local git_rg = require("users.snacks.git_rg")
+local picker_actions = require("users.snacks.picker_actions")
 
 return {
     "folke/snacks.nvim",
@@ -135,18 +136,10 @@ return {
                         preset = "vertical",
                     },
                     actions = {
-                        get_path = function(picker, item)
-                            picker:close()
-                            local home = vim.api.nvim_replace_termcodes("<Home>", true, false, true)
-                            vim.api.nvim_feedkeys(":" .. item.file .. home, "n", false)
-                        end,
-                        copy_path = function(picker, item)
-                            picker:close()
-                            -- yank
-                            vim.fn.setreg('"', item.file)
-                            vim.fn.setreg("0", item.file)
-                            vim.fn.setreg("+", item.file) -- Also put in clipboard
-                        end,
+                        get_path = picker_actions.get_path,
+                        copy_path = picker_actions.copy_path,
+                        copy_filename = picker_actions.copy_filename,
+                        open_in_tab = picker_actions.open_in_tab,
                     },
                     win = {
                         list = {
@@ -159,6 +152,14 @@ return {
                                     "copy_path",
                                     mode = { "n" },
                                 },
+                                [";"] = {
+                                    "copy_filename",
+                                    mode = { "n" },
+                                },
+                                ["T"] = {
+                                    "open_in_tab",
+                                    mode = { "n" },
+                                },
                             },
                         },
                         input = {
@@ -169,6 +170,14 @@ return {
                                 },
                                 [","] = {
                                     "copy_path",
+                                    mode = { "n" },
+                                },
+                                [";"] = {
+                                    "copy_filename",
+                                    mode = { "n" },
+                                },
+                                ["T"] = {
+                                    "open_in_tab",
                                     mode = { "n" },
                                 },
                             },
@@ -206,18 +215,10 @@ return {
                         preset = "vertical",
                     },
                     actions = {
-                        get_path = function(picker, item)
-                            picker:close()
-                            local home = vim.api.nvim_replace_termcodes("<Home>", true, false, true)
-                            vim.api.nvim_feedkeys(":" .. item.file .. home, "n", false)
-                        end,
-                        copy_path = function(picker, item)
-                            picker:close()
-                            -- yank
-                            vim.fn.setreg('"', item.file)
-                            vim.fn.setreg("0", item.file)
-                            vim.fn.setreg("+", item.file) -- Also put in clipboard
-                        end,
+                        get_path = picker_actions.get_path,
+                        copy_path = picker_actions.copy_path,
+                        copy_filename = picker_actions.copy_filename,
+                        open_in_tab = picker_actions.open_in_tab,
                     },
                     win = {
                         list = {
@@ -230,6 +231,14 @@ return {
                                     "copy_path",
                                     mode = { "n" },
                                 },
+                                [";"] = {
+                                    "copy_filename",
+                                    mode = { "n" },
+                                },
+                                ["T"] = {
+                                    "open_in_tab",
+                                    mode = { "n" },
+                                },
                             },
                         },
                         input = {
@@ -240,6 +249,14 @@ return {
                                 },
                                 [","] = {
                                     "copy_path",
+                                    mode = { "n" },
+                                },
+                                [";"] = {
+                                    "copy_filename",
+                                    mode = { "n" },
+                                },
+                                ["T"] = {
+                                    "open_in_tab",
                                     mode = { "n" },
                                 },
                             },

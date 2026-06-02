@@ -189,6 +189,8 @@ function M.open_git_branches_picker()
             diffview_x = git_actions.diffview_x,
             commit_to_cmd = git_actions.commit_to_cmd,
             commit_to_reg = git_actions.commit_to_reg,
+            branch_to_cmd = git_actions.branch_to_cmd,
+            branch_to_reg = git_actions.branch_to_reg,
             checkout_detached = function(picker, item)
                 if not item or not item.commit then
                     vim.notify("No branch selected for detached checkout", vim.log.levels.WARN)
@@ -239,11 +241,11 @@ function M.open_git_branches_picker()
                         mode = { "n" },
                     },
                     ["."] = {
-                        "commit_to_cmd",
+                        "branch_to_cmd",
                         mode = { "n" },
                     },
                     [","] = {
-                        "commit_to_reg",
+                        "branch_to_reg",
                         mode = { "n" },
                     },
                     ["<S-CR>"] = {
@@ -279,11 +281,11 @@ function M.open_git_branches_picker()
                         mode = { "n" },
                     },
                     ["."] = {
-                        "commit_to_cmd",
+                        "branch_to_cmd",
                         mode = { "n" },
                     },
                     [","] = {
-                        "commit_to_reg",
+                        "branch_to_reg",
                         mode = { "n" },
                     },
                     ["<S-CR>"] = {
