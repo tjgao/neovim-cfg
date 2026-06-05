@@ -91,25 +91,6 @@ local function move_right()
     vim.api.nvim_win_set_cursor(0, { r, pos })
 end
 
-local function skip_to_end()
-    local r, _ = table.unpack(vim.api.nvim_win_get_cursor(0))
-    local line = vim.api.nvim_get_current_line()
-    vim.api.nvim_win_set_cursor(0, { r, #line })
-    return true
-end
-
-local function skip_to_beginning()
-    local r, _ = table.unpack(vim.api.nvim_win_get_cursor(0))
-    local line = vim.api.nvim_get_current_line()
-    for i = 1, #line, 1 do
-        if not isspace(string.sub(line, i, i)) then
-            vim.api.nvim_win_set_cursor(0, { r, i - 1 })
-            return true
-        end
-    end
-    return false
-end
-
 local function wrap(key)
     return vim.api.nvim_replace_termcodes(key, true, true, true)
 end
@@ -153,5 +134,5 @@ vim.keymap.set("i", "<C-k>", "<Up>", { desc = "Move down" })
 vim.keymap.set("i", "<C-l>", "<Right>", { desc = "Move right" })
 vim.keymap.set("i", "<C-h>", "<Left>", { desc = "Skip -> left" })
 
-vim.keymap.set("i", "<C-e>", skip_to_end, { desc = "Skip to the end" })
-vim.keymap.set("i", "<C-a>", skip_to_beginning, { desc = "Skip to the beginning" })
+vim.keymap.set("i", "<C-e>", "<C-o>$", { desc = "Skip to the end" })
+vim.keymap.set("i", "<C-a>", "<C-o>^", { desc = "Skip to the beginning" })
