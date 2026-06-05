@@ -115,6 +115,10 @@ vim.api.nvim_create_user_command("Gp", function()
     vim.cmd("G pull")
 end, {})
 
+vim.api.nvim_create_user_command("Gu", function()
+    vim.cmd("G push")
+end, {})
+
 return {
     "tpope/vim-fugitive",
     dependencies = {
