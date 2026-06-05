@@ -1,4 +1,5 @@
 local tasks_json = require("users.tasks.json")
+local notify = require("shared.notify")
 
 local M = {}
 
@@ -17,8 +18,7 @@ local function stop_running_spinner(task_id)
 end
 
 local function attach_running_notification(task)
-    local ok, notifier = pcall(require, "snacks.notifier")
-    if not ok or type(notifier.notify) ~= "function" or type(notifier.hide) ~= "function" then
+    if not notify.supports_ids() then
         return
     end
 
@@ -31,7 +31,7 @@ local function attach_running_notification(task)
     stop_running_spinner(task_id)
     RUNNING_TASK_NOTIFS[task_id] = notif_id
     local frame_index = 1
-    notifier.notify(("%s %s is running..."):format(SPINNER_FRAMES[frame_index], task.name), vim.log.levels.INFO, {
+    notify.notify(("%s %s is running..."):format(SPINNER_FRAMES[frame_index], task.name), vim.log.levels.INFO, {
         id = notif_id,
         title = "Overseer",
         timeout = false,
@@ -50,7 +50,7 @@ local function attach_running_notification(task)
                     return
                 end
                 frame_index = (frame_index % #SPINNER_FRAMES) + 1
-                notifier.notify(
+                notify.notify(
                     ("%s %s is running..."):format(SPINNER_FRAMES[frame_index], task.name),
                     vim.log.levels.INFO,
                     {
@@ -68,7 +68,7 @@ local function attach_running_notification(task)
         RUNNING_TASK_NOTIFS[task_id] = nil
         stop_running_spinner(task_id)
         if id then
-            pcall(notifier.hide, id)
+            notify.hide(id)
         end
     end
 
@@ -83,7 +83,7 @@ local function attach_running_notification(task)
     task:subscribe("on_result", function()
         if task:is_running() then
             close_running_notification()
-            notifier.notify(("%s is running in background"):format(task.name), vim.log.levels.INFO, {
+            notify.notify(("%s is running in background"):format(task.name), vim.log.levels.INFO, {
                 title = "Overseer",
                 timeout = 2500,
             })
@@ -132,19 +132,19 @@ function M.run_task_by_label(label, source_index)
     local path = tasks_json.get_tasks_json_path()
     local tasks_doc, read_err = tasks_json.read_tasks_json(path)
     if not tasks_doc then
-        vim.notify(read_err or "Failed to read tasks.json", vim.log.levels.ERROR)
+        notify.notify(read_err or "Failed to read tasks.json", vim.log.levels.ERROR)
         return
     end
 
     if tasks_json.label_conflict(tasks_doc.tasks, label, source_index) then
-        vim.notify(("Duplicate task label '%s' is not allowed"):format(label), vim.log.levels.ERROR)
+        notify.notify(("Duplicate task label '%s' is not allowed"):format(label), vim.log.levels.ERROR)
         return
     end
 
     local overseer = require("overseer")
     overseer.run_task({ name = label, autostart = false }, function(task, err)
         if not task then
-            vim.notify(
+            notify.notify(
                 ("Could not run task '%s': %s"):format(label, tostring(err or "unknown error")),
                 vim.log.levels.ERROR
             )
@@ -185,7 +185,10 @@ function M.run_recent_task_action()
 
         local current_cwd = vim.fn.getcwd()
         if current_cwd ~= cwd then
-            vim.notify(("Last task belongs to %s; reopen there to rerun '%s'"):format(cwd, label), vim.log.levels.WARN)
+            notify.notify(
+                ("Last task belongs to %s; reopen there to rerun '%s'"):format(cwd, label),
+                vim.log.levels.WARN
+            )
             M.run_task_picker_and_remember()
             return
         end
@@ -216,7 +219,7 @@ function M.run_recent_task_action()
         return
     end
 
-    vim.notify("Invalid last task reference; falling back to task picker", vim.log.levels.WARN)
+    notify.notify("Invalid last task reference; falling back to task picker", vim.log.levels.WARN)
     M.run_task_picker_and_remember()
 end
 

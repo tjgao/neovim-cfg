@@ -114,6 +114,10 @@ end, {
     desc = "Shortcut for git branch",
 })
 
+vim.api.nvim_create_user_command("Gp", function()
+    vim.cmd("G pull")
+end, {})
+
 return {
     "tpope/vim-fugitive",
     dependencies = {

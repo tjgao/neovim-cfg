@@ -1,4 +1,5 @@
 local git_actions = require("users.snacks.git_actions")
+local notify = require("shared.notify")
 
 local M = {}
 
@@ -57,7 +58,7 @@ function M.open_git_branches_picker()
     local function delete_selected_branches(picker, item, force_local)
         local selected = selected_branch_items(picker, item)
         if #selected == 0 then
-            vim.notify("No branch selected", vim.log.levels.WARN)
+            notify.notify("No branch selected", vim.log.levels.WARN)
             return
         end
 
@@ -81,7 +82,7 @@ function M.open_git_branches_picker()
         end
 
         if #local_items == 0 and #remote_items == 0 then
-            vim.notify("No deletable branches selected", vim.log.levels.WARN)
+            notify.notify("No deletable branches selected", vim.log.levels.WARN)
             return
         end
 
@@ -133,15 +134,15 @@ function M.open_git_branches_picker()
         end
 
         if #skipped_current > 0 then
-            vim.notify("Skipped current branch: " .. table.concat(skipped_current, ", "), vim.log.levels.WARN)
+            notify.notify("Skipped current branch: " .. table.concat(skipped_current, ", "), vim.log.levels.WARN)
         end
         if #deleted > 0 then
-            vim.notify(("Deleted %d branch(es)"):format(#deleted), vim.log.levels.INFO)
+            notify.notify(("Deleted %d branch(es)"):format(#deleted), vim.log.levels.INFO)
             picker:close()
             vim.schedule(M.open_git_branches_picker)
         end
         if #failed > 0 then
-            vim.notify("Failed to delete: " .. table.concat(failed, " | "), vim.log.levels.ERROR)
+            notify.notify("Failed to delete: " .. table.concat(failed, " | "), vim.log.levels.ERROR)
         end
     end
 
@@ -191,9 +192,43 @@ function M.open_git_branches_picker()
             commit_to_reg = git_actions.commit_to_reg,
             branch_to_cmd = git_actions.branch_to_cmd,
             branch_to_reg = git_actions.branch_to_reg,
+            sync_local_branch = function(picker, item)
+                git_actions.sync_local_branch(item, { force = false }, function(ok)
+                    if ok and picker and not picker.closed and type(picker.find) == "function" then
+                        if picker.list and type(picker.list.set_target) == "function" then
+                            picker.list:set_target()
+                        end
+                        picker:find()
+                    end
+                end)
+            end,
+            sync_local_branch_force = function(picker, item)
+                git_actions.sync_local_branch(item, { force = true }, function(ok)
+                    if ok and picker and not picker.closed and type(picker.find) == "function" then
+                        if picker.list and type(picker.list.set_target) == "function" then
+                            picker.list:set_target()
+                        end
+                        picker:find()
+                    end
+                end)
+            end,
+            sync_and_checkout_local_branch = function(picker, item)
+                git_actions.sync_and_checkout_local_branch(item, { force = false }, function(ok, did_checkout)
+                    if ok and did_checkout and picker and not picker.closed then
+                        picker:close()
+                    end
+                end)
+            end,
+            sync_and_checkout_local_branch_force = function(picker, item)
+                git_actions.sync_and_checkout_local_branch(item, { force = true }, function(ok, did_checkout)
+                    if ok and did_checkout and picker and not picker.closed then
+                        picker:close()
+                    end
+                end)
+            end,
             checkout_detached = function(picker, item)
                 if not item or not item.commit then
-                    vim.notify("No branch selected for detached checkout", vim.log.levels.WARN)
+                    notify.notify("No branch selected for detached checkout", vim.log.levels.WARN)
                     return
                 end
 
@@ -206,12 +241,12 @@ function M.open_git_branches_picker()
                     if err == "" then
                         err = vim.trim(proc.stdout or "")
                     end
-                    vim.notify(err ~= "" and err or "Detached checkout failed", vim.log.levels.ERROR)
+                    notify.notify(err ~= "" and err or "Detached checkout failed", vim.log.levels.ERROR)
                     return
                 end
 
                 picker:close()
-                vim.notify(("Detached HEAD at %s"):format(item.commit), vim.log.levels.INFO)
+                notify.notify(("Detached HEAD at %s"):format(item.commit), vim.log.levels.INFO)
             end,
             delete_branch = function(picker, item)
                 delete_selected_branches(picker, item, false)
@@ -264,6 +299,22 @@ function M.open_git_branches_picker()
                         "toggle_remote_branches",
                         mode = { "n" },
                     },
+                    ["zu"] = {
+                        "sync_local_branch",
+                        mode = { "n" },
+                    },
+                    ["zU"] = {
+                        "sync_local_branch_force",
+                        mode = { "n" },
+                    },
+                    ["zs"] = {
+                        "sync_and_checkout_local_branch",
+                        mode = { "n" },
+                    },
+                    ["zS"] = {
+                        "sync_and_checkout_local_branch_force",
+                        mode = { "n" },
+                    },
                 },
             },
             input = {
@@ -302,6 +353,22 @@ function M.open_git_branches_picker()
                     },
                     ["zr"] = {
                         "toggle_remote_branches",
+                        mode = { "n" },
+                    },
+                    ["zu"] = {
+                        "sync_local_branch",
+                        mode = { "n" },
+                    },
+                    ["zU"] = {
+                        "sync_local_branch_force",
+                        mode = { "n" },
+                    },
+                    ["zs"] = {
+                        "sync_and_checkout_local_branch",
+                        mode = { "n" },
+                    },
+                    ["zS"] = {
+                        "sync_and_checkout_local_branch_force",
                         mode = { "n" },
                     },
                 },
