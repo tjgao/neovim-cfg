@@ -194,36 +194,44 @@ function M.open_git_branches_picker()
             branch_to_reg = git_actions.branch_to_reg,
             sync_local_branch = function(picker, item)
                 git_actions.sync_local_branch(item, { force = false }, function(ok)
-                    if ok and picker and not picker.closed and type(picker.find) == "function" then
-                        if picker.list and type(picker.list.set_target) == "function" then
-                            picker.list:set_target()
+                    vim.schedule(function()
+                        if ok and picker and not picker.closed and type(picker.find) == "function" then
+                            if picker.list and type(picker.list.set_target) == "function" then
+                                picker.list:set_target()
+                            end
+                            picker:find()
                         end
-                        picker:find()
-                    end
+                    end)
                 end)
             end,
             sync_local_branch_force = function(picker, item)
                 git_actions.sync_local_branch(item, { force = true }, function(ok)
-                    if ok and picker and not picker.closed and type(picker.find) == "function" then
-                        if picker.list and type(picker.list.set_target) == "function" then
-                            picker.list:set_target()
+                    vim.schedule(function()
+                        if ok and picker and not picker.closed and type(picker.find) == "function" then
+                            if picker.list and type(picker.list.set_target) == "function" then
+                                picker.list:set_target()
+                            end
+                            picker:find()
                         end
-                        picker:find()
-                    end
+                    end)
                 end)
             end,
             sync_and_checkout_local_branch = function(picker, item)
                 git_actions.sync_and_checkout_local_branch(item, { force = false }, function(ok, did_checkout)
-                    if ok and did_checkout and picker and not picker.closed then
-                        picker:close()
-                    end
+                    vim.schedule(function()
+                        if ok and did_checkout and picker and not picker.closed then
+                            picker:close()
+                        end
+                    end)
                 end)
             end,
             sync_and_checkout_local_branch_force = function(picker, item)
                 git_actions.sync_and_checkout_local_branch(item, { force = true }, function(ok, did_checkout)
-                    if ok and did_checkout and picker and not picker.closed then
-                        picker:close()
-                    end
+                    vim.schedule(function()
+                        if ok and did_checkout and picker and not picker.closed then
+                            picker:close()
+                        end
+                    end)
                 end)
             end,
             checkout_detached = function(picker, item)
