@@ -59,6 +59,7 @@ return {
                 input = {
                     keys = {
                         ["<S-l>"] = { "focus_preview", mode = { "n" } },
+                        ["<S-h>"] = { "focus_preview", mode = { "n" } },
                         ["<C-j>"] = { "preview_scroll_down", mode = { "i", "n" } },
                         ["<C-k>"] = { "preview_scroll_up", mode = { "i", "n" } },
                         ["<C-h>"] = { "preview_scroll_left", mode = { "i", "n" } },
@@ -68,11 +69,13 @@ return {
                 list = {
                     keys = {
                         ["<S-l>"] = { "focus_preview", mode = { "n" } },
+                        ["<S-h>"] = { "focus_preview", mode = { "n" } },
                     },
                 },
                 preview = {
                     keys = {
                         ["<S-h>"] = { "focus_list", mode = { "n" } },
+                        ["<S-l>"] = { "focus_list", mode = { "n" } },
                     },
                 },
             },
@@ -457,7 +460,7 @@ return {
             desc = "Search git log",
         },
         {
-            "<leader>sl",
+            "<leader>l",
             function()
                 require("snacks").picker.lsp_symbols()
             end,
