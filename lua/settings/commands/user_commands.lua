@@ -3,17 +3,12 @@ local notify = require("shared.notify")
 local git_async = require("users.git.async")
 
 local function toggle_spell()
-    local ok, notify = pcall(require, "notify")
     if vim.o.spell then
         vim.o.spell = false
-        if ok then
-            notify.notify("Spell turned off")
-        end
+        notify.notify("Spell turned off")
     else
         vim.o.spell = true
-        if ok then
-            notify.notify("Spell turned on")
-        end
+        notify.notify("Spell turned on")
     end
 end
 
