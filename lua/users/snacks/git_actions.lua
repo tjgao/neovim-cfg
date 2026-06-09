@@ -1,69 +1,9 @@
 local M = {}
 local notify = require("shared.notify")
-local SPINNER_FRAMES = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
-
-local function notify_progress_start(message)
-    if not notify.supports_ids() then
-        notify.notify(message, vim.log.levels.INFO, { title = "Git" })
-        return function() end
-    end
-
-    local notif_id = ("git-branch-sync-%d"):format(vim.uv.hrtime())
-    local frame_index = 0
-    local active = true
-
-    local uv = vim.uv or vim.loop
-    local timer = uv.new_timer()
-    if timer then
-        timer:start(
-            120,
-            120,
-            vim.schedule_wrap(function()
-                if not active then
-                    return
-                end
-                frame_index = (frame_index % #SPINNER_FRAMES) + 1
-                notify.notify(("%s %s"):format(SPINNER_FRAMES[frame_index], message), vim.log.levels.INFO, {
-                    id = notif_id,
-                    title = "Git",
-                    timeout = false,
-                })
-            end)
-        )
-    end
-
-    return function()
-        active = false
-        if timer then
-            timer:stop()
-            timer:close()
-            timer = nil
-        end
-        vim.defer_fn(function()
-            notify.hide(notif_id)
-        end, 200)
-    end
-end
-
-local function run_git_async(args, cwd, cb)
-    vim.system(args, {
-        cwd = cwd,
-        text = true,
-    }, function(proc)
-        if proc.code ~= 0 then
-            local err = vim.trim(proc.stderr or "")
-            if err == "" then
-                err = vim.trim(proc.stdout or "")
-            end
-            cb(nil, err ~= "" and err or "git command failed")
-            return
-        end
-        cb(proc, nil)
-    end)
-end
+local git_async = require("users.git.async")
 
 local function resolve_upstream_async(cwd, local_branch, cb)
-    run_git_async(
+    git_async.run(
         {
             "git",
             "for-each-ref",
@@ -190,9 +130,12 @@ function M.sync_local_branch(item, opts, on_done)
             remote_branch = branch
         end
 
-        done_progress = notify_progress_start(("Syncing '%s' from %s/%s..."):format(branch, remote, remote_branch))
+        done_progress = git_async.start_spinner(("Syncing '%s' from %s/%s..."):format(branch, remote, remote_branch), {
+            title = "Git",
+            id_prefix = "git-branch-sync",
+        })
         local refspec = (force and "+" or "") .. remote_branch .. ":" .. branch
-        run_git_async({ "git", "fetch", remote, refspec }, cwd, function(_, fetch_err)
+        git_async.run({ "git", "fetch", remote, refspec }, cwd, function(_, fetch_err)
             if fetch_err then
                 notify.notify(
                     ("Failed to sync '%s' from %s/%s: %s"):format(branch, remote, remote_branch, fetch_err),
@@ -240,7 +183,7 @@ function M.sync_and_checkout_local_branch(item, opts, on_done)
         end
 
         local cwd = type(item) == "table" and item.cwd or nil
-        run_git_async({ "git", "switch", branch }, cwd, function(_, switch_err)
+        git_async.run({ "git", "switch", branch }, cwd, function(_, switch_err)
             if switch_err then
                 notify.notify(
                     ("Failed to checkout '%s': %s"):format(branch, switch_err),
