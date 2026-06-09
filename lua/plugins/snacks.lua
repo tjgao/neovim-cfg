@@ -1,5 +1,5 @@
-local git_actions = require("users.snacks.git_actions")
 local git_branches = require("users.snacks.git_branches")
+local git_log = require("users.snacks.git_log")
 local git_rg = require("users.snacks.git_rg")
 local picker_actions = require("users.snacks.picker_actions")
 
@@ -394,68 +394,7 @@ return {
         {
             "<leader>sgl",
             function()
-                require("snacks").picker.pick({
-                    focus = "list",
-                    source = "git_log",
-                    actions = {
-                        diffview_d = git_actions.diffview_d,
-                        diffview_D = git_actions.diffview_D,
-                        diffview_x = git_actions.diffview_x,
-                        commit_to_cmd = git_actions.commit_to_cmd,
-                        commit_to_reg = git_actions.commit_to_reg,
-                    },
-
-                    win = {
-                        list = {
-                            keys = {
-                                ["d"] = {
-                                    "diffview_d",
-                                    mode = { "n" },
-                                },
-                                ["D"] = {
-                                    "diffview_D",
-                                    mode = { "n" },
-                                },
-                                ["x"] = {
-                                    "diffview_x",
-                                    mode = { "n" },
-                                },
-                                ["."] = {
-                                    "commit_to_cmd",
-                                    mode = { "n" },
-                                },
-                                [","] = {
-                                    "commit_to_reg",
-                                    mode = { "n" },
-                                },
-                            },
-                        },
-                        input = {
-                            keys = {
-                                ["d"] = {
-                                    "diffview_d",
-                                    mode = { "n" },
-                                },
-                                ["D"] = {
-                                    "diffview_D",
-                                    mode = { "n" },
-                                },
-                                ["x"] = {
-                                    "diffview_x",
-                                    mode = { "n" },
-                                },
-                                ["."] = {
-                                    "commit_to_cmd",
-                                    mode = { "n" },
-                                },
-                                [","] = {
-                                    "commit_to_reg",
-                                    mode = { "n" },
-                                },
-                            },
-                        },
-                    },
-                })
+                git_log.open()
             end,
             desc = "Search git log",
         },

@@ -1,4 +1,5 @@
 local git_actions = require("users.snacks.git_actions")
+local git_log = require("users.snacks.git_log")
 local notify = require("shared.notify")
 
 local M = {}
@@ -267,6 +268,18 @@ function M.open_git_branches_picker()
                 picker:close()
                 vim.schedule(M.open_git_branches_picker)
             end,
+            branch_log = function(picker, item)
+                local branch = type(item) == "table" and item.branch or nil
+                if type(branch) ~= "string" or branch == "" then
+                    notify.notify("No branch selected", vim.log.levels.WARN)
+                    return
+                end
+
+                picker:close()
+                vim.schedule(function()
+                    git_log.open_for_ref(branch)
+                end)
+            end,
         },
         win = {
             list = {
@@ -323,6 +336,10 @@ function M.open_git_branches_picker()
                         "sync_and_checkout_local_branch_force",
                         mode = { "n" },
                     },
+                    ["zl"] = {
+                        "branch_log",
+                        mode = { "n" },
+                    },
                 },
             },
             input = {
@@ -377,6 +394,10 @@ function M.open_git_branches_picker()
                     },
                     ["zS"] = {
                         "sync_and_checkout_local_branch_force",
+                        mode = { "n" },
+                    },
+                    ["zl"] = {
+                        "branch_log",
                         mode = { "n" },
                     },
                 },
