@@ -6,6 +6,19 @@ local M = {}
 
 local SHOW_REMOTE_BRANCHES = false
 
+local function display_branch_name(branch)
+    if type(branch) ~= "string" or branch == "" then
+        return branch
+    end
+
+    local remote, remote_branch = branch:match("^remotes/([^/]+)/(.+)$")
+    if remote and remote_branch then
+        return ("%s/%s"):format(remote, remote_branch)
+    end
+
+    return branch
+end
+
 local function set_hl_bold(name)
     local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = name, link = false })
     if not ok then
@@ -155,7 +168,7 @@ function M.open_git_branches_picker()
             return function(cb)
                 base(function(item)
                     if item then
-                        item.text = item.branch or "(detached HEAD)"
+                        item.text = display_branch_name(item.branch) or "(detached HEAD)"
                     end
                     cb(item)
                 end)
@@ -178,7 +191,7 @@ function M.open_git_branches_picker()
             else
                 local branch_hl = item.branch and item.branch:match("^remotes/") and "SnacksPickerGitBranchRemote"
                     or "SnacksPickerGitBranch"
-                ret[#ret + 1] = { a(item.branch, w, { truncate = true }), branch_hl }
+                ret[#ret + 1] = { a(display_branch_name(item.branch), w, { truncate = true }), branch_hl }
             end
 
             ret[#ret + 1] = { " " }
