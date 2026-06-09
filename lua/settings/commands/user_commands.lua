@@ -78,23 +78,56 @@ function M.setup()
         vim.cmd("tab split | vertical diffsplit " .. opts.fargs[1])
     end, { nargs = 1, desc = "Create a tab and diff the file with current buffer" })
 
-    vim.api.nvim_create_user_command("Gp", function()
-        run_git_background({ "pull", "--ff-only" }, {
+    vim.api.nvim_create_user_command("Gp", function(opts)
+        local args = { "pull" }
+        if #opts.fargs == 0 then
+            args[#args + 1] = "--ff-only"
+        end
+        vim.list_extend(args, opts.fargs)
+
+        run_git_background(args, {
             progress_message = "Pulling from upstream...",
-            success_message = "Pull completed (ff-only)",
+            success_message = "Pull completed",
             error_prefix = "Git pull failed",
             id_prefix = "git-pull",
         })
-    end, { desc = "Git pull --ff-only (async)" })
+    end, { nargs = "*", desc = "Git pull (async, passes args)" })
 
-    vim.api.nvim_create_user_command("Gu", function()
-        run_git_background({ "push" }, {
+    vim.api.nvim_create_user_command("Gu", function(opts)
+        local args = { "push" }
+        vim.list_extend(args, opts.fargs)
+
+        run_git_background(args, {
             progress_message = "Pushing to upstream...",
             success_message = "Push completed",
             error_prefix = "Git push failed",
             id_prefix = "git-push",
         })
-    end, { desc = "Git push (async)" })
+    end, { nargs = "*", desc = "Git push (async, passes args)" })
+
+    vim.api.nvim_create_user_command("Gf", function(opts)
+        local args = { "fetch" }
+        if #opts.fargs == 0 then
+            args[#args + 1] = "origin"
+        end
+        vim.list_extend(args, opts.fargs)
+
+        run_git_background(args, {
+            progress_message = "Fetching from remote...",
+            success_message = "Fetch completed",
+            error_prefix = "Git fetch failed",
+            id_prefix = "git-fetch",
+        })
+    end, { nargs = "*", desc = "Git fetch (async, defaults to origin)" })
+
+    vim.api.nvim_create_user_command("Gc", function(opts)
+        local args = vim.trim(opts.args or "")
+        if args == "" then
+            vim.cmd("G commit")
+            return
+        end
+        vim.cmd(("G commit %s"):format(args))
+    end, { nargs = "*", desc = "Git commit" })
 end
 
 return M
