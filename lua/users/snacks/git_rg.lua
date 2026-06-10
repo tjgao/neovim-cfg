@@ -131,12 +131,18 @@ end
 
 local function path_matches_glob(path, item)
     local target = item.glob:find("/", 1, true) and path or vim.fs.basename(path)
-    local pat = vim.fn.glob2regpat(item.glob)
+    local ok, pat = pcall(vim.fn.glob2regpat, item.glob)
+    if not ok or type(pat) ~= "string" or pat == "" then
+        return false, false
+    end
     if item.ignore_case then
         pat = "\\c" .. pat
     end
     local re = vim.regex(pat)
-    return re and re:match_str(target) ~= nil
+    if not re then
+        return false, false
+    end
+    return re:match_str(target) ~= nil, true
 end
 
 local function file_passes_filters(file, parsed)
@@ -165,20 +171,26 @@ local function file_passes_filters(file, parsed)
 
     if #parsed.include_globs > 0 then
         local ok = false
+        local has_valid_glob = false
         for _, item in ipairs(parsed.include_globs) do
-            if path_matches_glob(file, item) then
+            local matched, valid = path_matches_glob(file, item)
+            if valid then
+                has_valid_glob = true
+            end
+            if matched then
                 ok = true
                 break
             end
         end
-        if not ok then
+        if has_valid_glob and not ok then
             return false
         end
     end
 
     if #parsed.exclude_globs > 0 then
         for _, item in ipairs(parsed.exclude_globs) do
-            if path_matches_glob(file, item) then
+            local matched, valid = path_matches_glob(file, item)
+            if valid and matched then
                 return false
             end
         end
