@@ -396,14 +396,14 @@ return {
         {
             "<leader>sq",
             function()
-                require("snacks").picker.qflist()
+                require("snacks").picker.qflist({ focus = "list" })
             end,
             desc = "Search quickfix",
         },
         {
             "<leader>sl",
             function()
-                require("snacks").picker.loclist()
+                require("snacks").picker.loclist({ focus = "list" })
             end,
             desc = "Search loclist",
         },

@@ -64,6 +64,30 @@ local function escaped_search_pattern(pattern)
     return delim, escaped
 end
 
+local function run_search_to_list(kind, pattern, target)
+    local delim, escaped = escaped_search_pattern(pattern)
+    local prefix = kind == "loclist" and "l" or ""
+    local ok, err = pcall(function()
+        vim.cmd(("%svimgrep %s%s%sgj %s"):format(prefix, delim, escaped, delim, target))
+    end)
+    if not ok then
+        local msg = tostring(err)
+        if msg:find("E480", 1, true) then
+            if kind == "loclist" then
+                vim.fn.setloclist(0, {})
+            else
+                vim.fn.setqflist({})
+            end
+            notify.notify("No matches found", vim.log.levels.INFO, { title = "Search" })
+            return
+        end
+        notify.notify(msg, vim.log.levels.ERROR, { title = "Search" })
+        return
+    end
+
+    vim.cmd(kind == "loclist" and "lopen" or "copen")
+end
+
 local function run_git_background(args, opts)
     opts = opts or {}
 
@@ -237,9 +261,8 @@ function M.setup()
             return
         end
 
-        local delim, escaped = escaped_search_pattern(pattern)
         local target = opts.bang and "**/*" or "%"
-        vim.cmd(("vimgrep %s%s%sgj %s | copen"):format(delim, escaped, delim, target))
+        run_search_to_list("quickfix", pattern, target)
     end, {
         nargs = "*",
         bang = true,
@@ -252,9 +275,8 @@ function M.setup()
             return
         end
 
-        local delim, escaped = escaped_search_pattern(pattern)
         local target = opts.bang and "**/*" or "%"
-        vim.cmd(("lvimgrep %s%s%sgj %s | lopen"):format(delim, escaped, delim, target))
+        run_search_to_list("loclist", pattern, target)
     end, {
         nargs = "*",
         bang = true,
