@@ -26,9 +26,9 @@ return {
                 {
                     "q",
                     function()
-                        Q.close()
+                        vim.cmd("close")
                     end,
-                    desc = "Close quickfix",
+                    desc = "Close quickfix/loclist window",
                 },
             },
         })
