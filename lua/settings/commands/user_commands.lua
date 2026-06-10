@@ -34,6 +34,36 @@ local function toggle_spell()
     end
 end
 
+local function resolve_search_pattern(raw)
+    local pattern = vim.trim(raw or "")
+    if pattern == "" then
+        pattern = vim.fn.getreg("/")
+    end
+
+    if pattern == "" then
+        notify.notify("No search pattern found", vim.log.levels.WARN, { title = "Search" })
+        return nil
+    end
+
+    return pattern
+end
+
+local function pattern_delimiter(pattern)
+    local candidates = { "/", "#", "@", "%", "|", "!", ";", ":" }
+    for _, delim in ipairs(candidates) do
+        if not pattern:find(delim, 1, true) then
+            return delim
+        end
+    end
+    return "/"
+end
+
+local function escaped_search_pattern(pattern)
+    local delim = pattern_delimiter(pattern)
+    local escaped = pattern:gsub(vim.pesc(delim), "\\" .. delim)
+    return delim, escaped
+end
+
 local function run_git_background(args, opts)
     opts = opts or {}
 
@@ -199,6 +229,32 @@ function M.setup()
         complete = function(arg_lead, _, _)
             return git_completion.complete_commit(arg_lead)
         end,
+    })
+
+    vim.api.nvim_create_user_command("Sq", function(opts)
+        local pattern = resolve_search_pattern(opts.args)
+        if not pattern then
+            return
+        end
+
+        local delim, escaped = escaped_search_pattern(pattern)
+        vim.cmd(("vimgrep %s%s%sgj **/* | copen"):format(delim, escaped, delim))
+    end, {
+        nargs = "*",
+        desc = "Search to quickfix",
+    })
+
+    vim.api.nvim_create_user_command("Sl", function(opts)
+        local pattern = resolve_search_pattern(opts.args)
+        if not pattern then
+            return
+        end
+
+        local delim, escaped = escaped_search_pattern(pattern)
+        vim.cmd(("lvimgrep %s%s%sgj %% | lopen"):format(delim, escaped, delim))
+    end, {
+        nargs = "*",
+        desc = "Search to loclist",
     })
 end
 
