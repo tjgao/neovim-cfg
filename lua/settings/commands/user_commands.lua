@@ -238,10 +238,12 @@ function M.setup()
         end
 
         local delim, escaped = escaped_search_pattern(pattern)
-        vim.cmd(("vimgrep %s%s%sgj **/* | copen"):format(delim, escaped, delim))
+        local target = opts.bang and "**/*" or "%"
+        vim.cmd(("vimgrep %s%s%sgj %s | copen"):format(delim, escaped, delim, target))
     end, {
         nargs = "*",
-        desc = "Search to quickfix",
+        bang = true,
+        desc = "Search to quickfix (%; ! for all files)",
     })
 
     vim.api.nvim_create_user_command("Sl", function(opts)
@@ -251,10 +253,12 @@ function M.setup()
         end
 
         local delim, escaped = escaped_search_pattern(pattern)
-        vim.cmd(("lvimgrep %s%s%sgj %% | lopen"):format(delim, escaped, delim))
+        local target = opts.bang and "**/*" or "%"
+        vim.cmd(("lvimgrep %s%s%sgj %s | lopen"):format(delim, escaped, delim, target))
     end, {
         nargs = "*",
-        desc = "Search to loclist",
+        bang = true,
+        desc = "Search to loclist (%; ! for all files)",
     })
 end
 
