@@ -1,5 +1,7 @@
 local M = {}
 
+local USE_VIMGREP = false
+
 local function get_git_root()
     local cwd = vim.fn.expand("%:p:h")
     if cwd == "" then
@@ -231,7 +233,7 @@ function M.git_rg(opts)
                 or #parsed.include_globs > 0
                 or #parsed.exclude_globs > 0
 
-            if not has_path_filters and not parsed.has_rg_args and not has_base_rg_opts then
+            if not USE_VIMGREP and not has_path_filters and not parsed.has_rg_args and not has_base_rg_opts then
                 local git_finder = require("snacks.picker.source.git").grep
                 local search = parsed.search or ""
                 local smart_ignorecase = search ~= "" and search == search:lower()
@@ -259,11 +261,38 @@ function M.git_rg(opts)
             local next_opts = vim.tbl_deep_extend("force", fopts, { dirs = filtered_files })
             return require("snacks.picker.source.grep").grep(next_opts, nctx)
         end,
-        args = { "--no-messages", "--no-binary" },
+        args = USE_VIMGREP and { "--no-messages", "--no-binary", "--vimgrep" } or { "--no-messages", "--no-binary" },
         title = "Git Rg",
         supports_live = true,
         live = true,
     }, opts or {}))
+end
+
+local function with_vimgrep_if_enabled(opts)
+    if not USE_VIMGREP then
+        return opts or {}
+    end
+
+    local base = opts or {}
+    local args = vim.list_extend({ "--vimgrep" }, base.args or {})
+    return vim.tbl_deep_extend("force", base, { args = args })
+end
+
+function M.grep(opts)
+    return require("snacks").picker.grep(with_vimgrep_if_enabled(opts))
+end
+
+function M.grep_word(opts)
+    return require("snacks").picker.grep_word(with_vimgrep_if_enabled(opts))
+end
+
+function M.toggle_vimgrep_mode()
+    USE_VIMGREP = not USE_VIMGREP
+    return USE_VIMGREP
+end
+
+function M.is_vimgrep_mode()
+    return USE_VIMGREP
 end
 
 return M

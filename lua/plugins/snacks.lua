@@ -60,6 +60,7 @@ return {
                     keys = {
                         ["<S-l>"] = { "focus_preview", mode = { "n" } },
                         ["<S-h>"] = { "focus_preview", mode = { "n" } },
+                        ["Q"] = { "loclist", mode = { "n" } },
                         ["<C-j>"] = { "preview_scroll_down", mode = { "i", "n" } },
                         ["<C-k>"] = { "preview_scroll_up", mode = { "i", "n" } },
                         ["<C-h>"] = { "preview_scroll_left", mode = { "i", "n" } },
@@ -70,6 +71,7 @@ return {
                     keys = {
                         ["<S-l>"] = { "focus_preview", mode = { "n" } },
                         ["<S-h>"] = { "focus_preview", mode = { "n" } },
+                        ["Q"] = { "loclist", mode = { "n" } },
                     },
                 },
                 preview = {
@@ -286,7 +288,7 @@ return {
         {
             "<leader>?",
             function()
-                require("snacks").picker.grep({
+                git_rg.grep({
                     formatters = {
                         file = {
                             filename_first = true,
@@ -328,7 +330,7 @@ return {
         {
             "<leader>sS",
             function()
-                require("snacks").picker.grep_word({
+                git_rg.grep_word({
                     focus = "list",
                     formatters = {
                         file = {
@@ -390,6 +392,20 @@ return {
                 git_branches.open_git_branches_picker()
             end,
             desc = "Search git branches",
+        },
+        {
+            "<leader>sq",
+            function()
+                require("snacks").picker.qflist()
+            end,
+            desc = "Search quickfix",
+        },
+        {
+            "<leader>sl",
+            function()
+                require("snacks").picker.loclist()
+            end,
+            desc = "Search loclist",
         },
         {
             "<leader>sgl",
