@@ -59,7 +59,6 @@ local function split_string(str, size)
     return table.concat(parts, "\n")
 end
 
-local ts = require("nvim-treesitter")
 local gitsigns = require("gitsigns")
 
 local function line_in_hunk()
@@ -117,6 +116,7 @@ local function get_treesitter_breadcrumb()
 
     -- Build breadcrumb by walking up the tree
     local breadcrumb = {}
+    ---@type TSNode?
     local current = node
 
     -- More comprehensive list of context nodes
