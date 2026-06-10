@@ -105,6 +105,12 @@ keymap("n", "<leader>ai", function()
     vim.cmd("set ignorecase!")
 end, "Toggle case sensitive for * search")
 keymap("n", "<leader>ac", ":ColorizerToggle<CR>", "Toggle Colorizer for current buffer")
+keymap("n", "<leader>as", function()
+    local rg = require("users.snacks.git_rg")
+    local enabled = rg.toggle_vimgrep_mode()
+    local notify = require("snacks").notifier.notify
+    notify("Git rg mode: " .. (enabled and "match (vimgrep)" or "line (fast)"))
+end, "Toggle git rg vimgrep mode")
 
 keymap("n", "]h", ":Gitsigns next_hunk<CR>", { desc = "Gitsigns: Go to next hunk" })
 keymap("n", "[h", ":Gitsigns prev_hunk<CR>", { desc = "Gitsigns: Go to previous hunk" })
