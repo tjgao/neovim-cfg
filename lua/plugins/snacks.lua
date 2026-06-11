@@ -421,5 +421,12 @@ return {
             end,
             desc = "Search lsp symbols",
         },
+        {
+            "<leader>z",
+            function()
+                require("snacks").picker.zoxide({ focus = "list" })
+            end,
+            desc = "Search zoxide",
+        },
     },
 }
