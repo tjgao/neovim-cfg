@@ -58,16 +58,12 @@ vim.api.nvim_create_autocmd("ColorScheme", {
     end,
 })
 
--- kanso-ink looks too dark in WSL2, so this changes colorscheme for WSL2
-vim.defer_fn(function()
-    local handle = io.popen("uname -r")
-    if handle == nil then
-        return
-    end
-    local kernel = handle:read("*a"):lower()
-    handle:close()
-
-    if kernel ~= nil and kernel:find("microsoft") then
-        vim.cmd("colorscheme kanso-mist")
-    end
-end, 0)
+-- kanso-ink looks too dark in WSL2, so override it after startup on WSL
+if vim.fn.has("wsl") == 1 then
+    vim.api.nvim_create_autocmd("VimEnter", {
+        once = true,
+        callback = function()
+            vim.cmd("colorscheme kanso-mist")
+        end,
+    })
+end
