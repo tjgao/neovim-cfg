@@ -52,11 +52,8 @@ vim.api.nvim_create_autocmd("ColorScheme", {
         for _, mode in pairs(modes) do
             local mode_hl = vim.api.nvim_get_hl(0, { name = mode, link = false })
             mode_hl.bold = true
+            ---@diagnostic disable-next-line:param-type-mismatch
             vim.api.nvim_set_hl(0, mode, mode_hl)
         end
     end,
 })
-
-vim.defer_fn(function()
-    vim.cmd("colorscheme kanso-ink")
-end, 0)
