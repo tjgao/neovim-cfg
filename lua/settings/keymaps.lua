@@ -122,16 +122,12 @@ keymap("n", "N", "Nzzzv", "Previous search result")
 
 keymap("n", "<C-,>", ":LspClangdSwitchSourceHeader<CR>", "Switch source and header")
 
--- Obsidian --
-keymap("n", "<leader>on", ":ObsidianNew<CR>", "Open new note [Obsidian]")
-keymap("n", "<leader>os", ":ObsidianSearch<CR>", "Search note [Obsidian]")
-
 keymap("n", "<leader>qq", function()
-    require("quicker").toggle()
+    require("quicker").toggle({ focus = true })
 end, "Toggle quickfix")
 
 keymap("n", "<leader>ql", function()
-    require("quicker").toggle({ loclist = true })
+    require("quicker").toggle({ loclist = true, focus = true })
 end, "Toggle loclist")
 
 keymap("n", "<leader>sn", function()
