@@ -25,10 +25,6 @@ keymap("n", "<C-Down>", ":resize -2<CR>", "Resize window downward")
 keymap("n", "<C-Left>", ":vertical resize +2<CR>", "Resize window leftward")
 keymap("n", "<C-Right>", ":vertical resize -2<CR>", "Resize window rightward")
 
--- Navigate buffers
--- keymap("n", "<S-l>", ":bnext<CR>", "Go to next buf")
--- keymap("n", "<S-h>", ":bprevious<CR>", "Go to previous buf")
-
 -- Retrieve last thing yanked instead of deleted
 keymap("n", "<A-p>", '"0p', "Past last yanked instead of deleted")
 keymap("n", "<A-S-p>", '"0P', "Past last yanked using P")
@@ -138,4 +134,9 @@ keymap("n", "<leader>sN", function()
     message.open_messages_window()
 end, "Show notifier history")
 
+keymap("n", "<Tab>", "<cmd>QuickBuf<CR>", { desc = "QuickBuf" })
+keymap("n", "<leader>qt", "<cmd>QuickBufPinToggle<CR>", { desc = "QuickBufPinToggle" })
+-- Navigate pinned buffers
+keymap("n", "<S-h>", "<cmd>QuickBufPrevPinned<CR>", { desc = "Prev pinned buffer" })
+keymap("n", "<S-l>", "<cmd>QuickBufNextPinned<CR>", { desc = "Next pinned buffer" })
 -- keymap("n", "<Tab>", ":b#<CR>zz", "Jump to the most recent buffer")
