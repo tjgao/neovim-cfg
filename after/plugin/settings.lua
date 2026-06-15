@@ -66,4 +66,6 @@ if vim.fn.has("wsl") == 1 then
             vim.cmd("colorscheme kanso-mist")
         end,
     })
+
+    vim.keymap.set("n", "\x1b[105;5u", "<C-i>", { noremap = true, silent = true })
 end

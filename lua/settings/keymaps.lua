@@ -4,6 +4,7 @@ local message = require("settings.commands.messages")
 --Remap space as leader key
 keymap("", "<Space>", "<Nop>", "Leader remap")
 
+keymap("n", "<C-i>", "<C-i>", { noremap = true, silent = true })
 -- Modes
 --   normal_mode = "n",
 --   insert_mode = "i",
