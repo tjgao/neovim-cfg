@@ -23,11 +23,14 @@ local options = {
     splitbelow = true,                            -- force horizontal splits to go below
     splitright = true,                            -- force vertical spllits to go right
     wildmode = "longest:full",                    -- do not want auto select for wildmenu
-    guifont = "UbuntuMono Nerd Font Regular:h16", -- font used in GUI neovim app
+    guifont = "Iosevka Nerd Font:h24",            -- font used in GUI neovim app
 
     updatetime = 400,
     colorcolumn = "120",
     conceallevel = 1,
+
+    title = true,
+    titlestring = "%{fnamemodify(expand('%:p'), ':~:.')} - nvim",
 }
 
 vim.opt.shortmess:append("c")
