@@ -67,6 +67,17 @@ function M.setup_gdb_adapter(dap)
     return true
 end
 
+function M.setup_nlua_adapter(dap)
+    dap.adapters.nlua = function(callback, config)
+        callback({
+            type = "server",
+            host = config.host or "127.0.0.1",
+            port = config.port or 8086,
+        })
+    end
+    return true
+end
+
 function M.adapter_is_configured(dap, adapter_name)
     return dap.adapters and dap.adapters[adapter_name] ~= nil
 end
@@ -83,6 +94,7 @@ function M.prepare_config_for_run(dap, config)
         ["pwa-node"] = "js-debug-adapter is not available",
         ["pwa-chrome"] = "js-debug-adapter is not available",
         ["pwa-msedge"] = "js-debug-adapter is not available",
+        nlua = "nlua adapter is not available (install one-small-step-for-vimkind)",
     }
 
     local error_message = adapter_checks[runnable.type]

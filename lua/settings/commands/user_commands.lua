@@ -284,4 +284,14 @@ function M.setup()
     })
 end
 
+vim.api.nvim_create_user_command("Osv", function()
+    local osv = require("osv")
+    if osv.is_running() then
+        osv.stop()
+        vim.notify("OSV stopped", vim.log.levels.INFO)
+    else
+        osv.launch({ port = 8086, block = false })
+        vim.notify("OSV started", vim.log.levels.INFO)
+    end
+end, {})
 return M

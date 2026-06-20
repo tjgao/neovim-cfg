@@ -388,6 +388,16 @@ local function default_launch_config()
             },
         },
         {
+            label = "Neovim Lua (attach to OSV)",
+            config = {
+                name = "Neovim Lua attach",
+                type = "nlua",
+                request = "attach",
+                host = "127.0.0.1",
+                port = 8086,
+            },
+        },
+        {
             label = "Empty config",
             config = {
                 name = "New config",

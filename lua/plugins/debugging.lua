@@ -13,6 +13,7 @@ local function initialize_debug_backends(dap)
 
     debug_state.set_js_enabled(debug_adapters.setup_js_adapter())
     debug_adapters.setup_gdb_adapter(dap)
+    debug_adapters.setup_nlua_adapter(dap)
 
     debug_state.set_initialized(true)
 end
@@ -68,6 +69,7 @@ return {
         "jay-babu/mason-nvim-dap.nvim",
         "leoluz/nvim-dap-go",
         "mxsdev/nvim-dap-vscode-js",
+        "jbyuki/one-small-step-for-vimkind",
         "stevearc/overseer.nvim",
     },
     config = function()
