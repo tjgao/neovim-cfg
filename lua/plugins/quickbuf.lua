@@ -1,7 +1,7 @@
 return {
-    -- dir = "/home/tiejun/code/github/quickbuf.nvim",
-    -- name = "quickbuf",
-    "tjgao/quickbuf.nvim",
+    dir = "/home/tiejun/code/github/quickbuf.nvim",
+    name = "quickbuf",
+    -- "tjgao/quickbuf.nvim",
     config = function()
         require("quickbuf").setup({
             persistence = {
