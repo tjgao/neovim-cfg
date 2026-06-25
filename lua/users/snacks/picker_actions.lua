@@ -1,8 +1,7 @@
 local M = {}
-local notify = require("shared.notify")
 
 local function notify_action(level, action, message)
-    notify.notify(("Snacks %s: %s"):format(action, message), level)
+    vim.notify(("Snacks %s: %s"):format(action, message), level)
 end
 
 local function get_item_path(item, action)

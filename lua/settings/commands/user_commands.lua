@@ -1,5 +1,4 @@
 local M = {}
-local notify = require("shared.notify")
 local git_async = require("users.git.async")
 local git_completion = require("users.git.completion")
 
@@ -27,10 +26,10 @@ end
 local function toggle_spell()
     if vim.o.spell then
         vim.o.spell = false
-        notify.notify("Spell turned off")
+        vim.notify("Spell turned off")
     else
         vim.o.spell = true
-        notify.notify("Spell turned on")
+        vim.notify("Spell turned on")
     end
 end
 
@@ -41,7 +40,7 @@ local function resolve_search_pattern(raw)
     end
 
     if pattern == "" then
-        notify.notify("No search pattern found", vim.log.levels.WARN, { title = "Search" })
+        vim.notify("No search pattern found", vim.log.levels.WARN, { title = "Search" })
         return nil
     end
 
@@ -78,10 +77,10 @@ local function run_search_to_list(kind, pattern, target)
             else
                 vim.fn.setqflist({})
             end
-            notify.notify("No matches found", vim.log.levels.INFO, { title = "Search" })
+            vim.notify("No matches found", vim.log.levels.INFO, { title = "Search" })
             return
         end
-        notify.notify(msg, vim.log.levels.ERROR, { title = "Search" })
+        vim.notify(msg, vim.log.levels.ERROR, { title = "Search" })
         return
     end
 
@@ -93,7 +92,7 @@ local function run_git_background(args, opts)
 
     local root = git_async.resolve_git_root(vim.fn.getcwd())
     if not root then
-        notify.notify("Not inside a git repository", vim.log.levels.WARN, { title = "Git" })
+        vim.notify("Not inside a git repository", vim.log.levels.WARN, { title = "Git" })
         return
     end
 
@@ -110,7 +109,7 @@ local function run_git_background(args, opts)
             done_progress()
 
             if err then
-                notify.notify((opts.error_prefix or "Git command failed") .. ": " .. err, vim.log.levels.ERROR, {
+                vim.notify((opts.error_prefix or "Git command failed") .. ": " .. err, vim.log.levels.ERROR, {
                     title = "Git",
                 })
                 return
@@ -118,11 +117,11 @@ local function run_git_background(args, opts)
 
             local out = vim.trim(proc.stdout or "")
             if out ~= "" then
-                notify.notify(out, vim.log.levels.INFO, { title = "Git" })
+                vim.notify(out, vim.log.levels.INFO, { title = "Git" })
                 return
             end
 
-            notify.notify(opts.success_message or "Git command completed", vim.log.levels.INFO, {
+            vim.notify(opts.success_message or "Git command completed", vim.log.levels.INFO, {
                 title = "Git",
             })
         end)

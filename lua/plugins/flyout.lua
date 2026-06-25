@@ -10,6 +10,7 @@ return {
                 preview_height = "40%",
             },
             notifications = {
+                notify_backend = "flyout",
                 start = false,
                 ["end"] = false,
                 progress = {

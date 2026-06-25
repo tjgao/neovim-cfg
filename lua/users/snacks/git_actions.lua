@@ -1,5 +1,4 @@
 local M = {}
-local notify = require("shared.notify")
 local git_async = require("users.git.async")
 
 local function resolve_upstream_async(cwd, local_branch, cb)
@@ -58,7 +57,7 @@ end
 function M.branch_to_cmd(picker, item)
     local branch = type(item) == "table" and item.branch or nil
     if type(branch) ~= "string" or branch == "" then
-        notify.notify("No branch name found", vim.log.levels.WARN, { title = "Git" })
+        vim.notify("No branch name found", vim.log.levels.WARN, { title = "Git" })
         return
     end
 
@@ -77,7 +76,7 @@ end
 function M.branch_to_reg(picker, item)
     local branch = type(item) == "table" and item.branch or nil
     if type(branch) ~= "string" or branch == "" then
-        notify.notify("No branch name found", vim.log.levels.WARN, { title = "Git" })
+        vim.notify("No branch name found", vim.log.levels.WARN, { title = "Git" })
         return
     end
 
@@ -94,14 +93,14 @@ function M.sync_local_branch(item, opts, on_done)
 
     local branch = type(item) == "table" and item.branch or nil
     if type(branch) ~= "string" or branch == "" then
-        notify.notify("No branch selected", vim.log.levels.WARN, { title = "Git" })
+        vim.notify("No branch selected", vim.log.levels.WARN, { title = "Git" })
         on_done(false)
         return false
     end
 
     local is_remote = branch:match("^remotes/[^/]+/.+") ~= nil
     if is_remote then
-        notify.notify(("Skip remote branch '%s'"):format(branch), vim.log.levels.INFO, { title = "Git" })
+        vim.notify(("Skip remote branch '%s'"):format(branch), vim.log.levels.INFO, { title = "Git" })
         on_done(false)
         return false
     end
@@ -116,7 +115,7 @@ function M.sync_local_branch(item, opts, on_done)
         end
 
         if upstream_err then
-            notify.notify(
+            vim.notify(
                 ("Failed to resolve upstream for '%s': %s"):format(branch, upstream_err),
                 vim.log.levels.ERROR,
                 { title = "Git" }
@@ -137,7 +136,7 @@ function M.sync_local_branch(item, opts, on_done)
         local refspec = (force and "+" or "") .. remote_branch .. ":" .. branch
         git_async.run({ "git", "fetch", remote, refspec }, cwd, function(_, fetch_err)
             if fetch_err then
-                notify.notify(
+                vim.notify(
                     ("Failed to sync '%s' from %s/%s: %s"):format(branch, remote, remote_branch, fetch_err),
                     vim.log.levels.ERROR,
                     { title = "Git" }
@@ -146,7 +145,7 @@ function M.sync_local_branch(item, opts, on_done)
                 return
             end
 
-            notify.notify(
+            vim.notify(
                 ("Synced local branch '%s' from %s/%s"):format(branch, remote, remote_branch),
                 vim.log.levels.INFO,
                 { title = "Git" }
@@ -164,7 +163,7 @@ function M.sync_and_checkout_local_branch(item, opts, on_done)
 
     local branch = type(item) == "table" and item.branch or nil
     if type(branch) ~= "string" or branch == "" then
-        notify.notify("No branch selected", vim.log.levels.WARN, { title = "Git" })
+        vim.notify("No branch selected", vim.log.levels.WARN, { title = "Git" })
         on_done(false, false)
         return false
     end
@@ -185,7 +184,7 @@ function M.sync_and_checkout_local_branch(item, opts, on_done)
         local cwd = type(item) == "table" and item.cwd or nil
         git_async.run({ "git", "switch", branch }, cwd, function(_, switch_err)
             if switch_err then
-                notify.notify(
+                vim.notify(
                     ("Failed to checkout '%s': %s"):format(branch, switch_err),
                     vim.log.levels.ERROR,
                     { title = "Git" }
@@ -194,7 +193,7 @@ function M.sync_and_checkout_local_branch(item, opts, on_done)
                 return
             end
 
-            notify.notify(("Checked out '%s'"):format(branch), vim.log.levels.INFO, { title = "Git" })
+            vim.notify(("Checked out '%s'"):format(branch), vim.log.levels.INFO, { title = "Git" })
             on_done(true, true)
         end)
     end)

@@ -1,6 +1,5 @@
 local git_actions = require("users.snacks.git_actions")
 local git_log = require("users.snacks.git_log")
-local notify = require("shared.notify")
 
 local M = {}
 
@@ -72,7 +71,7 @@ function M.open_git_branches_picker()
     local function delete_selected_branches(picker, item, force_local)
         local selected = selected_branch_items(picker, item)
         if #selected == 0 then
-            notify.notify("No branch selected", vim.log.levels.WARN)
+            vim.notify("No branch selected", vim.log.levels.WARN)
             return
         end
 
@@ -96,7 +95,7 @@ function M.open_git_branches_picker()
         end
 
         if #local_items == 0 and #remote_items == 0 then
-            notify.notify("No deletable branches selected", vim.log.levels.WARN)
+            vim.notify("No deletable branches selected", vim.log.levels.WARN)
             return
         end
 
@@ -148,15 +147,15 @@ function M.open_git_branches_picker()
         end
 
         if #skipped_current > 0 then
-            notify.notify("Skipped current branch: " .. table.concat(skipped_current, ", "), vim.log.levels.WARN)
+            vim.notify("Skipped current branch: " .. table.concat(skipped_current, ", "), vim.log.levels.WARN)
         end
         if #deleted > 0 then
-            notify.notify(("Deleted %d branch(es)"):format(#deleted), vim.log.levels.INFO)
+            vim.notify(("Deleted %d branch(es)"):format(#deleted), vim.log.levels.INFO)
             picker:close()
             vim.schedule(M.open_git_branches_picker)
         end
         if #failed > 0 then
-            notify.notify("Failed to delete: " .. table.concat(failed, " | "), vim.log.levels.ERROR)
+            vim.notify("Failed to delete: " .. table.concat(failed, " | "), vim.log.levels.ERROR)
         end
     end
 
@@ -250,7 +249,7 @@ function M.open_git_branches_picker()
             end,
             checkout_detached = function(picker, item)
                 if not item or not item.commit then
-                    notify.notify("No branch selected for detached checkout", vim.log.levels.WARN)
+                    vim.notify("No branch selected for detached checkout", vim.log.levels.WARN)
                     return
                 end
 
@@ -263,12 +262,12 @@ function M.open_git_branches_picker()
                     if err == "" then
                         err = vim.trim(proc.stdout or "")
                     end
-                    notify.notify(err ~= "" and err or "Detached checkout failed", vim.log.levels.ERROR)
+                    vim.notify(err ~= "" and err or "Detached checkout failed", vim.log.levels.ERROR)
                     return
                 end
 
                 picker:close()
-                notify.notify(("Detached HEAD at %s"):format(item.commit), vim.log.levels.INFO)
+                vim.notify(("Detached HEAD at %s"):format(item.commit), vim.log.levels.INFO)
             end,
             delete_branch = function(picker, item)
                 delete_selected_branches(picker, item, false)
@@ -284,7 +283,7 @@ function M.open_git_branches_picker()
             branch_log = function(picker, item)
                 local branch = type(item) == "table" and item.branch or nil
                 if type(branch) ~= "string" or branch == "" then
-                    notify.notify("No branch selected", vim.log.levels.WARN)
+                    vim.notify("No branch selected", vim.log.levels.WARN)
                     return
                 end
 

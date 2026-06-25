@@ -1,16 +1,36 @@
-local notify = require("shared.notify")
-
 local M = {}
 
 local SPINNER_FRAMES = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
+
+local function get_snacks_notifier()
+    local ok, notifier = pcall(require, "snacks.notifier")
+    if not ok or type(notifier.notify) ~= "function" then
+        return nil
+    end
+    return notifier
+end
+
+local function supports_ids()
+    local notifier = get_snacks_notifier()
+    return notifier ~= nil and type(notifier.hide) == "function"
+end
+
+local function hide(id)
+    local notifier = get_snacks_notifier()
+    if not notifier or type(notifier.hide) ~= "function" then
+        return false
+    end
+
+    return pcall(notifier.hide, id)
+end
 
 function M.start_spinner(message, opts)
     opts = opts or {}
     local title = opts.title or "Git"
     local id_prefix = opts.id_prefix or "git-op"
 
-    if not notify.supports_ids() then
-        notify.notify(message, vim.log.levels.INFO, { title = title })
+    if not supports_ids() then
+        vim.notify(message, vim.log.levels.INFO)
         return function() end
     end
 
@@ -19,7 +39,7 @@ function M.start_spinner(message, opts)
     local frame_index = 1
     local active = true
 
-    notify.notify(("%s %s"):format(SPINNER_FRAMES[frame_index], message), vim.log.levels.INFO, {
+    vim.notify(("%s %s"):format(SPINNER_FRAMES[frame_index], message), vim.log.levels.INFO, {
         id = notif_id,
         title = title,
         timeout = false,
@@ -35,7 +55,7 @@ function M.start_spinner(message, opts)
                     return
                 end
                 frame_index = (frame_index % #SPINNER_FRAMES) + 1
-                notify.notify(("%s %s"):format(SPINNER_FRAMES[frame_index], message), vim.log.levels.INFO, {
+                vim.notify(("%s %s"):format(SPINNER_FRAMES[frame_index], message), vim.log.levels.INFO, {
                     id = notif_id,
                     title = title,
                     timeout = false,
@@ -52,7 +72,7 @@ function M.start_spinner(message, opts)
             timer = nil
         end
         vim.defer_fn(function()
-            notify.hide(notif_id)
+            hide(notif_id)
         end, 200)
     end
 end
