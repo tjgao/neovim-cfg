@@ -90,6 +90,5 @@ return {
         vim.keymap.set("n", "<leader>af", function()
             toggle_autofmt(true)
         end, { desc = "Toggle auto format" })
-        vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, { desc = "Format file [None-ls]" })
     end,
 }

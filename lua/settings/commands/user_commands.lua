@@ -2,6 +2,14 @@ local M = {}
 local git_async = require("users.git.async")
 local git_completion = require("users.git.completion")
 
+local flyout_cmd_opts = {
+    nargs = "+",
+}
+
+if vim.fn.has("wsl") ~= 1 then
+    flyout_cmd_opts.complete = "shellcmd"
+end
+
 local function short_gitlog(args)
     vim.cmd('G log --pretty=format:"%h%x09%an%x09%ad%x09%s" --date=short ' .. args.args)
 end
@@ -281,16 +289,19 @@ function M.setup()
         bang = true,
         desc = "Search to loclist (%; ! for all files)",
     })
+
+    vim.api.nvim_create_user_command("Osv", function()
+        local osv = require("osv")
+        if osv.is_running() then
+            osv.stop()
+            vim.notify("OSV stopped", vim.log.levels.INFO)
+        else
+            osv.launch({ port = 8086, block = false })
+            vim.notify("OSV started", vim.log.levels.INFO)
+        end
+    end, {})
+
+    vim.api.nvim_create_user_command("F", "Flyout <args>", flyout_cmd_opts)
 end
 
-vim.api.nvim_create_user_command("Osv", function()
-    local osv = require("osv")
-    if osv.is_running() then
-        osv.stop()
-        vim.notify("OSV stopped", vim.log.levels.INFO)
-    else
-        osv.launch({ port = 8086, block = false })
-        vim.notify("OSV started", vim.log.levels.INFO)
-    end
-end, {})
 return M
