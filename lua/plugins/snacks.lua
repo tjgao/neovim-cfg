@@ -19,7 +19,7 @@ return {
             },
         },
         notifier = {
-            enabled = true,
+            enabled = false,
         },
         picker = {
             enabled = true,

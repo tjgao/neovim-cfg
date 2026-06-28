@@ -128,7 +128,7 @@ keymap("n", "<leader>ql", function()
 end, "Toggle loclist")
 
 keymap("n", "<leader>sn", function()
-    require("snacks").notifier.show_history()
+    require("fy").show_history()
 end, "Show notifier history")
 
 keymap("n", "<leader>sN", function()

@@ -9,14 +9,12 @@ return {
                 task_list_height = "25%",
                 preview_height = "40%",
             },
-            notifications = {
-                notify_backend = "flyout",
+            notify = {
+                notify_backend = "fy",
                 start = false,
-                ["end"] = false,
+                ["end"] = true,
                 progress = {
                     enabled = true,
-                    interval_ms = 120,
-                    frames = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" },
                 },
             },
         })
