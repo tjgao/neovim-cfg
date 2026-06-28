@@ -142,3 +142,4 @@ keymap("n", "<S-h>", "<cmd>QuickBufPrevPinned<CR>", { desc = "Prev pinned buffer
 keymap("n", "<S-l>", "<cmd>QuickBufNextPinned<CR>", { desc = "Next pinned buffer" })
 
 keymap("n", "<leader>ff", "<cmd>FlyoutTasks<CR>", { desc = "FlyoutTasks" })
+keymap("n", "<leader>tt", "<cmd>FlyoutPick<CR>", { desc = "FlyoutTasks" })

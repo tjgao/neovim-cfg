@@ -3,6 +3,7 @@ local task_runtime = require("users.tasks.runtime")
 
 return {
     "stevearc/overseer.nvim",
+    enabled = false,
     cmd = {
         "OverseerRun",
         "OverseerToggle",
