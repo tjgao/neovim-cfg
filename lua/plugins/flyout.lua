@@ -1,5 +1,5 @@
 return {
-    dir = "/home/tiejun/code/github/flyout.nvim",
+    dir = "~/code/github/flyout.nvim",
     name = "flyout",
     -- "tjgao/flyout.nvim",
     config = function()

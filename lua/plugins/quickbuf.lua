@@ -1,5 +1,5 @@
 return {
-    dir = "/home/tiejun/code/github/quickbuf.nvim",
+    dir = "~/code/github/quickbuf.nvim",
     name = "quickbuf",
     -- "tjgao/quickbuf.nvim",
     config = function()
