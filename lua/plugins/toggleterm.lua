@@ -51,7 +51,6 @@ M = {
         local toggleterm = require("toggleterm")
         toggleterm.setup()
         local term_table = {}
-        local origin_by_term = {}
 
         for i, o in pairs(cfg) do
             table.insert(term_table, terminal:new(make_term(i, o)))
@@ -59,39 +58,11 @@ M = {
 
         function MyToggleTerm(c)
             local t = term_table[c]
-            if t == nil then
-                return
+            if t ~= nil then
+                t:toggle(cfg[c].size, cfg[c].direction)
             end
-
-            local was_open = t:is_open()
-
-            if not was_open then
-                local origin_win = vim.api.nvim_get_current_win()
-                local origin_buf = vim.api.nvim_win_get_buf(origin_win)
-                if vim.bo[origin_buf].buftype ~= "terminal" then
-                    origin_by_term[c] = {
-                        win = origin_win,
-                        cursor = vim.api.nvim_win_get_cursor(origin_win),
-                    }
-                end
-            end
-
-            t:toggle(cfg[c].size, cfg[c].direction)
             if cfg[c].cmd ~= nil and cfg[c].cmd ~= "" then
                 toggleterm.exec_command(cfg[c].cmd, c)
-            end
-
-            if was_open then
-                local origin = origin_by_term[c]
-                if origin ~= nil and vim.api.nvim_win_is_valid(origin.win) then
-                    vim.schedule(function()
-                        if not vim.api.nvim_win_is_valid(origin.win) then
-                            return
-                        end
-                        vim.api.nvim_set_current_win(origin.win)
-                        pcall(vim.api.nvim_win_set_cursor, origin.win, origin.cursor)
-                    end)
-                end
             end
         end
 
