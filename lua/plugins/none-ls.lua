@@ -30,7 +30,7 @@ local remove_autofmt = function()
 end
 
 local toggle_autofmt = function(show_notification)
-    local notify = require("snacks").notifier.notify
+    local notify = vim.notify
     local group = vim.api.nvim_create_augroup(group_name, { clear = false })
     local cmds = vim.api.nvim_get_autocmds({
         group = group,

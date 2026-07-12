@@ -12,7 +12,7 @@ return {
             notify = {
                 notify_backend = "fy",
                 start = false,
-                ["end"] = true,
+                ["end"] = false,
                 progress = {
                     enabled = true,
                 },
