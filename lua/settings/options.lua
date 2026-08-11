@@ -126,4 +126,19 @@ if vim.fn.has("wsl") == 1 and vim.fn.executable("win32yank.exe") == 1 then
         },
         cache_enabled = 0,
     }
+else
+    vim.schedule(function()
+        vim.opt.clipboard = "unnamedplus"
+        vim.g.clipboard = {
+            name = "OSC 52",
+            copy = {
+                ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+                ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+            },
+            paste = {
+                ["+"] = require("vim.ui.clipboard.osc52").paste("+"),
+                ["*"] = require("vim.ui.clipboard.osc52").paste("*"),
+            },
+        }
+    end)
 end
