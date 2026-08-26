@@ -2,6 +2,7 @@ local git_branches = require("users.snacks.git_branches")
 local git_log = require("users.snacks.git_log")
 local git_rg = require("users.snacks.git_rg")
 local picker_actions = require("users.snacks.picker_actions")
+local qf_actions = require("users.snacks.qf_actions")
 
 return {
     "folke/snacks.nvim",
@@ -430,14 +431,91 @@ return {
         {
             "<leader>sq",
             function()
-                require("snacks").picker.qflist({ focus = "list" })
+                require("snacks").picker.pick({
+                    focus = "list",
+                    source = "qflist",
+                    actions = {
+                        remove_qflist_items = qf_actions.remove_qflist_items,
+                        clear_qflist = qf_actions.clear_qflist,
+                    },
+                    win = {
+                        list = {
+                            keys = {
+                                ["dd"] = {
+                                    "remove_qflist_items",
+                                    mode = { "n" },
+                                },
+                                ["d"] = {
+                                    "remove_qflist_items",
+                                    mode = { "x" },
+                                },
+                                ["da"] = {
+                                    "clear_qflist",
+                                    mode = { "n" },
+                                },
+                            },
+                        },
+                        input = {
+                            keys = {
+                                ["dd"] = {
+                                    "remove_qflist_items",
+                                    mode = { "n" },
+                                },
+                                ["da"] = {
+                                    "clear_qflist",
+                                    mode = { "n" },
+                                },
+                            },
+                        },
+                    },
+                })
             end,
             desc = "Search quickfix",
         },
         {
             "<leader>sl",
             function()
-                require("snacks").picker.loclist({ focus = "list" })
+                local target_win = vim.api.nvim_get_current_win()
+                local loc_actions = qf_actions.make_loclist_actions(target_win)
+                require("snacks").picker.pick({
+                    focus = "list",
+                    source = "loclist",
+                    qf_win = target_win,
+                    actions = {
+                        remove_loclist_items = loc_actions.remove_loclist_items,
+                        clear_loclist = loc_actions.clear_loclist,
+                    },
+                    win = {
+                        list = {
+                            keys = {
+                                ["dd"] = {
+                                    "remove_loclist_items",
+                                    mode = { "n" },
+                                },
+                                ["d"] = {
+                                    "remove_loclist_items",
+                                    mode = { "x" },
+                                },
+                                ["da"] = {
+                                    "clear_loclist",
+                                    mode = { "n" },
+                                },
+                            },
+                        },
+                        input = {
+                            keys = {
+                                ["dd"] = {
+                                    "remove_loclist_items",
+                                    mode = { "n" },
+                                },
+                                ["da"] = {
+                                    "clear_loclist",
+                                    mode = { "n" },
+                                },
+                            },
+                        },
+                    },
+                })
             end,
             desc = "Search loclist",
         },
