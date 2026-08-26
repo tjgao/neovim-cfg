@@ -248,6 +248,8 @@ return {
             function()
                 require("snacks").picker.pick({
                     source = "files",
+                    ignored = true,
+                    hidden = true,
                     layout = {
                         preset = "vertical",
                     },
