@@ -1,6 +1,7 @@
 local M = {}
 local git_async = require("users.git.async")
 local git_completion = require("users.git.completion")
+local git_rg = require("users.snacks.git_rg")
 
 local flyout_cmd_opts = {
     nargs = "+",
@@ -55,44 +56,113 @@ local function resolve_search_pattern(raw)
     return pattern
 end
 
-local function pattern_delimiter(pattern)
-    local candidates = { "/", "#", "@", "%", "|", "!", ";", ":" }
-    for _, delim in ipairs(candidates) do
-        if not pattern:find(delim, 1, true) then
-            return delim
-        end
-    end
-    return "/"
-end
-
-local function escaped_search_pattern(pattern)
-    local delim = pattern_delimiter(pattern)
-    local escaped = pattern:gsub(vim.pesc(delim), "\\" .. delim)
-    return delim, escaped
-end
-
 local function run_search_to_list(kind, pattern, target)
-    local delim, escaped = escaped_search_pattern(pattern)
-    local prefix = kind == "loclist" and "l" or ""
-    local ok, err = pcall(function()
-        vim.cmd(("%svimgrep %s%s%sgj %s"):format(prefix, delim, escaped, delim, target))
-    end)
-    if not ok then
-        local msg = tostring(err)
-        if msg:find("E480", 1, true) then
-            if kind == "loclist" then
-                vim.fn.setloclist(0, {})
-            else
-                vim.fn.setqflist({})
-            end
-            vim.notify("No matches found", vim.log.levels.INFO, { title = "Search" })
-            return
-        end
-        vim.notify(msg, vim.log.levels.ERROR, { title = "Search" })
+    if vim.fn.executable("rg") ~= 1 then
+        vim.notify("ripgrep (rg) is not available", vim.log.levels.ERROR, { title = "Search" })
         return
     end
 
-    vim.cmd(kind == "loclist" and "lopen" or "copen")
+    local targets = {}
+    if type(target) == "table" then
+        targets = target
+    elseif target == "%" then
+        local file = vim.api.nvim_buf_get_name(0)
+        if file ~= "" then
+            targets = { file }
+        end
+    elseif target == "**/*" then
+        targets = { "." }
+    else
+        targets = { target }
+    end
+
+    if #targets == 0 then
+        if kind == "loclist" then
+            vim.fn.setloclist(0, {})
+        else
+            vim.fn.setqflist({})
+        end
+        vim.notify("No matches found", vim.log.levels.INFO, { title = "Search" })
+        return
+    end
+
+    local args = {
+        "--vimgrep",
+        "--no-heading",
+        "--color",
+        "never",
+        "--smart-case",
+        "--",
+        pattern,
+    }
+    vim.list_extend(args, targets)
+
+    local cmd = { "rg" }
+    vim.list_extend(cmd, args)
+    local proc = vim.system(cmd, { text = true }):wait()
+
+    if proc.code == 1 then
+        if kind == "loclist" then
+            vim.fn.setloclist(0, {})
+        else
+            vim.fn.setqflist({})
+        end
+        vim.notify("No matches found", vim.log.levels.INFO, { title = "Search" })
+        return
+    end
+
+    if proc.code ~= 0 then
+        local err = vim.trim(proc.stderr or "")
+        if err == "" then
+            err = "rg failed"
+        end
+        vim.notify(err, vim.log.levels.ERROR, { title = "Search" })
+        return
+    end
+
+    local items = {}
+    for line in (proc.stdout or ""):gmatch("[^\r\n]+") do
+        local filename, lnum, col, text = line:match("^(.-):(%d+):(%d+):(.*)$")
+        if filename then
+            items[#items + 1] = {
+                filename = filename,
+                lnum = tonumber(lnum),
+                col = tonumber(col),
+                text = text,
+            }
+        end
+    end
+
+    if #items == 0 then
+        if kind == "loclist" then
+            vim.fn.setloclist(0, {})
+        else
+            vim.fn.setqflist({})
+        end
+        vim.notify("No matches found", vim.log.levels.INFO, { title = "Search" })
+        return
+    end
+
+    if kind == "loclist" then
+        vim.fn.setloclist(0, {}, " ", { title = "Search", items = items })
+        vim.cmd("lopen")
+    else
+        vim.fn.setqflist({}, " ", { title = "Search", items = items })
+        vim.cmd("copen")
+    end
+end
+
+local function get_git_tracked_files()
+    local root = git_async.resolve_git_root(vim.fn.getcwd())
+    if not root then
+        return nil
+    end
+
+    local files = {}
+    for _, file in ipairs(git_rg.get_git_tracked_files(root)) do
+        files[#files + 1] = vim.fs.joinpath(root, file)
+    end
+    return files
 end
 
 local function run_git_background(args, opts)
@@ -268,12 +338,21 @@ function M.setup()
             return
         end
 
-        local target = opts.bang and "**/*" or "%"
-        run_search_to_list("quickfix", pattern, target)
+        if opts.bang then
+            local tracked_files = get_git_tracked_files()
+            if tracked_files then
+                run_search_to_list("quickfix", pattern, tracked_files)
+            else
+                vim.notify("Not in a git repo, fallback to all files", vim.log.levels.INFO, { title = "Search" })
+                run_search_to_list("quickfix", pattern, "**/*")
+            end
+            return
+        end
+        run_search_to_list("quickfix", pattern, "%")
     end, {
         nargs = "*",
         bang = true,
-        desc = "Search to quickfix (%; ! for all files)",
+        desc = "Search to quickfix (%; ! for git tracked files)",
     })
 
     vim.api.nvim_create_user_command("Sl", function(opts)
@@ -282,12 +361,21 @@ function M.setup()
             return
         end
 
-        local target = opts.bang and "**/*" or "%"
-        run_search_to_list("loclist", pattern, target)
+        if opts.bang then
+            local tracked_files = get_git_tracked_files()
+            if tracked_files then
+                run_search_to_list("loclist", pattern, tracked_files)
+            else
+                vim.notify("Not in a git repo, fallback to all files", vim.log.levels.INFO, { title = "Search" })
+                run_search_to_list("loclist", pattern, "**/*")
+            end
+            return
+        end
+        run_search_to_list("loclist", pattern, "%")
     end, {
         nargs = "*",
         bang = true,
-        desc = "Search to loclist (%; ! for all files)",
+        desc = "Search to loclist (%; ! for git tracked files)",
     })
 
     vim.api.nvim_create_user_command("Osv", function()

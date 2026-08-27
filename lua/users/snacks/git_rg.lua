@@ -298,6 +298,18 @@ function M.grep_word(opts)
     return require("snacks").picker.grep_word(with_vimgrep_if_enabled(opts))
 end
 
+function M.get_git_root()
+    return get_git_root()
+end
+
+function M.get_git_tracked_files(root)
+    local repo_root = root or get_git_root()
+    if not repo_root then
+        return {}
+    end
+    return get_git_tracked_files(repo_root)
+end
+
 function M.toggle_vimgrep_mode()
     USE_VIMGREP = not USE_VIMGREP
     return USE_VIMGREP
