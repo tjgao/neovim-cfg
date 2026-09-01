@@ -23,7 +23,7 @@ local options = {
     splitbelow = true,                            -- force horizontal splits to go below
     splitright = true,                            -- force vertical spllits to go right
     wildmode = "longest:full",                    -- do not want auto select for wildmenu
-    guifont = "Iosevka Nerd Font:h24",            -- font used in GUI neovim app
+    guifont = "Iosevka NF:h18",                   -- font used in GUI neovim app
 
     updatetime = 400,
     colorcolumn = "120",
