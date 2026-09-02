@@ -12,34 +12,15 @@ function M.toggle_dap_term()
     end
 end
 
-function M.setup_ui_listeners(dap, dapview, opts)
-    opts = opts or {}
-
-    dap.listeners.after.event_initialized.dap_prelaunch_status = function()
-        local task_names = opts.get_active_prelaunch_tasks and opts.get_active_prelaunch_tasks() or {}
-        if type(task_names) == "table" and #task_names > 0 then
-            vim.notify("preLaunchTask finished, debugger started", vim.log.levels.INFO)
-        end
-    end
+function M.setup_ui_listeners(dap, dapview)
     dap.listeners.after.event_stopped.dapui_config = function()
         dapview.open()
     end
     dap.listeners.before.event_terminated.dapui_config = function()
-        if opts.stop_active_prelaunch_task then
-            opts.stop_active_prelaunch_task()
-        end
         dapview.close()
     end
     dap.listeners.before.event_exited.dapui_config = function()
-        if opts.stop_active_prelaunch_task then
-            opts.stop_active_prelaunch_task()
-        end
         dapview.close()
-    end
-    dap.listeners.before.disconnect.dap_prelaunch_cleanup = function()
-        if opts.stop_active_prelaunch_task then
-            opts.stop_active_prelaunch_task()
-        end
     end
 end
 

@@ -32,11 +32,6 @@ local function run_selected_config(dap, config, opts)
         debug_config_picker.remember_last_launch_config(runnable)
     end
 
-    local prelaunch_tasks = debug_state.get_prelaunch_task_names(runnable)
-    if #prelaunch_tasks > 0 then
-        vim.notify(("Running preLaunchTask(s): %s"):format(table.concat(prelaunch_tasks, ", ")), vim.log.levels.INFO)
-    end
-    debug_state.set_active_prelaunch_tasks_from_config(runnable)
     dap.run(runnable)
 end
 
@@ -70,12 +65,13 @@ return {
         "leoluz/nvim-dap-go",
         "mxsdev/nvim-dap-vscode-js",
         "jbyuki/one-small-step-for-vimkind",
-        "stevearc/overseer.nvim",
+        { dir = "/home/tiejun/code/github/fy.nvim", name = "fy.nvim" },
+        { dir = "/home/tiejun/code/github/flyout.nvim", name = "flyout.nvim" },
     },
     config = function()
         local dap = require("dap")
         local dapview = require("dap-view")
-        local ok_overseer, overseer = pcall(require, "overseer")
+        local flyout = require("flyout")
 
         local mason_dap = require("mason-nvim-dap")
         mason_dap.setup({
@@ -100,14 +96,12 @@ return {
         })
         require("dap-go").setup()
 
-        if ok_overseer then
-            overseer.enable_dap()
+        local _, flyout_err = flyout.enable_dap()
+        if flyout_err then
+            vim.notify("Flyout: " .. tostring(flyout_err), vim.log.levels.ERROR)
         end
 
-        debug_ui.setup_ui_listeners(dap, dapview, {
-            get_active_prelaunch_tasks = debug_state.get_active_prelaunch_tasks,
-            stop_active_prelaunch_task = debug_state.stop_active_prelaunch_tasks,
-        })
+        debug_ui.setup_ui_listeners(dap, dapview)
         debug_config_picker.setup_cache_invalidation()
         debug_keymaps.setup(dap, {
             continue_or_run_single_or_pick = continue_or_run_single_or_pick,
