@@ -30,21 +30,6 @@ return {
             git_branches = {
                 all = false,
             },
-            sources = {
-                select = {
-                    kinds = {
-                        overseer_template = {
-                            focus = "list",
-                        },
-                        overseer_task = {
-                            focus = "list",
-                        },
-                        overseer_task_options = {
-                            focus = "list",
-                        },
-                    },
-                },
-            },
             matcher = { frecency = true },
             formatters = {
                 file = {

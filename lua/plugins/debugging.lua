@@ -111,7 +111,16 @@ return {
         })
         debug_ui.setup_dap_term_buffer_keymap()
         keymap("n", "<Leader>dx", function()
-            dap.terminate()
+            if dap.session() then
+                dap.terminate()
+            else
+                local stopped = flyout.stop_active_prelaunch_tasks({ notify = false })
+                if stopped > 0 then
+                    vim.notify(("Stopped preLaunchTask run(s): %d"):format(stopped), vim.log.levels.INFO)
+                else
+                    vim.notify("No active debug session or preLaunchTask run", vim.log.levels.WARN)
+                end
+            end
             dapview.close()
         end, { desc = "Exit debugger" })
     end,
