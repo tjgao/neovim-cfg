@@ -181,13 +181,69 @@ function M.save_config(config, previous_index, path, opts)
     end
 
     local configurations = launch.configurations
-    local replaced = false
-    if type(previous_index) == "number" and previous_index >= 1 and previous_index <= #configurations then
-        configurations[previous_index] = vim.deepcopy(config)
-        replaced = true
+    local target_index = nil
+
+    local function find_config_index_by_name(name)
+        if type(name) ~= "string" or name == "" then
+            return nil
+        end
+
+        local found = nil
+        for i, item in ipairs(configurations) do
+            if type(item) == "table" and item.name == name then
+                if found ~= nil then
+                    return nil
+                end
+                found = i
+            end
+        end
+
+        return found
     end
 
-    if not replaced then
+    local function has_name_conflict(name, ignore_index)
+        if type(name) ~= "string" or name == "" then
+            return false
+        end
+
+        for i, item in ipairs(configurations) do
+            if i ~= ignore_index and type(item) == "table" and item.name == name then
+                return true
+            end
+        end
+
+        return false
+    end
+
+    if type(previous_index) == "number" and previous_index >= 1 and previous_index <= #configurations then
+        target_index = previous_index
+    end
+
+    if target_index == nil then
+        local by_original_name = find_config_index_by_name(opts.match_name)
+        if by_original_name then
+            target_index = by_original_name
+        end
+    end
+
+    if target_index == nil then
+        local by_new_name = find_config_index_by_name(config.name)
+        if by_new_name then
+            target_index = by_new_name
+        end
+    end
+
+    if has_name_conflict(config.name, target_index) then
+        vim.notify(
+            ("Debug configuration name '%s' already exists. Use a different name."):format(config.name),
+            vim.log.levels.ERROR
+        )
+        return false
+    end
+
+    if target_index ~= nil then
+        configurations[target_index] = vim.deepcopy(config)
+    else
         configurations[#configurations + 1] = vim.deepcopy(config)
     end
 

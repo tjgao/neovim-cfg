@@ -54,6 +54,7 @@ end
 
 local function open_config_editor(dap, selected_config, picker, source_index, picker_item, refresh_picker, opts)
     local sanitized = launch_json.sanitize(vim.deepcopy(selected_config))
+    local original_config_name = type(selected_config.name) == "string" and selected_config.name or nil
     local valid, err = launch_json.validate_config(sanitized)
     if not valid then
         vim.notify(err or "Invalid debug config", vim.log.levels.ERROR)
@@ -157,7 +158,7 @@ local function open_config_editor(dap, selected_config, picker, source_index, pi
                     parsed,
                     source_index,
                     launch_json.get_path(),
-                    { on_write = clear_last_launch_config }
+                    { on_write = clear_last_launch_config, match_name = original_config_name }
                 )
             then
                 return
@@ -190,7 +191,7 @@ local function open_config_editor(dap, selected_config, picker, source_index, pi
                 parsed,
                 source_index,
                 launch_json.get_path(),
-                { on_write = clear_last_launch_config }
+                { on_write = clear_last_launch_config, match_name = original_config_name }
             )
         then
             vim.bo[buf].modified = false
