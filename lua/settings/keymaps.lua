@@ -1,3 +1,4 @@
+require("users.cmdline.zoxide").setup_keymaps()
 local keymap = require("shared.utils").keymap
 local message = require("settings.commands.messages")
 
