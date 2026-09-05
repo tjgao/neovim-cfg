@@ -17,6 +17,9 @@ return {
             "rafi/awesome-vim-colorschemes",
         },
         {
+            "webhooked/polar.nvim",
+        },
+        {
             "sainnhe/everforest",
             config = function()
                 vim.g.everforest_background = "hard"
