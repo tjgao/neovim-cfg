@@ -18,6 +18,11 @@ local function is_image(path)
     return IMAGE_EXTENSIONS[ext] == true
 end
 
+local function is_pdf(path)
+    local ext = vim.fn.fnamemodify(path or "", ":e"):lower()
+    return ext == "pdf"
+end
+
 local function open_image_external(path)
     if vim.fn.executable("kitty") == 1 and vim.fn.executable("sxiv") == 1 then
         vim.fn.jobstart({ "kitty", "--detach", "sxiv", path }, { detach = true })
@@ -25,6 +30,22 @@ local function open_image_external(path)
     end
     if vim.fn.executable("sxiv") == 1 then
         vim.fn.jobstart({ "sxiv", path }, { detach = true })
+        return true
+    end
+    if vim.fn.executable("xdg-open") == 1 then
+        vim.fn.jobstart({ "xdg-open", path }, { detach = true })
+        return true
+    end
+    return false
+end
+
+local function open_pdf_external(path)
+    if vim.fn.executable("kitty") == 1 and vim.fn.executable("zathura") == 1 then
+        vim.fn.jobstart({ "kitty", "--detach", "zathura", path }, { detach = true })
+        return true
+    end
+    if vim.fn.executable("zathura") == 1 then
+        vim.fn.jobstart({ "zathura", path }, { detach = true })
         return true
     end
     if vim.fn.executable("xdg-open") == 1 then
@@ -103,14 +124,19 @@ return {
                     return
                 end
 
-                if not is_image(hovered) then
-                    vim.notify("Hovered file is not an image", vim.log.levels.INFO)
-                    return
+                if is_image(hovered) then
+                    if not open_image_external(hovered) then
+                        vim.notify("No image opener found (kitty/sxiv/xdg-open)", vim.log.levels.ERROR)
+                    end
                 end
 
-                if not open_image_external(hovered) then
-                    vim.notify("No image opener found (kitty/sxiv/xdg-open)", vim.log.levels.ERROR)
+                if is_pdf(hovered) then
+                    if not open_pdf_external(hovered) then
+                        vim.notify("No PDF opener found (kitty+zathura/zathura/xdg-open)", vim.log.levels.ERROR)
+                    end
                 end
+
+                vim.notify("Hovered file is not an image or PDF", vim.log.levels.INFO)
             end, { buffer = yazi_buffer, silent = true, desc = "Preview hovered image externally" })
         end,
         keymaps = {
