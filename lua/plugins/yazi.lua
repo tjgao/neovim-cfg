@@ -128,16 +128,18 @@ return {
                     if not open_image_external(hovered) then
                         vim.notify("No image opener found (kitty/sxiv/xdg-open)", vim.log.levels.ERROR)
                     end
+                    return
                 end
 
                 if is_pdf(hovered) then
                     if not open_pdf_external(hovered) then
                         vim.notify("No PDF opener found (kitty+zathura/zathura/xdg-open)", vim.log.levels.ERROR)
                     end
+                    return
                 end
 
                 vim.notify("Hovered file is not an image or PDF", vim.log.levels.INFO)
-            end, { buffer = yazi_buffer, silent = true, desc = "Preview hovered image externally" })
+            end, { buffer = yazi_buffer, silent = true, desc = "Open hovered image/PDF externally" })
         end,
         keymaps = {
             show_help = "<leader>sy",
