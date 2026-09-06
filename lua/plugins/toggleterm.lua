@@ -1,5 +1,5 @@
 function _G.set_terminal_keymaps()
-    vim.api.nvim_buf_set_keymap(0, "t", "<c-\\>", [[<c-\><c-n>]], { noremap = true })
+    vim.api.nvim_buf_set_keymap(0, "t", "<c-/>", [[<c-\><c-n>]], { noremap = true })
 end
 
 vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
