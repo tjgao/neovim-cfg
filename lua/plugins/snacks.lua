@@ -505,6 +505,13 @@ return {
             desc = "Search loclist",
         },
         {
+            "<leader>sR",
+            function()
+                require("snacks").picker.registers({ focus = "list" })
+            end,
+            desc = "Search registers",
+        },
+        {
             "<leader>sgl",
             function()
                 git_log.open()
