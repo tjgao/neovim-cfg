@@ -30,6 +30,12 @@ local function yazi_with_chafa(mode)
     vim.env.YAZI_ORIG_XDG_SESSION_TYPE = old_orig_session
 end
 
+local yazi_config = vim.fn.expand("~/.config/yazi-nvim")
+
+if vim.fn.has("wsl") == 1 then
+    yazi_config = vim.fn.expand("~/.config/yazi-nvim-wsl")
+end
+
 ---@type LazySpec
 return {
     "mikavilpas/yazi.nvim",
@@ -66,7 +72,7 @@ return {
     },
     ---@type table
     opts = {
-        config_home = vim.fn.expand("~/.config/yazi-nvim"),
+        config_home = yazi_config,
         -- if you want to open yazi instead of netrw, see below for more info
         open_for_directories = false,
         floating_window_scaling_factor = 0.92,
