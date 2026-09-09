@@ -58,14 +58,6 @@ vim.api.nvim_create_autocmd("ColorScheme", {
     end,
 })
 
--- kanso-ink looks too dark in WSL2, so override it after startup on WSL
 if vim.fn.has("wsl") == 1 then
-    vim.api.nvim_create_autocmd("VimEnter", {
-        once = true,
-        callback = function()
-            vim.cmd("colorscheme kanso-mist")
-        end,
-    })
-
     vim.keymap.set("n", "\x1b[105;5u", "<C-i>", { noremap = true, silent = true })
 end
