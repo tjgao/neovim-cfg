@@ -24,7 +24,7 @@ return {
                 -- mapping query_strings to modes.
                 selection_modes = {
                     ["@parameter.outer"] = "v", -- charwise
-                    ["@function.outer"] = "V", -- linewise
+                    ["@function.outer"] = "V",  -- linewise
                     ["@class.outer"] = "<c-v>", -- blockwise
                 },
                 -- If you set this to `true` (default is `false`) then any textobject is
@@ -77,10 +77,10 @@ return {
             sel.select_textobject("@conditional.inner", "textobjects")
         end, { desc = "Select conditional inner" })
 
-        vim.keymap.set({ "x", "o" }, "al", function()
+        vim.keymap.set({ "x", "o" }, "aL", function()
             sel.select_textobject("@loop.outer", "textobjects")
         end, { desc = "Select loop outer" })
-        vim.keymap.set({ "x", "o" }, "il", function()
+        vim.keymap.set({ "x", "o" }, "iL", function()
             sel.select_textobject("@loop.inner", "textobjects")
         end, { desc = "Select loop inner" })
 
