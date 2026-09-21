@@ -1,3 +1,6 @@
+-- disable default "-" mapping
+vim.g.loaded_nvim_dir_plugin = 1
+
 if vim.g.neovide then
     require("vim._core.ui2").enable()
     -- vim.deprecate = function() end
