@@ -77,7 +77,8 @@ return {
         open_for_directories = false,
         floating_window_scaling_factor = 0.92,
         keymaps = {
-            show_help = "<F2>",
+            show_help = "<F2>", -- there is a bug with it, when closing help, layout is weird
+            change_working_directory = "<F3>",
         },
     },
     -- 👇 if you use `open_for_directories=true`, this is recommended
