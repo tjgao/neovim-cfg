@@ -8,6 +8,9 @@ return {
             priority = 1000,
         },
         {
+            "https://codeberg.org/navahas/sanzo.nvim",
+        },
+        {
             "vague-theme/vague.nvim",
         },
         {
