@@ -26,6 +26,11 @@ return {
                         h.WinBar.fg = soft_fg
                         h.SanzoVariable.fg = soft_fg
                         h.SanzoField.fg = soft_method
+
+                        h.DiffAdd = { fg = p.role_string, bg = "#2f3a34" }
+                        h.DiffChange = { fg = p.role_def, bg = "#333841" }
+                        h.DiffDelete = { fg = p.role_const, bg = "#3a2f31" }
+                        h.DiffText = { fg = p.role_fn, bg = "#3f3a2f" }
                         h["@function.method"] = { fg = soft_method }
                         h["@lsp.type.method"] = { fg = soft_method }
                     end,
