@@ -27,6 +27,10 @@ return {
                         h.SanzoVariable.fg = soft_fg
                         h.SanzoField.fg = soft_method
 
+                        h.SnacksPickerDirectory = { fg = soft_fg }
+                        h.SnacksPickerFile = { fg = soft_fg }
+                        h.SnacksPickerDir = { fg = "#6f6f6f" }
+
                         h.DiffAdd = { fg = p.role_string, bg = "#2f3a34" }
                         h.DiffChange = { fg = p.role_def, bg = "#333841" }
                         h.DiffDelete = { fg = p.role_const, bg = "#3a2f31" }
