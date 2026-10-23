@@ -11,6 +11,12 @@ local function render_messages(buf)
     local lines = vim.split(output, "\n", { plain = true })
     if #lines == 0 or (#lines == 1 and lines[1] == "") then
         lines = { "(no messages)" }
+    else
+        local reversed = {}
+        for i = #lines, 1, -1 do
+            reversed[#reversed + 1] = lines[i]
+        end
+        lines = reversed
     end
 
     local was_readonly = vim.bo[buf].readonly
@@ -42,6 +48,10 @@ local function render_messages(buf)
 
     vim.bo[buf].modifiable = false
     vim.bo[buf].readonly = was_readonly
+
+    if MESSAGE_VIEW.win and vim.api.nvim_win_is_valid(MESSAGE_VIEW.win) then
+        vim.api.nvim_win_set_cursor(MESSAGE_VIEW.win, { 1, 0 })
+    end
 end
 
 function M.open_messages_window()

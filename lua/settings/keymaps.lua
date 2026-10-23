@@ -131,7 +131,7 @@ end, "Show notifier history")
 
 keymap("n", "<leader>sN", function()
     message.open_messages_window()
-end, "Show notifier history")
+end, "Show message history")
 
 keymap("n", "<Tab>", "<cmd>QuickBuf<CR>", { desc = "QuickBuf" })
 keymap("n", "<leader>qt", "<cmd>QuickBufPinToggle<CR>", { desc = "QuickBufPinToggle" })
