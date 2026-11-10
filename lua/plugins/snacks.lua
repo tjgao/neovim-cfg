@@ -521,7 +521,7 @@ return {
         {
             "<leader>l",
             function()
-                require("snacks").picker.lsp_symbols()
+                require("snacks").picker.lsp_symbols({ focus = "list" })
             end,
             desc = "Search lsp symbols",
         },
