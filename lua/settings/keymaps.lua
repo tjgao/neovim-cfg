@@ -15,11 +15,13 @@ keymap("n", "<C-i>", "<C-i>", { noremap = true, silent = true })
 --   command_mode = "c",
 
 -- Normal --
--- Window navigation
-keymap("n", "<C-h>", "<C-w>h", "Move left window")
-keymap("n", "<C-l>", "<C-w>l", "Move right window")
-keymap("n", "<C-k>", "<C-w>k", "Move up window")
-keymap("n", "<C-j>", "<C-w>j", "Move down window")
+-- Window navigation is provided by vim-herdr-navigation's herdr-nvim.lua:
+-- it moves between Neovim splits and crosses into the neighboring herdr pane
+-- at a split edge. Do not redefine <C-h/j/k/l> here; that would override it.
+-- keymap("n", "<C-h>", "<C-w>h", "Move left window")
+-- keymap("n", "<C-l>", "<C-w>l", "Move right window")
+-- keymap("n", "<C-k>", "<C-w>k", "Move up window")
+-- keymap("n", "<C-j>", "<C-w>j", "Move down window")
 
 -- Resize with arrows
 keymap("n", "<C-Up>", ":resize +2<CR>", "Resize window upward")
